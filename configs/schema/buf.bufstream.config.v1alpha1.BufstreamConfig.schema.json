@@ -1,0 +1,136 @@
+{
+  "$id": "buf.bufstream.config.v1alpha1.BufstreamConfig.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "actors": {
+      "description": "The actors that are running on this control process.\n\n If empty, all actors are enabled.",
+      "items": {
+        "anyOf": [
+          {
+            "enum": [
+              "ACTOR_UNSPECIFIED",
+              "ACTOR_WRITER",
+              "ACTOR_READER",
+              "ACTOR_TXNER",
+              "ACTOR_SEQUENCER",
+              "ACTOR_CASHIER",
+              "ACTOR_CLEANER"
+            ],
+            "title": "Actor",
+            "type": "string"
+          },
+          {
+            "maximum": 2147483647,
+            "minimum": -2147483648,
+            "type": "integer"
+          }
+        ]
+      },
+      "type": "array"
+    },
+    "archive": {
+      "$ref": "buf.bufstream.config.v1alpha1.ArchiveConfig.schema.json"
+    },
+    "auto_migrate_metadata_storage": {
+      "description": "Automatically run migrations for the metadata storage on startup",
+      "type": "boolean"
+    },
+    "cashier": {
+      "$ref": "buf.bufstream.config.v1alpha1.CashierConfig.schema.json"
+    },
+    "cluster": {
+      "description": "The path of the cluster.",
+      "type": "string"
+    },
+    "connect_address": {
+      "$ref": "buf.bufstream.config.v1alpha1.Address.schema.json"
+    },
+    "connect_public_address": {
+      "$ref": "buf.bufstream.config.v1alpha1.Address.schema.json"
+    },
+    "data_enforcement": {
+      "$ref": "buf.bufstream.config.v1alpha1.DataEnforcementConfig.schema.json",
+      "description": "Configuration for data enforcement via schemas of records flowing in and\n out of bufstream."
+    },
+    "disabled_actors": {
+      "description": "The actors that are disabled on this control process.",
+      "items": {
+        "anyOf": [
+          {
+            "enum": [
+              "ACTOR_UNSPECIFIED",
+              "ACTOR_WRITER",
+              "ACTOR_READER",
+              "ACTOR_TXNER",
+              "ACTOR_SEQUENCER",
+              "ACTOR_CASHIER",
+              "ACTOR_CLEANER"
+            ],
+            "title": "Actor",
+            "type": "string"
+          },
+          {
+            "maximum": 2147483647,
+            "minimum": -2147483648,
+            "type": "integer"
+          }
+        ]
+      },
+      "type": "array"
+    },
+    "dispatch": {
+      "$ref": "buf.bufstream.config.v1alpha1.DispatchConfig.schema.json"
+    },
+    "etcd": {
+      "$ref": "buf.bufstream.config.v1alpha1.EtcdConfig.schema.json",
+      "description": "The etcd configuration."
+    },
+    "in_memory": {
+      "type": "boolean"
+    },
+    "kafka": {
+      "$ref": "buf.bufstream.config.v1alpha1.KafkaConfig.schema.json"
+    },
+    "name": {
+      "description": "The name of the control process.\n\n Defaults to the hostname.",
+      "type": "string"
+    },
+    "observability": {
+      "$ref": "buf.bufstream.config.v1alpha1.ObservabilityConfig.schema.json",
+      "description": "The observability configuration."
+    },
+    "postgres": {
+      "$ref": "buf.bufstream.config.v1alpha1.PostgresConfig.schema.json"
+    },
+    "producer_id_batch_size": {
+      "anyOf": [
+        {
+          "maximum": 9223372036854776000,
+          "minimum": -9223372036854776000,
+          "type": "integer"
+        },
+        {
+          "pattern": "^[0-9]+$",
+          "type": "string"
+        }
+      ]
+    },
+    "sequencer": {
+      "$ref": "buf.bufstream.config.v1alpha1.SequencerConfig.schema.json"
+    },
+    "storage": {
+      "$ref": "buf.bufstream.config.v1alpha1.StorageConfig.schema.json",
+      "description": "The storage configuration."
+    },
+    "writer": {
+      "$ref": "buf.bufstream.config.v1alpha1.WriterConfig.schema.json"
+    },
+    "zone": {
+      "description": "The location of the control process, e.g. the datacenter/availability zone",
+      "type": "string"
+    }
+  },
+  "title": "Bufstream Config",
+  "type": "object"
+}

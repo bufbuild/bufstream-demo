@@ -1,0 +1,36 @@
+syntax="proto3";
+
+package bufbuild.bufstream_demo.v1;
+
+service EmailService {
+  rpc GetEmail(GetEmailRequest) returns (GetEmailResponse);
+  rpc UpdateEmail(UpdateEmailRequest) returns (UpdateEmailResponse);
+  rpc ToggleVerifier(ToggleVerifierRequest) returns (ToggleVerifierResponse);
+}
+
+message UserEmail {
+  string uuid = 1;
+  string email_address = 2;
+  bool verified = 3;
+}
+
+message GetEmailRequest {
+  string uuid = 1;
+}
+
+message GetEmailResponse {
+  UserEmail user_email = 1;
+}
+
+message UpdateEmailRequest {
+  string uuid = 1;
+  string new_address = 2;
+}
+
+message UpdateEmailResponse {}
+
+message ToggleVerifierRequest {
+  bool enabled = 1;
+}
+
+message ToggleVerifierResponse {}

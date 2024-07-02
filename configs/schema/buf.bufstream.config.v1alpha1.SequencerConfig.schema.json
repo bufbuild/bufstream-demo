@@ -1,0 +1,44 @@
+{
+  "$id": "buf.bufstream.config.v1alpha1.SequencerConfig.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "disable_active_listen": {
+      "type": "boolean"
+    },
+    "max_shelf_chunk_size": {
+      "description": "The maximum number of toparts messages to shelve in at a time.",
+      "exclusiveMaximum": 2147483648,
+      "minimum": -2147483648,
+      "type": "integer"
+    },
+    "max_topart_producer_cache_size": {
+      "description": "The maximum number of producers tracked per topart.  (May be exceeded due to other constraints.)\n\n For each tracked producer the sequencer remembers producer/topart offset\n and some transaction state.\n\n A sequencer may forget the producer/topart offset (if the producer does\n not produce a record to the topart for a long time), but a producer never\n forgets a producer with an incomplete transaction.",
+      "exclusiveMaximum": 2147483648,
+      "minimum": -2147483648,
+      "type": "integer"
+    },
+    "max_writer_delay_ms": {
+      "anyOf": [
+        {
+          "maximum": 9223372036854776000,
+          "minimum": -9223372036854776000,
+          "type": "integer"
+        },
+        {
+          "pattern": "^[0-9]+$",
+          "type": "string"
+        }
+      ],
+      "description": "The maximum delay between between writing and sequencing a writer log entry."
+    },
+    "min_recent_msg_count": {
+      "description": "The minimum number of recent messages to keep for each topart.",
+      "exclusiveMaximum": 2147483648,
+      "minimum": -2147483648,
+      "type": "integer"
+    }
+  },
+  "title": "Sequencer Config",
+  "type": "object"
+}

@@ -1,0 +1,11 @@
+# see https://akhq.io/docs/configuration/brokers.html
+akhq:
+  connections:
+    bufstream-demo:
+      properties:
+        bootstrap.servers: "bufstream:9092"
+      #schema-registry:
+        #url: "https://<BSR_HOST>/integrations/confluent/<CSR_INSTANCE>"
+        #type: "confluent"
+        #basic-auth-username: "<BSR_USER>"
+        #basic-auth-password: "<BSR_TOKEN>"

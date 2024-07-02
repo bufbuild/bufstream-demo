@@ -1,0 +1,46 @@
+{
+  "$id": "buf.bufstream.config.v1alpha1.TLSListenerConfig.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "TLSListenerConfig is TLS/SSL configuration options for servers. At least one\n certificate must be specified.",
+  "properties": {
+    "certificates": {
+      "description": "Certificates to present to the client. The first certificate compatible\n with the client's requirements is selected automatically.",
+      "items": {
+        "$ref": "buf.bufstream.config.v1alpha1.Certificate.schema.json"
+      },
+      "type": "array"
+    },
+    "client_auth": {
+      "anyOf": [
+        {
+          "enum": [
+            "TYPE_UNSPECIFIED",
+            "NO_CERT",
+            "REQUEST_CERT",
+            "REQUIRE_CERT",
+            "VERIFY_CERT_IF_GIVEN",
+            "REQUIRE_AND_VERIFY_CERT"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        {
+          "maximum": 2147483647,
+          "minimum": -2147483648,
+          "type": "integer"
+        }
+      ],
+      "description": "Declare the policy the server will follow for mutual TLS (mTLS)."
+    },
+    "client_cas": {
+      "description": "THe PEM-encoded certificate authorities used by the server to validate\n the client certificates. This field cannot be empty if client_auth\n performs verification.",
+      "items": {
+        "$ref": "buf.bufstream.config.v1alpha1.DataSource.schema.json"
+      },
+      "type": "array"
+    }
+  },
+  "title": "TLS Listener Config",
+  "type": "object"
+}

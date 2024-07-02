@@ -1,0 +1,8 @@
+{
+  "$id": "buf.bufstream.config.v1alpha1.ClientAuth.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {},
+  "title": "Client Auth",
+  "type": "object"
+}

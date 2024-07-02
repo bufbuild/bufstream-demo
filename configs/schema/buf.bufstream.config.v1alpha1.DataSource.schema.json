@@ -1,0 +1,46 @@
+{
+  "$id": "buf.bufstream.config.v1alpha1.DataSource.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Configuration values sourced from various locations.",
+  "properties": {
+    "bytes": {
+      "description": "An inline byte blob of the data",
+      "pattern": "^[A-Za-z0-9+/]*={0,2}$",
+      "type": "string"
+    },
+    "encoding": {
+      "anyOf": [
+        {
+          "enum": [
+            "ENCODING_UNSPECIFIED",
+            "PLAINTEXT",
+            "BASE64"
+          ],
+          "title": "Encoding",
+          "type": "string"
+        },
+        {
+          "maximum": 2147483647,
+          "minimum": -2147483648,
+          "type": "integer"
+        }
+      ],
+      "description": "The encoding of the data source value. Defaults to PLAINTEXT."
+    },
+    "env_var": {
+      "description": "An environment variable containing the data.",
+      "type": "string"
+    },
+    "path": {
+      "description": "A file path to the data relative to the current working directory.\n Trailing newlines are stripped from the file contents.",
+      "type": "string"
+    },
+    "string": {
+      "description": "An inline string of the data",
+      "type": "string"
+    }
+  },
+  "title": "Data Source",
+  "type": "object"
+}

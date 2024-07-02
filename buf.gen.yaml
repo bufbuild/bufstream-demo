@@ -1,0 +1,19 @@
+version: v2
+managed:
+  enabled: true
+  disable:
+    - file_option: go_package
+      module: buf.build/bufbuild/protovalidate
+  override:
+    - file_option: go_package_prefix
+      value: github.com/bufbuild/bufstream-demo/gen
+    - file_option: go_package_prefix
+      module: buf.build/bufbuild/confluent
+      value: buf.build/gen/go/bufbuild/confluent/protocolbuffers/go
+plugins:
+  - remote: buf.build/protocolbuffers/go
+    out: gen
+    opt: paths=source_relative
+  - remote: buf.build/connectrpc/go
+    out: gen
+    opt: paths=source_relative

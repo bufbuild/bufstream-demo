@@ -1,0 +1,56 @@
+{
+  "$id": "buf.bufstream.config.v1alpha1.WriterConfig.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "default_txn_timeout_ms": {
+      "description": "The default timeout for transactions (for a producer that does not specify one).",
+      "exclusiveMaximum": 2147483648,
+      "minimum": -2147483648,
+      "type": "integer"
+    },
+    "max_flush_interval_ms": {
+      "anyOf": [
+        {
+          "maximum": 9223372036854776000,
+          "minimum": -9223372036854776000,
+          "type": "integer"
+        },
+        {
+          "pattern": "^[0-9]+$",
+          "type": "string"
+        }
+      ],
+      "description": "The interval between flushes of the writer log."
+    },
+    "max_flush_record_bytes": {
+      "anyOf": [
+        {
+          "maximum": 9223372036854776000,
+          "minimum": -9223372036854776000,
+          "type": "integer"
+        },
+        {
+          "pattern": "^[0-9]+$",
+          "type": "string"
+        }
+      ]
+    },
+    "max_txn_timeout_ms": {
+      "description": "The maximum timeout for transactions.",
+      "exclusiveMaximum": 2147483648,
+      "minimum": -2147483648,
+      "type": "integer"
+    },
+    "stream_intake": {
+      "type": "boolean"
+    },
+    "stream_intake_chunk_size": {
+      "exclusiveMaximum": 2147483648,
+      "minimum": -2147483648,
+      "type": "integer"
+    }
+  },
+  "title": "Writer Config",
+  "type": "object"
+}

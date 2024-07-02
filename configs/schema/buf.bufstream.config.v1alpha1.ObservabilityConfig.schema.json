@@ -1,0 +1,121 @@
+{
+  "$id": "buf.bufstream.config.v1alpha1.ObservabilityConfig.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Configuration for observability primitives",
+  "properties": {
+    "debug_address": {
+      "$ref": "buf.bufstream.config.v1alpha1.Address.schema.json",
+      "description": "If configured, pprof and prometheus exported metrics will be exposed on this address."
+    },
+    "log_format": {
+      "anyOf": [
+        {
+          "enum": [
+            "FORMAT_UNSPECIFIED",
+            "TEXT",
+            "JSON"
+          ],
+          "title": "Format",
+          "type": "string"
+        },
+        {
+          "maximum": 2147483647,
+          "minimum": -2147483648,
+          "type": "integer"
+        }
+      ],
+      "description": "log format, defaults to TEXT when connected to a terminal, otherwise JSON."
+    },
+    "log_git_version": {
+      "description": "If set, include \"version=\u003cSHA\u003e\" in log output.",
+      "type": "boolean"
+    },
+    "log_level": {
+      "anyOf": [
+        {
+          "enum": [
+            "LEVEL_UNSPECIFIED",
+            "DEBUG",
+            "INFO",
+            "WARN",
+            "ERROR"
+          ],
+          "title": "Level",
+          "type": "string"
+        },
+        {
+          "maximum": 2147483647,
+          "minimum": -2147483648,
+          "type": "integer"
+        }
+      ],
+      "description": "log level, defaults to INFO"
+    },
+    "metrics_exporter": {
+      "anyOf": [
+        {
+          "enum": [
+            "EXPORTER_UNSPECIFIED",
+            "NONE",
+            "STDOUT",
+            "HTTP",
+            "HTTPS",
+            "PROMETHEUS"
+          ],
+          "title": "Exporter",
+          "type": "string"
+        },
+        {
+          "maximum": 2147483647,
+          "minimum": -2147483648,
+          "type": "integer"
+        }
+      ],
+      "description": "OpenTelemetry exporter for metrics, defaults to NONE."
+    },
+    "trace_exporter": {
+      "anyOf": [
+        {
+          "enum": [
+            "EXPORTER_UNSPECIFIED",
+            "NONE",
+            "STDOUT",
+            "HTTP",
+            "HTTPS",
+            "PROMETHEUS"
+          ],
+          "title": "Exporter",
+          "type": "string"
+        },
+        {
+          "maximum": 2147483647,
+          "minimum": -2147483648,
+          "type": "integer"
+        }
+      ],
+      "description": "OpenTelemetry exporter for traces, defaults to NONE."
+    },
+    "trace_ratio": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "enum": [
+            "NaN",
+            "Infinity",
+            "-Infinity"
+          ],
+          "type": "string"
+        }
+      ],
+      "description": "OpenTelemetry trace sample ratio, defaults to 1."
+    }
+  },
+  "title": "Observability Config",
+  "type": "object"
+}
