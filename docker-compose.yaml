@@ -1,0 +1,43 @@
+services:
+  bufstream:
+    image: us-docker.pkg.dev/buf-images-1/bufstream-public/images/bufstream:0.0.1
+    hostname: bufstream
+    container_name: bufstream
+    ports:
+      - "9092:9092"
+    healthcheck:
+      test: nc -z bufstream 9092 || exit -1
+      start_period: 15s
+      interval: 5s
+      timeout: 10s
+      retries: 10
+    volumes:
+      - "./configs/bufstream.yaml:/bufstream.yaml"
+    command: [ "-c", "/bufstream.yaml" ]
+  demo:
+    build:
+      context: .
+    depends_on:
+      - bufstream
+    command: [
+      "--address", "0.0.0.0:8888",
+      "--bootstrap", "bufstream:9092",
+      # "--csr-url", "https://bufdemo.buf.dev/integrations/confluent/bufstream",
+      # "--csr-user", "bufstream-demo",
+      # "--csr-pass", "316f019d54704848b3055d6c683ec9affad302142e674fa7950367a034969ead",
+    ]
+#  akhq:
+#    image: tchiotludo/akhq:0.25.0
+#    stop_signal: SIGKILL
+#    depends_on:
+#      - bufstream
+#    healthcheck:
+#      test: nc -z akhq 8080 || exit -1
+#      start_period: 15s
+#      interval: 5s
+#      timeout: 10s
+#      retries: 10
+#    ports:
+#      - "8080:8080"
+#    volumes:
+#      - "./configs/akhq.yaml:/app/application.yml"

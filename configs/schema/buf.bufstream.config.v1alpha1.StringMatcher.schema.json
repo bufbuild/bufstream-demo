@@ -1,0 +1,26 @@
+{
+  "$id": "buf.bufstream.config.v1alpha1.StringMatcher.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Provides match rules to be applied to string values",
+  "properties": {
+    "all": {
+      "description": "Matches all values; useful as a catch-all.",
+      "type": "boolean"
+    },
+    "equal": {
+      "description": "Matches case-sensitively.",
+      "type": "string"
+    },
+    "in": {
+      "$ref": "buf.bufstream.config.v1alpha1.StringSet.schema.json",
+      "description": "Matches case-sensitively any of the values in the set."
+    },
+    "invert": {
+      "description": "Inverts the matching behavior (effectively \"not\").",
+      "type": "boolean"
+    }
+  },
+  "title": "String Matcher",
+  "type": "object"
+}

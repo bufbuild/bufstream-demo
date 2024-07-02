@@ -1,0 +1,30 @@
+{
+  "$id": "buf.bufstream.config.v1alpha1.ValidationPolicy.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "The semantic validation rules applied to parsed elements during data\n enforcement.",
+  "properties": {
+    "on_error": {
+      "anyOf": [
+        {
+          "enum": [
+            "ENFORCEMENT_ACTION_UNSPECIFIED",
+            "PASS_THROUGH",
+            "REJECT_BATCH",
+            "FILTER_RECORD"
+          ],
+          "title": "Enforcement Action",
+          "type": "string"
+        },
+        {
+          "maximum": 2147483647,
+          "minimum": -2147483648,
+          "type": "integer"
+        }
+      ],
+      "description": "The action to perform if the element fails semantic validation defined in\n the schema. Fetch policies should not REJECT_BATCH to avoid blocking\n consumers."
+    }
+  },
+  "title": "Validation Policy",
+  "type": "object"
+}

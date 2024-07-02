@@ -1,0 +1,18 @@
+{
+  "$id": "buf.bufstream.config.v1alpha1.Certificate.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "A certificate chain and private key pair.",
+  "properties": {
+    "chain": {
+      "$ref": "buf.bufstream.config.v1alpha1.DataSource.schema.json",
+      "description": "The PEM-encoded leaf certificate, which may contain intermediate certificates\n following the leaf certificate to form a certificate chain."
+    },
+    "private_key": {
+      "$ref": "buf.bufstream.config.v1alpha1.DataSource.schema.json",
+      "description": "The PEM-encoded (unencrypted) private key of the certificate chain."
+    }
+  },
+  "title": "Certificate",
+  "type": "object"
+}

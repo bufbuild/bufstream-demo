@@ -1,0 +1,22 @@
+{
+  "$id": "google.protobuf.DoubleValue.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "anyOf": [
+    {
+      "type": "number"
+    },
+    {
+      "type": "string"
+    },
+    {
+      "enum": [
+        "NaN",
+        "Infinity",
+        "-Infinity"
+      ],
+      "type": "string"
+    }
+  ],
+  "description": "The double value.",
+  "title": "Double Value"
+}
