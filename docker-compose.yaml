@@ -1,8 +1,7 @@
 version: "3.5"
 services:
   bufstream:
-    # TODO: needs registry URI
-    image: bufbuild/bufstream
+    image: us-docker.pkg.dev/buf-images-1/bufstream-public/images/bufstream:0.0.1
     hostname: bufstream
     container_name: bufstream
     ports:
