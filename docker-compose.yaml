@@ -16,7 +16,7 @@ services:
       - "./configs/bufstream.yaml:/bufstream.yaml"
     command: ["-c", "/bufstream.yaml"]
   akhq:
-    image: tchiotludo/akhq:dev
+    image: tchiotludo/akhq:0.25.0
     stop_signal: SIGKILL
     depends_on:
       - bufstream
