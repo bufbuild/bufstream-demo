@@ -1,4 +1,3 @@
-version: "3.5"
 services:
   bufstream:
     image: us-docker.pkg.dev/buf-images-1/bufstream-public/images/bufstream:0.0.1

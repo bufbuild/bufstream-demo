@@ -24,7 +24,7 @@ the demo.
 1. Start downloading Docker images: _[optional]_
 
    ```shellsession
-   $ docker-compose pull
+   $ docker compose pull
    ```
 
 ## Bufstream demo
@@ -44,7 +44,7 @@ Bufstream.
 1. Boot up the Bufstream, AKHQ, and demo apps:
 
    ```shellsession
-   $ docker-compose up --build
+   $ docker compose up --build
    ```
 
 1. In another terminal window, send a request to update an email address:
@@ -210,7 +210,7 @@ implementation can be used with Bufstream.
 1. Stop and restart Docker services to pick up the changes (Ctrl+c to gracefully terminate current services):
 
    ```shellsession
-   $ docker-compose up --build
+   $ docker compose up --build
    ```
 
 ### Semantic validation
@@ -296,5 +296,5 @@ machine with the following commands:
 
 ```
 buf registry logout <BSR_SERVER>
-docker-compose down --rmi all
+docker compose down --rmi all
 ```
