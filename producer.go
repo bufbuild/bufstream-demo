@@ -68,7 +68,7 @@ func (p *Producer) produce(ctx context.Context, validFormat, validSemantics bool
 
 func (p *Producer) payload(id string, validFormat, validSemantics bool) ([]byte, error) {
 	if !validFormat {
-		return make([]byte, 10), nilq
+		return []byte("\x00foobar"), nil
 	}
 	var msg *bufstream_demov1.EmailUpdated
 	if validSemantics {
