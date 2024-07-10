@@ -2,7 +2,7 @@
 
 ## What is Bufstream?
 
-[Bufstream](https://buf.build/products/bufstream) is a drop-in replacement for
+[Bufstream](https://buf.build/product/bufstream) is a drop-in replacement for
 Apache Kafka that's 10x cheaper to operate.
 While Bufstream works well for any Kafka workload, it excels when paired with
 Protobuf.
