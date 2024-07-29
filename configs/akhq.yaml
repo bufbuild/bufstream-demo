@@ -8,4 +8,4 @@ akhq:
 #        url: "https://bufdemo.buf.dev/integrations/confluent/bufstream"
 #        type: "confluent"
 #        basic-auth-username: "bufstream-demo"
-#        basic-auth-password: "316f019d54704848b3055d6c683ec9affad302142e674fa7950367a034969ead"
+#        basic-auth-password: "ee3a6dd1667b064886308e9280e79d094a3f2cd910c0efe019f876fec18d1abb"
