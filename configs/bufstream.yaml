@@ -26,7 +26,7 @@ observability:
 #          username:
 #            string: "bufstream-demo"
 #          password:
-#            string: "316f019d54704848b3055d6c683ec9affad302142e674fa7950367a034969ead"
+#            string: "ee3a6dd1667b064886308e9280e79d094a3f2cd910c0efe019f876fec18d1abb"
 #  produce:
 #    - topics: { all: true }
 #      schema_registry: csr

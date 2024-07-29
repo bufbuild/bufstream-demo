@@ -1,6 +1,6 @@
 services:
   bufstream:
-    image: us-docker.pkg.dev/buf-images-1/bufstream-public/images/bufstream:0.0.2
+    image: us-docker.pkg.dev/buf-images-1/bufstream-public/images/bufstream:0.0.3
     hostname: bufstream
     container_name: bufstream
     ports:
@@ -24,7 +24,7 @@ services:
       "--bootstrap", "bufstream:9092",
       # "--csr-url", "https://bufdemo.buf.dev/integrations/confluent/bufstream",
       # "--csr-user", "bufstream-demo",
-      # "--csr-pass", "316f019d54704848b3055d6c683ec9affad302142e674fa7950367a034969ead",
+      # "--csr-pass", "ee3a6dd1667b064886308e9280e79d094a3f2cd910c0efe019f876fec18d1abb",
     ]
 #  akhq:
 #    image: tchiotludo/akhq:0.25.0
