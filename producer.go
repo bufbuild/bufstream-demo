@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log/slog"
 
 	"github.com/brianvoe/gofakeit/v7"
@@ -30,40 +31,62 @@ func NewProducer(
 	}
 }
 
-func (p *Producer) Run(ctx context.Context) error {
-	return errors.Join(
-		p.produce(ctx, true, true),
-		p.produce(ctx, true, false),
-		p.produce(ctx, false, false),
+func (p *Producer) Run(ctx context.Context) (int, error) {
+	cases := [][2]bool{
+		{true, true},   // valid
+		{true, false},  // semantically invalid
+		{false, false}, // not valid protobuf
+	}
+	var (
+		published int
+		errs      []error
 	)
+	for _, c := range cases {
+		if n, err := p.produce(ctx, c[0], c[1]); err != nil {
+			errs = append(errs, err)
+		} else {
+			published += n
+		}
+	}
+	return published, errors.Join(errs...)
 }
 
-func (p *Producer) produce(ctx context.Context, validFormat, validSemantics bool) error {
+func (p *Producer) produce(ctx context.Context, validFormat, validSemantics bool) (int, error) {
 	id := uuid.New().String()
 	payload, err := p.payload(id, validFormat, validSemantics)
 	if err != nil {
-		return err
-	}
-	format := "valid"
-	switch {
-	case !validFormat:
-		format = "malformed"
-	case !validSemantics:
-		format = "invalid"
+		return 0, err
 	}
 
-	logger := slog.With("format", format)
+	var desc string
+	switch {
+	case !validFormat:
+		desc = "malformed message"
+	case !validSemantics:
+		desc = "semantically invalid message"
+	default:
+		desc = "valid message"
+	}
+
 	res := p.client.ProduceSync(ctx, &kgo.Record{
 		Key:   []byte(id),
 		Value: payload,
 		Topic: p.topic,
 	})
-	if err = res.FirstErr(); err != nil {
-		logger.Error("failed to produce record", "error", err)
+	var (
+		published int
+		prefix    string
+	)
+	logger := slog.With()
+	if err := res.FirstErr(); err != nil {
+		prefix = "failed to publish "
+		logger = logger.With("error", err.Error())
 	} else {
-		logger.Info("produced record")
+		prefix = "successfully published "
+		published++
 	}
-	return nil
+	slog.Info(fmt.Sprint(prefix + desc))
+	return published, nil
 }
 
 func (p *Producer) payload(id string, validFormat, validSemantics bool) ([]byte, error) {

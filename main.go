@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	"os"
 	"os/signal"
+	"time"
 
 	"github.com/spf13/pflag"
 )
@@ -26,15 +27,19 @@ func main() {
 	defer deserializer.Close()
 
 	producer := NewProducer(client, cfg.topic, serializer)
-	if err := producer.Run(ctx); err != nil {
-		slog.Error("producer exited with error", "error", err)
-		os.Exit(1)
-	}
-
 	consumer := NewConsumer(client, cfg.topic, deserializer)
-	slog.Info("consumer started", "topic", cfg.topic)
-	if err := consumer.Run(ctx); err != nil && !errors.Is(err, context.Canceled) {
-		slog.Error("consumer exited with error", "error", err)
+	for {
+		n, err := producer.Run(ctx)
+		if err != nil {
+			slog.Error("producer exited with error", "error", err)
+			os.Exit(1)
+		}
+
+		if err := consumer.Run(ctx, n); err != nil && !errors.Is(err, context.Canceled) {
+			slog.Error("consumer exited with error", "error", err)
+			os.Exit(1)
+		}
+		time.Sleep(time.Second)
 	}
 }
 
