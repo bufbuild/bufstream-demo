@@ -1,6 +1,6 @@
 services:
   bufstream:
-    image: us-docker.pkg.dev/buf-images-1/bufstream-public/images/bufstream:0.0.3
+    image: us-docker.pkg.dev/buf-images-1/bufstream-public/images/bufstream:0.1.0
     hostname: bufstream
     container_name: bufstream
     ports:
