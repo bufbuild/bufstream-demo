@@ -65,8 +65,7 @@ func (p ProtoSerde[M]) Serialize(_ string, data interface{}) ([]byte, error) {
 }
 
 func (p ProtoSerde[M]) ConfigureDeserializer(_ schemaregistry.Client, _ serde.Type, _ *serde.DeserializerConfig) error {
-	// TODO implement me
-	panic("implement me")
+	panic("unimplemented")
 }
 
 func (p ProtoSerde[M]) Deserialize(_ string, payload []byte) (interface{}, error) {
