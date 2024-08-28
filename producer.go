@@ -77,7 +77,7 @@ func (p *Producer) produce(ctx context.Context, validFormat, validSemantics bool
 		published int
 		prefix    string
 	)
-	logger := slog.With()
+	logger := slog.Default()
 	if err := res.FirstErr(); err != nil {
 		prefix = "failed to publish "
 		logger = logger.With("error", err.Error())
@@ -85,7 +85,7 @@ func (p *Producer) produce(ctx context.Context, validFormat, validSemantics bool
 		prefix = "successfully published "
 		published++
 	}
-	slog.Info(fmt.Sprint(prefix + desc))
+	logger.Info(fmt.Sprint(prefix + desc))
 	return published, nil
 }
 
