@@ -40,9 +40,9 @@ the demo.
 
 ## Try out Bufstream
 
-The Bufstream demo application simulates a small application that produces and 
-consumes `EmailUpdated` event messages. The demo publishes these events to a 
-Bufstream topic, followed by a separate consumer that fetches from the same 
+The Bufstream demo application simulates a small application that produces and
+consumes `EmailUpdated` event messages. The demo publishes these events to a
+Bufstream topic, followed by a separate consumer that fetches from the same
 topic and "verifies" the change. The demo app uses an off-the-shelf Kafka client
 ([`franz-go`](https://github.com/twmb/franz-go)) to interact with Bufstream.
 
@@ -78,19 +78,19 @@ redact sensitive information on the fly.
 We'll demonstrte this functionality using the Buf Schema Registry, but
 Bufstream also works with any registry that implements Confluent's REST API.
 
-1. Uncomment the `data_enforcement` block in [`configs/bufstream.yaml`](configs/bufstream.yaml).
+1. Uncomment the `data_enforcement` block in [`config/bufstream.yaml`](config/bufstream.yaml).
 
 1. Uncomment the `--csr` command options under the `demo` service in [`docker-compose.yaml`](docker-compose.yaml).
 
 1. To pick up the configuration changes, terminate the Docker apps via `ctrl+c` and restart them with `docker compose up`.
 
-1. The app again logs both the attempted publishing and consumption of the 
+1. The app again logs both the attempted publishing and consumption of the
    three events. The first event will successfully reach the consumer. But
    with Bufstream's data quality enforcement enabled, the second and third
    messages are rejected.
 
-1. For the message that reaches the consumer, notice the empty `old_address` in 
-   the logs. This field has been redacted by Bufstream as it's labeled with the 
+1. For the message that reaches the consumer, notice the empty `old_address` in
+   the logs. This field has been redacted by Bufstream as it's labeled with the
    `debug_redact` option.
 
 By configuring Bufstream with a few data quality and governance policies,

@@ -12,7 +12,7 @@ services:
       timeout: 10s
       retries: 10
     volumes:
-      - "./configs/bufstream.yaml:/bufstream.yaml"
+      - "./config/bufstream.yaml:/bufstream.yaml"
     command: [ "-c", "/bufstream.yaml" ]
   demo:
     build:
@@ -40,4 +40,4 @@ services:
 #    ports:
 #      - "8080:8080"
 #    volumes:
-#      - "./configs/akhq.yaml:/app/application.yml"
+#      - "./config/akhq.yaml:/app/application.yml"

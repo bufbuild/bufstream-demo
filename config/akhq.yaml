@@ -1,4 +1,4 @@
-# see https://akhq.io/docs/configuration/brokers.html
+# See https://akhq.io/docs/configuration/brokers.html for more details.
 akhq:
   connections:
     bufstream-demo:

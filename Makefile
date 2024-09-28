@@ -24,6 +24,10 @@ upgrade:
 	go mod tidy -v
 	buf dep update
 
+.PHONY: dockerbuild
+dockerbuild:
+	docker build -t bufstream/demo .
+
 .PHONY: buf
 buf:
 	go install github.com/bufbuild/buf/cmd/buf@latest
