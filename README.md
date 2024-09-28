@@ -75,7 +75,7 @@ of data flowing through Bufstream, you can configure policies that require data
 to conform to a pre-determined schema, pass semantic validation, and even
 redact sensitive information on the fly.
 
-We'll demonstrte this functionality using the Buf Schema Registry, but
+We'll demonstrate this functionality using the Buf Schema Registry, but
 Bufstream also works with any registry that implements Confluent's REST API.
 
 1. Uncomment the `data_enforcement` block in [`config/bufstream.yaml`](config/bufstream.yaml).
