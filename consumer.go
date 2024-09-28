@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log/slog"
 
-	bufstream_demov1 "github.com/bufbuild/bufstream-demo/gen/bufbuild/bufstream_demo/v1"
+	demov1 "github.com/bufbuild/bufstream-demo/gen/bufstream/demo/v1"
 	"github.com/confluentinc/confluent-kafka-go/v2/schemaregistry/serde"
 	"github.com/twmb/franz-go/pkg/kgo"
 )
@@ -46,18 +46,18 @@ func (d *Consumer) consume(ctx context.Context, expect int) error {
 				slog.Info(fmt.Sprintf("received malformed message: %v", err))
 				continue
 			}
-			msg, ok := data.(*bufstream_demov1.EmailUpdated)
+			msg, ok := data.(*demov1.EmailUpdated)
 			if !ok {
 				slog.Error("received unexpected record type", "type", fmt.Sprintf("%T", msg))
 				continue
 			}
 			var suffix string
-			if old := msg.GetOldAddress(); old == "" {
+			if old := msg.GetOldEmailAddress(); old == "" {
 				suffix = "redacted old email"
 			} else {
 				suffix = fmt.Sprintf("old email %s", old)
 			}
-			slog.Info(fmt.Sprintf("received message with new email %s and %s", msg.GetNewAddress(), suffix))
+			slog.Info(fmt.Sprintf("received message with new email %s and %s", msg.GetNewEmailAddress(), suffix))
 		}
 	}
 	return nil

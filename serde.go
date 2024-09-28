@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	bufstream_demov1 "github.com/bufbuild/bufstream-demo/gen/bufbuild/bufstream_demo/v1"
+	demov1 "github.com/bufbuild/bufstream-demo/gen/bufstream/demo/v1"
 	"github.com/confluentinc/confluent-kafka-go/v2/schemaregistry"
 	"github.com/confluentinc/confluent-kafka-go/v2/schemaregistry/serde"
 	"github.com/confluentinc/confluent-kafka-go/v2/schemaregistry/serde/protobuf"
@@ -13,7 +13,7 @@ import (
 
 func NewSerde(csrURL, username, password string) (serde.Serializer, serde.Deserializer, error) {
 	if csrURL == "" {
-		protoSerde := ProtoSerde[*bufstream_demov1.EmailUpdated]{}
+		protoSerde := ProtoSerde[*demov1.EmailUpdated]{}
 		return protoSerde, protoSerde, nil
 	}
 	srClient, err := NewSchemaRegistryClient(csrURL, username, password)
@@ -82,4 +82,6 @@ func (p ProtoSerde[M]) DeserializeInto(_ string, payload []byte, data interface{
 	return proto.Unmarshal(payload, msg)
 }
 
-func (p ProtoSerde[M]) Close() {}
+func (p ProtoSerde[M]) Close() error {
+	return nil
+}

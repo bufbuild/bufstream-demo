@@ -7,7 +7,7 @@ import (
 	"log/slog"
 
 	"github.com/brianvoe/gofakeit/v7"
-	bufstream_demov1 "github.com/bufbuild/bufstream-demo/gen/bufbuild/bufstream_demo/v1"
+	demov1 "github.com/bufbuild/bufstream-demo/gen/bufstream/demo/v1"
 	"github.com/confluentinc/confluent-kafka-go/v2/schemaregistry/serde"
 	"github.com/google/uuid"
 	"github.com/twmb/franz-go/pkg/kgo"
@@ -93,18 +93,18 @@ func (p *Producer) payload(id string, validFormat, validSemantics bool) ([]byte,
 	if !validFormat {
 		return []byte("\x00foobar"), nil
 	}
-	var msg *bufstream_demov1.EmailUpdated
+	var msg *demov1.EmailUpdated
 	if validSemantics {
-		msg = &bufstream_demov1.EmailUpdated{
-			Uuid:       id,
-			OldAddress: gofakeit.Email(),
-			NewAddress: gofakeit.Email(),
+		msg = &demov1.EmailUpdated{
+			Id:              id,
+			OldEmailAddress: gofakeit.Email(),
+			NewEmailAddress: gofakeit.Email(),
 		}
 	} else {
-		msg = &bufstream_demov1.EmailUpdated{
-			Uuid:       id,
-			OldAddress: gofakeit.Email(),
-			NewAddress: gofakeit.Animal(),
+		msg = &demov1.EmailUpdated{
+			Id:              id,
+			OldEmailAddress: gofakeit.Email(),
+			NewEmailAddress: gofakeit.Animal(),
 		}
 	}
 	return p.serializer.Serialize(p.topic, msg)
