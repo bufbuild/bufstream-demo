@@ -12,12 +12,12 @@ import (
 
 // Producer is an example producer to a given topic using given Protobuf message type.
 //
-// A Producer takes a Kafka client, and a topic, and sends one of two types of data:
+// A Producer takes a Kafka client and a topic, and sends one of two types of data:
 //
 //   - A Protobuf message of the given type.
 //   - Invalid data that could not be parsed as any Protobuf message.
 //
-// This is a toy example, but produces the basics you need to send Protobuf messages
+// This is a toy example, but shows the basics you need to send Protobuf messages
 // to Kafka using franz-go.
 type Producer[M proto.Message] struct {
 	client     *kgo.Client

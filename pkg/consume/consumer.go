@@ -1,3 +1,4 @@
+// Package consume implements a toy consumer.
 package consume
 
 import (
@@ -10,6 +11,15 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
+// Consumer is an example consumer of a given topic using given Protobuf message type.
+//
+// A Consume takes a Kafka client and a topic, and expects to recieve Protobuf messages
+// of the given type. Upon every received message, a handler is invoked. If malformed
+// data is recieved (data that can not be deserialized into the given Protobuf message type),
+// a malformed data handler is invoked.
+//
+// This is a toy example, but shows the basics you need to receive Protobuf messages
+// from Kafka using franz-go.
 type Consumer[M proto.Message] struct {
 	client               *kgo.Client
 	deserializer         serde.Deserializer
@@ -18,20 +28,9 @@ type Consumer[M proto.Message] struct {
 	malformedDataHandler func([]byte, error) error
 }
 
-type ConsumerOption[M proto.Message] func(*Consumer[M])
-
-func WithMessageHandler[M proto.Message](messageHandler func(M) error) ConsumerOption[M] {
-	return func(consumer *Consumer[M]) {
-		consumer.messageHandler = messageHandler
-	}
-}
-
-func WithMalformedDataHandler[M proto.Message](malformedDataHandler func([]byte, error) error) ConsumerOption[M] {
-	return func(consumer *Consumer[M]) {
-		consumer.malformedDataHandler = malformedDataHandler
-	}
-}
-
+// NewConsumer returns a new Consumer.
+//
+// Always use this constructor to construct Consumers.
 func NewConsumer[M proto.Message](
 	client *kgo.Client,
 	deserializer serde.Deserializer,
@@ -49,6 +48,28 @@ func NewConsumer[M proto.Message](
 		option(consumer)
 	}
 	return consumer
+}
+
+// ConsumerOption is an option when constructing a new Consumer.
+//
+// All parameters except options are required. ConsumerOptions allow
+// for optional parameters.
+type ConsumerOption[M proto.Message] func(*Consumer[M])
+
+// WithMessageHandler returns a new ConsumerOption that overrides the default
+// handler of received messages.
+//
+// The default handler uses slog to log incoming messages.
+func WithMessageHandler[M proto.Message](messageHandler func(M) error) ConsumerOption[M] {
+	return func(consumer *Consumer[M]) {
+		consumer.messageHandler = messageHandler
+	}
+}
+
+func WithMalformedDataHandler[M proto.Message](malformedDataHandler func([]byte, error) error) ConsumerOption[M] {
+	return func(consumer *Consumer[M]) {
+		consumer.malformedDataHandler = malformedDataHandler
+	}
 }
 
 func (c *Consumer[M]) Consume(ctx context.Context) error {
