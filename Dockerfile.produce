@@ -1,3 +1,8 @@
+# This Dockerfile builds a small image that just contains a binary built from
+# cmd/bufstream-demo-produce.
+#
+# This allows users to try out this demo without needing to have Go installed, as well
+# as makes the demo runnable within docker compose.
 FROM golang:1.23-alpine3.20 as builder
 
 WORKDIR /app
