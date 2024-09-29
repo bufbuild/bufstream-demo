@@ -5,60 +5,87 @@ import (
 	"fmt"
 	"log/slog"
 
-	demov1 "github.com/bufbuild/bufstream-demo/internal/gen/bufstream/demo/v1"
 	"github.com/confluentinc/confluent-kafka-go/v2/schemaregistry/serde"
 	"github.com/twmb/franz-go/pkg/kgo"
+	"google.golang.org/protobuf/proto"
 )
 
-type Consumer struct {
-	client       *kgo.Client
-	topic        string
-	deserializer serde.Deserializer
+type Consumer[M proto.Message] struct {
+	client               *kgo.Client
+	deserializer         serde.Deserializer
+	topic                string
+	messageHandler       func(M) error
+	malformedDataHandler func([]byte, error) error
 }
 
-func NewConsumer(
-	client *kgo.Client,
-	topic string,
-	deserializer serde.Deserializer,
-) *Consumer {
-	return &Consumer{
-		client:       client,
-		topic:        topic,
-		deserializer: deserializer,
+type ConsumerOption[M proto.Message] func(*Consumer[M])
+
+func WithMessageHandler[M proto.Message](messageHandler func(M) error) ConsumerOption[M] {
+	return func(consumer *Consumer[M]) {
+		consumer.messageHandler = messageHandler
 	}
 }
 
-func (d *Consumer) Run(ctx context.Context, expect int) error {
-	return d.consume(ctx, expect)
+func WithMalformedDataHandler[M proto.Message](malformedDataHandler func([]byte, error) error) ConsumerOption[M] {
+	return func(consumer *Consumer[M]) {
+		consumer.malformedDataHandler = malformedDataHandler
+	}
 }
 
-func (d *Consumer) consume(ctx context.Context, expect int) error {
+func NewConsumer[M proto.Message](
+	client *kgo.Client,
+	deserializer serde.Deserializer,
+	topic string,
+	options ...ConsumerOption[M],
+) *Consumer[M] {
+	consumer := &Consumer[M]{
+		client:               client,
+		deserializer:         deserializer,
+		topic:                topic,
+		messageHandler:       defaultMessageHandler[M],
+		malformedDataHandler: defaultMalformedDataHandler,
+	}
+	for _, option := range options {
+		option(consumer)
+	}
+	return consumer
+}
+
+func (c *Consumer[M]) Consume(ctx context.Context, expectedMessageCount int) error {
 	var got int
-	for got < expect {
-		fetches := d.client.PollFetches(ctx)
+	for got < expectedMessageCount {
+		fetches := c.client.PollFetches(ctx)
 		if errs := fetches.Errors(); len(errs) > 0 {
 			return fmt.Errorf("failed to fetch records: %v", errs)
 		}
 		for _, record := range fetches.Records() {
 			got++
-			data, err := d.deserializer.Deserialize(record.Topic, record.Value)
+			data, err := c.deserializer.Deserialize(record.Topic, record.Value)
 			if err != nil {
-				slog.Info(fmt.Sprintf("received malformed message: %v", err))
+				if err := c.malformedDataHandler(record.Value, err); err != nil {
+					return err
+				}
 				continue
 			}
-			msg, ok := data.(*demov1.EmailUpdated)
+			message, ok := data.(M)
 			if !ok {
-				slog.Error("received unexpected record type", "type", fmt.Sprintf("%T", msg))
-				continue
+				// TODO: This was a log only, why? This should never happen in our code.
+				return fmt.Errorf("received unexpected message type: %T", data)
 			}
-			var suffix string
-			if old := msg.GetOldEmailAddress(); old == "" {
-				suffix = "redacted old email"
-			} else {
-				suffix = fmt.Sprintf("old email %s", old)
+			if err := c.messageHandler(message); err != nil {
+				return err
 			}
-			slog.Info(fmt.Sprintf("received message with new email %s and %s", msg.GetNewEmailAddress(), suffix))
 		}
 	}
+	return nil
+}
+
+func defaultMessageHandler[M proto.Message](message M) error {
+	slog.Info("received message", "message", message)
+	return nil
+}
+
+func defaultMalformedDataHandler(payload []byte, err error) error {
+	slog.Info("received malformed data", "error", err)
 	return nil
 }

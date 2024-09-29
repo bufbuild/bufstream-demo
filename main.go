@@ -3,12 +3,16 @@ package main
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log/slog"
 	"os"
 	"os/signal"
 	"time"
 
-	"github.com/bufbuild/bufstream-demo/internal"
+	demov1 "github.com/bufbuild/bufstream-demo/gen/bufstream/demo/v1"
+	"github.com/bufbuild/bufstream-demo/pkg/csr"
+	"github.com/bufbuild/bufstream-demo/pkg/kafka"
+	"github.com/confluentinc/confluent-kafka-go/v2/schemaregistry/serde"
 	"github.com/spf13/pflag"
 )
 
@@ -16,29 +20,65 @@ func main() {
 	slog.SetDefault(slog.New(slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{Level: slog.LevelDebug})))
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer cancel()
+	if err := run(ctx); err != nil {
+		slog.Error("program error", "error", err)
+		os.Exit(1)
+	}
+}
 
+func run(ctx context.Context) error {
 	cfg := ParseConfig()
 
-	client := Must(NewKafkaClient(cfg.bootstrapServers, cfg.groupID, cfg.topic))
+	client, err := kafka.NewKafkaClient(
+		kafka.Config{
+			BootstrapServers: cfg.bootstrapServers,
+			Group:            cfg.groupID,
+			Topic:            cfg.topic,
+			ClientID:         "bufstream-demo",
+		},
+	)
+	if err != nil {
+		return err
+	}
 	defer client.Close()
 
-	serializer, deserializer, err := internal.NewSerde(cfg.csrURL, cfg.csrUser, cfg.csrPass)
-	Must[any](nil, err)
-	defer serializer.Close()
-	defer deserializer.Close()
+	var serializer serde.Serializer
+	var deserializer serde.Deserializer
+	if cfg.csrURL != "" {
+		csrClient, err := csr.NewCSRClient(cfg.csrURL, cfg.csrUser, cfg.csrPass)
+		if err != nil {
+			return err
+		}
+		serializer, err = csr.NewCSRProtobufSerializer(csrClient)
+		if err != nil {
+			return err
+		}
+		deserializer, err = csr.NewCSRProtobufDeserializer(csrClient)
+		if err != nil {
+			return err
+		}
+	} else {
+		serializer = csr.NewSingleTypeProtobufSerializer[*demov1.EmailUpdated]()
+		deserializer = csr.NewSingleTypeProtobufDeserializer[*demov1.EmailUpdated]()
+	}
+	defer func() { _ = serializer.Close() }()
+	defer func() { _ = deserializer.Close() }()
 
 	producer := NewProducer(client, cfg.topic, serializer)
-	consumer := NewConsumer(client, cfg.topic, deserializer)
+	consumer := NewConsumer[*demov1.EmailUpdated](
+		client,
+		deserializer,
+		cfg.topic,
+		WithMessageHandler(handleEmailUpdated),
+	)
 	for {
 		n, err := producer.Run(ctx)
 		if err != nil {
-			slog.Error("producer exited with error", "error", err)
-			os.Exit(1)
+			return fmt.Errorf("produce error: %w", err)
 		}
 
-		if err := consumer.Run(ctx, n); err != nil && !errors.Is(err, context.Canceled) {
-			slog.Error("consumer exited with error", "error", err)
-			os.Exit(1)
+		if err := consumer.Consume(ctx, n); err != nil && !errors.Is(err, context.Canceled) {
+			return fmt.Errorf("consume error: %w", err)
 		}
 		time.Sleep(time.Second)
 	}
@@ -77,10 +117,13 @@ func ParseConfig() (cfg Config) {
 	return cfg
 }
 
-func Must[T any](v T, err error) T {
-	if err != nil {
-		slog.Error("initialization error", "error", err)
-		os.Exit(1)
+func handleEmailUpdated(message *demov1.EmailUpdated) error {
+	var suffix string
+	if old := message.GetOldEmailAddress(); old == "" {
+		suffix = "redacted old email"
+	} else {
+		suffix = fmt.Sprintf("old email %s", old)
 	}
-	return v
+	slog.Info(fmt.Sprintf("received message with new email %s and %s", message.GetNewEmailAddress(), suffix))
+	return nil
 }
