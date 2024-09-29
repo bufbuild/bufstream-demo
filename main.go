@@ -10,6 +10,7 @@ import (
 	"time"
 
 	demov1 "github.com/bufbuild/bufstream-demo/gen/bufstream/demo/v1"
+	"github.com/bufbuild/bufstream-demo/pkg/consume"
 	"github.com/bufbuild/bufstream-demo/pkg/csr"
 	"github.com/bufbuild/bufstream-demo/pkg/kafka"
 	"github.com/confluentinc/confluent-kafka-go/v2/schemaregistry/serde"
@@ -65,11 +66,11 @@ func run(ctx context.Context) error {
 	defer func() { _ = deserializer.Close() }()
 
 	producer := NewProducer(client, cfg.topic, serializer)
-	consumer := NewConsumer[*demov1.EmailUpdated](
+	consumer := consume.NewConsumer[*demov1.EmailUpdated](
 		client,
 		deserializer,
 		cfg.topic,
-		WithMessageHandler(handleEmailUpdated),
+		consume.WithMessageHandler(handleEmailUpdated),
 	)
 	for {
 		n, err := producer.Run(ctx)
