@@ -1,3 +1,4 @@
+// Package produce implements a toy producer.
 package produce
 
 import (
@@ -9,12 +10,24 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
+// Producer is an example producer to a given topic using given Protobuf message type.
+//
+// A Producer takes a Kafka client, and a topic, and sends one of two types of data:
+//
+//   - A Protobuf message of the given type.
+//   - Invalid data that could not be parsed as any Protobuf message.
+//
+// This is a toy example, but produces the basics you need to send Protobuf messages
+// to Kafka using franz-go.
 type Producer[M proto.Message] struct {
 	client     *kgo.Client
 	serializer serde.Serializer
 	topic      string
 }
 
+// NewProducer returns a new Producer.
+//
+// Always use this constructor to construct Producers.
 func NewProducer[M proto.Message](
 	client *kgo.Client,
 	serializer serde.Serializer,
@@ -27,6 +40,8 @@ func NewProducer[M proto.Message](
 	}
 }
 
+// ProduceProtobufMessage serializes the given Protobuf messages, and synchronously
+// sends it to the Producer's topic with the given key.
 func (p *Producer[M]) ProduceProtobufMessage(ctx context.Context, key string, message M) error {
 	payload, err := p.serializer.Serialize(p.topic, message)
 	if err != nil {
@@ -35,6 +50,8 @@ func (p *Producer[M]) ProduceProtobufMessage(ctx context.Context, key string, me
 	return p.produce(ctx, key, payload)
 }
 
+// ProduceInvalid synchronously sends data to the Producer's topic that could
+// never be intererpreted as a Protobuf message.
 func (p *Producer[M]) ProduceInvalid(ctx context.Context, key string) error {
 	return p.produce(ctx, key, []byte("\x00foobar"))
 }
