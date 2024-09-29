@@ -1,4 +1,4 @@
-package main
+package internal
 
 import (
 	"errors"
@@ -54,7 +54,7 @@ func NewDeserializer(client schemaregistry.Client) (serde.Deserializer, error) {
 
 type ProtoSerde[M proto.Message] struct{}
 
-func (p ProtoSerde[M]) ConfigureSerializer(_ schemaregistry.Client, _ serde.Type, _ *serde.SerializerConfig) error {
+func (p ProtoSerde[M]) ConfigureSerializer(schemaregistry.Client, serde.Type, *serde.SerializerConfig) error {
 	return nil
 }
 

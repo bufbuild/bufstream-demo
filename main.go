@@ -8,6 +8,7 @@ import (
 	"os/signal"
 	"time"
 
+	"github.com/bufbuild/bufstream-demo/internal"
 	"github.com/spf13/pflag"
 )
 
@@ -21,7 +22,7 @@ func main() {
 	client := Must(NewKafkaClient(cfg.bootstrapServers, cfg.groupID, cfg.topic))
 	defer client.Close()
 
-	serializer, deserializer, err := NewSerde(cfg.csrURL, cfg.csrUser, cfg.csrPass)
+	serializer, deserializer, err := internal.NewSerde(cfg.csrURL, cfg.csrUser, cfg.csrPass)
 	Must[any](nil, err)
 	defer serializer.Close()
 	defer deserializer.Close()
