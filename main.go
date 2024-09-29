@@ -32,7 +32,7 @@ func run(ctx context.Context) error {
 	client, err := kafka.NewKafkaClient(
 		kafka.Config{
 			BootstrapServers: cfg.bootstrapServers,
-			Group:            cfg.groupID,
+			Group:            cfg.group,
 			Topic:            cfg.topic,
 			ClientID:         "bufstream-demo",
 		},
@@ -86,9 +86,8 @@ func run(ctx context.Context) error {
 
 type Config struct {
 	bootstrapServers []string
-	groupID          string
+	group            string
 	topic            string
-	address          string
 	csrURL           string
 	csrUser          string
 	csrPass          string
@@ -96,10 +95,9 @@ type Config struct {
 
 func ParseConfig() (cfg Config) {
 	cfg = Config{
-		bootstrapServers: []string{"bufstream:9092"},
+		bootstrapServers: []string{"0.0.0.0:9092"},
 		topic:            "email-updated",
-		groupID:          "email-verifier",
-		address:          "0.0.0.0:8888",
+		group:            "email-verifier",
 		csrURL:           "",
 		csrUser:          "",
 		csrPass:          "",
@@ -107,8 +105,7 @@ func ParseConfig() (cfg Config) {
 
 	pflag.StringArrayVarP(&cfg.bootstrapServers, "bootstrap", "b", cfg.bootstrapServers, "Bufstream bootstrap server(s)")
 	pflag.StringVarP(&cfg.topic, "topic", "t", cfg.topic, "Email updates topic name")
-	pflag.StringVarP(&cfg.groupID, "group", "g", cfg.groupID, "Consumer consumer group ID")
-	pflag.StringVarP(&cfg.address, "address", "a", cfg.address, "Email service listener address")
+	pflag.StringVarP(&cfg.group, "group", "g", cfg.group, "Consumer consumer group ID")
 	pflag.StringVarP(&cfg.csrURL, "csr-url", "c", cfg.csrURL, "CSR URL")
 	pflag.StringVarP(&cfg.csrUser, "csr-user", "u", cfg.csrUser, "CSR username")
 	pflag.StringVarP(&cfg.csrPass, "csr-pass", "p", cfg.csrPass, "CSR password/token")

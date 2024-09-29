@@ -42,20 +42,20 @@ func (p *Producer) Run(ctx context.Context) (int, error) {
 		errs      []error
 	)
 	for _, c := range cases {
-		if n, err := p.produce(ctx, c[0], c[1]); err != nil {
+		if err := p.produce(ctx, c[0], c[1]); err != nil {
 			errs = append(errs, err)
 		} else {
-			published += n
+			published++
 		}
 	}
 	return published, errors.Join(errs...)
 }
 
-func (p *Producer) produce(ctx context.Context, validFormat, validSemantics bool) (int, error) {
+func (p *Producer) produce(ctx context.Context, validFormat, validSemantics bool) error {
 	id := uuid.New().String()
 	payload, err := p.payload(id, validFormat, validSemantics)
 	if err != nil {
-		return 0, err
+		return err
 	}
 
 	var desc string
@@ -73,20 +73,11 @@ func (p *Producer) produce(ctx context.Context, validFormat, validSemantics bool
 		Value: payload,
 		Topic: p.topic,
 	})
-	var (
-		published int
-		prefix    string
-	)
-	logger := slog.Default()
 	if err := res.FirstErr(); err != nil {
-		prefix = "failed to publish "
-		logger = logger.With("error", err.Error())
-	} else {
-		prefix = "successfully published "
-		published++
+		return fmt.Errorf("failed to publish: %w", err)
 	}
-	logger.Info(fmt.Sprint(prefix + desc))
-	return published, nil
+	slog.Info("successfully published" + desc)
+	return nil
 }
 
 func (p *Producer) payload(id string, validFormat, validSemantics bool) ([]byte, error) {
