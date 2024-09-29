@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log/slog"
 
-	demov1 "github.com/bufbuild/bufstream-demo/gen/bufstream/demo/v1"
+	demov1 "github.com/bufbuild/bufstream-demo/internal/gen/bufstream/demo/v1"
 	"github.com/confluentinc/confluent-kafka-go/v2/schemaregistry/serde"
 	"github.com/twmb/franz-go/pkg/kgo"
 )

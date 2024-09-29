@@ -1,9 +1,10 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 
-	demov1 "github.com/bufbuild/bufstream-demo/gen/bufstream/demo/v1"
+	demov1 "github.com/bufbuild/bufstream-demo/internal/gen/bufstream/demo/v1"
 	"github.com/confluentinc/confluent-kafka-go/v2/schemaregistry"
 	"github.com/confluentinc/confluent-kafka-go/v2/schemaregistry/serde"
 	"github.com/confluentinc/confluent-kafka-go/v2/schemaregistry/serde/protobuf"
@@ -64,8 +65,8 @@ func (p ProtoSerde[M]) Serialize(_ string, data interface{}) ([]byte, error) {
 	return nil, fmt.Errorf("unknown data type: %T", data)
 }
 
-func (p ProtoSerde[M]) ConfigureDeserializer(_ schemaregistry.Client, _ serde.Type, _ *serde.DeserializerConfig) error {
-	panic("unimplemented")
+func (p ProtoSerde[M]) ConfigureDeserializer(schemaregistry.Client, serde.Type, *serde.DeserializerConfig) error {
+	return errors.New("unimplemented")
 }
 
 func (p ProtoSerde[M]) Deserialize(_ string, payload []byte) (interface{}, error) {
