@@ -11,6 +11,16 @@ import (
 	"google.golang.org/protobuf/reflect/protoregistry"
 )
 
+type ClientConfig struct {
+	URL      string
+	Username string
+	Password string
+}
+
+func NewCSRClient(clientConfig ClientConfig) (schemaregistry.Client, error) {
+	return schemaregistry.NewClient(newCSRConfig(clientConfig))
+}
+
 func NewSingleTypeProtobufSerializer[M proto.Message]() serde.Serializer {
 	return singleTypeProtobufSerializer[M]{}
 }
@@ -32,27 +42,15 @@ func NewCSRProtobufDeserializer(csrClient schemaregistry.Client) (serde.Deserial
 	return deserializer, nil
 }
 
-func NewCSRClient(
-	csrURL string,
-	csrUsername string,
-	csrPassword string,
-) (schemaregistry.Client, error) {
-	return schemaregistry.NewClient(newCSRConfig(csrURL, csrUsername, csrPassword))
-}
-
-func newCSRConfig(
-	csrURL string,
-	csrUsername string,
-	csrPassword string,
-) *schemaregistry.Config {
-	if csrUsername != "" && csrPassword != "" {
+func newCSRConfig(clientConfig ClientConfig) *schemaregistry.Config {
+	if clientConfig.Username != "" && clientConfig.Password != "" {
 		return schemaregistry.NewConfigWithBasicAuthentication(
-			csrURL,
-			csrUsername,
-			csrPassword,
+			clientConfig.URL,
+			clientConfig.Username,
+			clientConfig.Password,
 		)
 	}
-	return schemaregistry.NewConfig(csrURL)
+	return schemaregistry.NewConfig(clientConfig.URL)
 }
 
 type singleTypeProtobufSerializer[M proto.Message] struct{}

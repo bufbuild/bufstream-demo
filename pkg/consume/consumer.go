@@ -81,11 +81,11 @@ func (c *Consumer[M]) Consume(ctx context.Context, expectedMessageCount int) err
 }
 
 func defaultMessageHandler[M proto.Message](message M) error {
-	slog.Info("received message", "message", message)
+	slog.Info("consumed message", "message", message)
 	return nil
 }
 
 func defaultMalformedDataHandler(payload []byte, err error) error {
-	slog.Info("received malformed data", "error", err)
+	slog.Info("consumed malformed data", "error", err)
 	return nil
 }

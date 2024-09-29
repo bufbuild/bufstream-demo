@@ -2,42 +2,27 @@ package main
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"log/slog"
-	"os"
-	"os/signal"
 	"time"
 
+	"github.com/brianvoe/gofakeit/v7"
 	demov1 "github.com/bufbuild/bufstream-demo/gen/bufstream/demo/v1"
+	"github.com/bufbuild/bufstream-demo/pkg/app"
 	"github.com/bufbuild/bufstream-demo/pkg/consume"
 	"github.com/bufbuild/bufstream-demo/pkg/csr"
 	"github.com/bufbuild/bufstream-demo/pkg/kafka"
+	"github.com/bufbuild/bufstream-demo/pkg/produce"
 	"github.com/confluentinc/confluent-kafka-go/v2/schemaregistry/serde"
-	"github.com/spf13/pflag"
+	"github.com/google/uuid"
 )
 
 func main() {
-	slog.SetDefault(slog.New(slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{Level: slog.LevelDebug})))
-	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
-	defer cancel()
-	if err := run(ctx); err != nil {
-		slog.Error("program error", "error", err)
-		os.Exit(1)
-	}
+	app.Main(run)
 }
 
-func run(ctx context.Context) error {
-	cfg := ParseConfig()
-
-	client, err := kafka.NewKafkaClient(
-		kafka.Config{
-			BootstrapServers: cfg.bootstrapServers,
-			Group:            cfg.group,
-			Topic:            cfg.topic,
-			ClientID:         "bufstream-demo",
-		},
-	)
+func run(ctx context.Context, config app.Config) error {
+	client, err := kafka.NewKafkaClient(config.Kafka)
 	if err != nil {
 		return err
 	}
@@ -45,8 +30,8 @@ func run(ctx context.Context) error {
 
 	var serializer serde.Serializer
 	var deserializer serde.Deserializer
-	if cfg.csrURL != "" {
-		csrClient, err := csr.NewCSRClient(cfg.csrURL, cfg.csrUser, cfg.csrPass)
+	if config.CSR.URL != "" {
+		csrClient, err := csr.NewCSRClient(config.CSR)
 		if err != nil {
 			return err
 		}
@@ -65,56 +50,59 @@ func run(ctx context.Context) error {
 	defer func() { _ = serializer.Close() }()
 	defer func() { _ = deserializer.Close() }()
 
-	producer := NewProducer(client, cfg.topic, serializer)
+	producer := produce.NewProducer[*demov1.EmailUpdated](
+		client,
+		serializer,
+		config.Kafka.Topic,
+	)
 	consumer := consume.NewConsumer[*demov1.EmailUpdated](
 		client,
 		deserializer,
-		cfg.topic,
+		config.Kafka.Topic,
 		consume.WithMessageHandler(handleEmailUpdated),
 	)
-	for {
-		n, err := producer.Run(ctx)
-		if err != nil {
-			return fmt.Errorf("produce error: %w", err)
-		}
 
-		if err := consumer.Consume(ctx, n); err != nil && !errors.Is(err, context.Canceled) {
-			return fmt.Errorf("consume error: %w", err)
+	for {
+		id := newID()
+		if err := producer.ProduceProtobufMessage(ctx, id, newSemanticallyValidEmailUpdated(id)); err != nil {
+			return err
+		}
+		id = newID()
+		if err := producer.ProduceProtobufMessage(ctx, id, newSemanticallyInvalidEmailUpdated(id)); err != nil {
+			return err
+		}
+		id = newID()
+		if err := producer.ProduceInvalid(ctx, id); err != nil {
+			return err
+		}
+		if err := consumer.Consume(ctx, 3); err != nil {
+			return err
 		}
 		time.Sleep(time.Second)
 	}
 }
 
-type Config struct {
-	bootstrapServers []string
-	group            string
-	topic            string
-	csrURL           string
-	csrUser          string
-	csrPass          string
+func newID() string {
+	return uuid.New().String()
 }
 
-func ParseConfig() (cfg Config) {
-	cfg = Config{
-		bootstrapServers: []string{"0.0.0.0:9092"},
-		topic:            "email-updated",
-		group:            "email-verifier",
-		csrURL:           "",
-		csrUser:          "",
-		csrPass:          "",
+func newSemanticallyValidEmailUpdated(id string) *demov1.EmailUpdated {
+	return &demov1.EmailUpdated{
+		Id:              id,
+		OldEmailAddress: gofakeit.Email(),
+		NewEmailAddress: gofakeit.Email(),
 	}
-
-	pflag.StringArrayVarP(&cfg.bootstrapServers, "bootstrap", "b", cfg.bootstrapServers, "Bufstream bootstrap server(s)")
-	pflag.StringVarP(&cfg.topic, "topic", "t", cfg.topic, "Email updates topic name")
-	pflag.StringVarP(&cfg.group, "group", "g", cfg.group, "Consumer consumer group ID")
-	pflag.StringVarP(&cfg.csrURL, "csr-url", "c", cfg.csrURL, "CSR URL")
-	pflag.StringVarP(&cfg.csrUser, "csr-user", "u", cfg.csrUser, "CSR username")
-	pflag.StringVarP(&cfg.csrPass, "csr-pass", "p", cfg.csrPass, "CSR password/token")
-	pflag.Parse()
-
-	return cfg
 }
 
+func newSemanticallyInvalidEmailUpdated(id string) *demov1.EmailUpdated {
+	return &demov1.EmailUpdated{
+		Id:              id,
+		OldEmailAddress: gofakeit.Email(),
+		NewEmailAddress: gofakeit.Animal(),
+	}
+}
+
+// TODO: Maybe just remove this entirely.
 func handleEmailUpdated(message *demov1.EmailUpdated) error {
 	var suffix string
 	if old := message.GetOldEmailAddress(); old == "" {
