@@ -14,9 +14,22 @@ services:
     volumes:
       - "./config/bufstream.yaml:/bufstream.yaml"
     command: [ "-c", "/bufstream.yaml" ]
-  demo:
+  consume:
     build:
       context: .
+      dockerfile: Dockerfile.consume
+    depends_on:
+      - bufstream
+    command: [
+      "--bootstrap", "bufstream:9092",
+      # "--csr-url", "https://bufdemo.buf.dev/integrations/confluent/bufstream",
+      # "--csr-user", "bufstream-demo",
+      # "--csr-pass", "ee3a6dd1667b064886308e9280e79d094a3f2cd910c0efe019f876fec18d1abb",
+    ]
+  produce:
+    build:
+      context: .
+      dockerfile: Dockerfile.produce
     depends_on:
       - bufstream
     command: [

@@ -6,19 +6,19 @@ import (
 	"github.com/twmb/franz-go/pkg/kgo"
 )
 
-type ClientConfig struct {
+type Config struct {
 	BootstrapServers []string
 	Group            string
 	Topic            string
 	ClientID         string
 }
 
-func NewKafkaClient(clientConfig ClientConfig) (*kgo.Client, error) {
+func NewKafkaClient(config Config) (*kgo.Client, error) {
 	return kgo.NewClient(
-		kgo.SeedBrokers(clientConfig.BootstrapServers...),
-		kgo.ConsumerGroup(clientConfig.Group),
-		kgo.ConsumeTopics(clientConfig.Topic),
-		kgo.ClientID(clientConfig.ClientID),
+		kgo.SeedBrokers(config.BootstrapServers...),
+		kgo.ConsumerGroup(config.Group),
+		kgo.ConsumeTopics(config.Topic),
+		kgo.ClientID(config.ClientID),
 		kgo.AllowAutoTopicCreation(),
 		kgo.FetchMaxWait(time.Second),
 		// TODO: Why did we set this?

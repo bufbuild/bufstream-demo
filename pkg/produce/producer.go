@@ -3,7 +3,6 @@ package produce
 import (
 	"context"
 	"fmt"
-	"log/slog"
 
 	"github.com/confluentinc/confluent-kafka-go/v2/schemaregistry/serde"
 	"github.com/twmb/franz-go/pkg/kgo"
@@ -33,19 +32,11 @@ func (p *Producer[M]) ProduceProtobufMessage(ctx context.Context, key string, me
 	if err != nil {
 		return err
 	}
-	if err := p.produce(ctx, key, payload); err != nil {
-		return err
-	}
-	slog.Info("produced protobuf message", "key", key)
-	return nil
+	return p.produce(ctx, key, payload)
 }
 
 func (p *Producer[M]) ProduceInvalid(ctx context.Context, key string) error {
-	if err := p.produce(ctx, key, []byte("\x00foobar")); err != nil {
-		return err
-	}
-	slog.Info("produced invalid data", "key", key)
-	return nil
+	return p.produce(ctx, key, []byte("\x00foobar"))
 }
 
 func (p *Producer[M]) produce(ctx context.Context, key string, payload []byte) error {
@@ -58,7 +49,7 @@ func (p *Producer[M]) produce(ctx context.Context, key string, payload []byte) e
 		},
 	)
 	if err := produceResults.FirstErr(); err != nil {
-		return fmt.Errorf("failed to publish: %w", err)
+		return fmt.Errorf("failed to produce: %w", err)
 	}
 	return nil
 }

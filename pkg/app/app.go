@@ -12,8 +12,8 @@ import (
 )
 
 type Config struct {
-	Kafka kafka.ClientConfig
-	CSR   csr.ClientConfig
+	Kafka kafka.Config
+	CSR   csr.Config
 }
 
 func Main(do func(context.Context, Config) error) {
@@ -37,13 +37,13 @@ func run(ctx context.Context, do func(context.Context, Config) error) error {
 func parseConfig() (Config, error) {
 	flagSet := pflag.NewFlagSet(os.Args[0], pflag.ContinueOnError)
 	config := Config{
-		Kafka: kafka.ClientConfig{
+		Kafka: kafka.Config{
 			BootstrapServers: []string{"0.0.0.0:9092"},
 			Topic:            "email-updated",
 			Group:            "email-verifier",
 			ClientID:         "bufstream-demo",
 		},
-		CSR: csr.ClientConfig{
+		CSR: csr.Config{
 			URL:      "",
 			Username: "",
 			Password: "",

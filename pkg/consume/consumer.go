@@ -51,30 +51,26 @@ func NewConsumer[M proto.Message](
 	return consumer
 }
 
-func (c *Consumer[M]) Consume(ctx context.Context, expectedMessageCount int) error {
-	var got int
-	for got < expectedMessageCount {
-		fetches := c.client.PollFetches(ctx)
-		if errs := fetches.Errors(); len(errs) > 0 {
-			return fmt.Errorf("failed to fetch records: %v", errs)
-		}
-		for _, record := range fetches.Records() {
-			got++
-			data, err := c.deserializer.Deserialize(record.Topic, record.Value)
-			if err != nil {
-				if err := c.malformedDataHandler(record.Value, err); err != nil {
-					return err
-				}
-				continue
-			}
-			message, ok := data.(M)
-			if !ok {
-				// TODO: This was a log only, why? This should never happen in our code.
-				return fmt.Errorf("received unexpected message type: %T", data)
-			}
-			if err := c.messageHandler(message); err != nil {
+func (c *Consumer[M]) Consume(ctx context.Context) error {
+	fetches := c.client.PollFetches(ctx)
+	if errs := fetches.Errors(); len(errs) > 0 {
+		return fmt.Errorf("failed to fetch records: %v", errs)
+	}
+	for _, record := range fetches.Records() {
+		data, err := c.deserializer.Deserialize(record.Topic, record.Value)
+		if err != nil {
+			if err := c.malformedDataHandler(record.Value, err); err != nil {
 				return err
 			}
+			continue
+		}
+		message, ok := data.(M)
+		if !ok {
+			// TODO: This was a log only, why? This should never happen in our code.
+			return fmt.Errorf("received unexpected message type: %T", data)
+		}
+		if err := c.messageHandler(message); err != nil {
+			return err
 		}
 	}
 	return nil
