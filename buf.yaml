@@ -5,10 +5,11 @@ version: v2
 modules:
   # Our .proto files live within the proto directory.
   - path: proto
+    name: bufdemo.buf.dev/bufbuild/bufstream-demo-cleanup
 deps:
   # We import "buf/confluent/v1/extensions.proto" within our example files, which
-  # comes from the buf.build/bufbuild/protovalidate module.
-  - buf.build/bufbuild/confluent
+  # comes from the bufdemo.buf.dev/bufbuild/protovalidate module.
+  - bufdemo.buf.dev/bufbuild/confluent
   # We import "buf/validate/validate.proto" within our example files, which
-  # comes from the buf.build/bufbuild/protovalidate module.
-  - buf.build/bufbuild/protovalidate
+  # comes from the bufdemo.buf.dev/bufbuild/protovalidate module.
+  - bufdemo.buf.dev/bufbuild/protovalidate

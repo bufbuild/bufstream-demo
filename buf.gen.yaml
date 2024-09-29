@@ -8,13 +8,13 @@ managed:
     - file_option: go_package_prefix
       value: github.com/bufbuild/bufstream-demo/gen
     - file_option: go_package_prefix
-      module: buf.build/bufbuild/confluent
+      module: bufdemo.buf.dev/bufbuild/confluent
       value: buf.build/gen/go/bufbuild/confluent/protocolbuffers/go
   disable:
     - file_option: go_package
-      module: buf.build/bufbuild/protovalidate
+      module: bufdemo.buf.dev/bufbuild/protovalidate
 plugins:
-  - remote: buf.build/protocolbuffers/go
+  - remote: bufdemo.buf.dev/protocolbuffers/go
     out: gen
     opt: paths=source_relative
 clean: true
