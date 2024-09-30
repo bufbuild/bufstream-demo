@@ -1,0 +1,9 @@
+{
+  "$id": "google.protobuf.UInt64Value.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "The uint64 value.",
+  "exclusiveMaximum": 18446744073709552000,
+  "minimum": 0,
+  "title": "U Int64 Value",
+  "type": "integer"
+}

@@ -1,0 +1,16 @@
+{
+  "$id": "buf.bufstream.config.v1alpha1.StringSet.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Effectively a wrapped `repeated string` to accomodate usage in a oneof or\n differentiating a null and empty list.",
+  "properties": {
+    "values": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    }
+  },
+  "title": "String Set",
+  "type": "object"
+}

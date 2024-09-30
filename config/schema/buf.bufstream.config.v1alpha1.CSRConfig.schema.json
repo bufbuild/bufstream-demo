@@ -1,0 +1,26 @@
+{
+  "$id": "buf.bufstream.config.v1alpha1.CSRConfig.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Configuration for the Confluent Schema Registry (CSR) API.",
+  "properties": {
+    "basic_auth": {
+      "$ref": "buf.bufstream.config.v1alpha1.BasicAuth.schema.json",
+      "description": "Authenticate against the CSR API using basic auth credentials"
+    },
+    "instance_name": {
+      "description": "Name of the CSR instance within the BSR. This name is used to disambiguate\n subjects of the same name within the same schema file. Used exclusively\n for schema coercion.",
+      "type": "string"
+    },
+    "tls": {
+      "$ref": "buf.bufstream.config.v1alpha1.TLSDialerConfig.schema.json",
+      "description": "TLS configuration. If unset and the url field specifies https, a default\n configuration is used."
+    },
+    "url": {
+      "description": "Root URL (including protocol and any required path prefix) of the CSR API.",
+      "type": "string"
+    }
+  },
+  "title": "CSR Config",
+  "type": "object"
+}

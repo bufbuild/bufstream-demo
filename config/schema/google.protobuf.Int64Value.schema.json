@@ -1,0 +1,17 @@
+{
+  "$id": "google.protobuf.Int64Value.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "anyOf": [
+    {
+      "maximum": 9223372036854776000,
+      "minimum": -9223372036854776000,
+      "type": "integer"
+    },
+    {
+      "pattern": "^[0-9]+$",
+      "type": "string"
+    }
+  ],
+  "description": "The int64 value.",
+  "title": "Int64 Value"
+}

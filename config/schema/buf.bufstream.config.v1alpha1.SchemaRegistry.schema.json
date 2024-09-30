@@ -1,0 +1,18 @@
+{
+  "$id": "buf.bufstream.config.v1alpha1.SchemaRegistry.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "A single schema registry used in data enforcement.",
+  "properties": {
+    "confluent": {
+      "$ref": "buf.bufstream.config.v1alpha1.CSRConfig.schema.json",
+      "description": "Confluent Schema Registry"
+    },
+    "name": {
+      "description": "Name of this registry, used to disambiguate multiple registries used\n across policies.",
+      "type": "string"
+    }
+  },
+  "title": "Schema Registry",
+  "type": "object"
+}

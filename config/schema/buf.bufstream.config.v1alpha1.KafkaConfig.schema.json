@@ -1,0 +1,85 @@
+{
+  "$id": "buf.bufstream.config.v1alpha1.KafkaConfig.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "address": {
+      "$ref": "buf.bufstream.config.v1alpha1.Address.schema.json"
+    },
+    "disable_concurrent_produce": {
+      "type": "boolean"
+    },
+    "disable_eager_fetch": {
+      "description": "If a fetch should only return when all toparts had a chance to return records.\n\n When false, fetch will return as soon as any records are available.\n A separate process continues to fetch the other records with the assumption\n the client will try to fetch them again.",
+      "type": "boolean"
+    },
+    "disable_sync_fetch": {
+      "type": "boolean"
+    },
+    "idle_timeout": {
+      "$ref": "google.protobuf.Duration.schema.json",
+      "description": "How long a Kafka connection can be idle before being closed by the server.\n If set a value less than or equal to zero, the timeout will be disabled."
+    },
+    "log_api_requests_regex": {
+      "type": "string"
+    },
+    "log_api_responses_regex": {
+      "type": "string"
+    },
+    "public_address": {
+      "$ref": "buf.bufstream.config.v1alpha1.Address.schema.json"
+    },
+    "request_buffer_size": {
+      "description": "The number of kafka request to unmarshal and buffer before processing.",
+      "exclusiveMaximum": 4294967296,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "tls": {
+      "$ref": "buf.bufstream.config.v1alpha1.TLSListenerConfig.schema.json",
+      "description": "If populated, enables and enforces TLS termination on the Kafka server."
+    },
+    "topart_balance_strategy": {
+      "anyOf": [
+        {
+          "enum": [
+            "BALANCE_STRATEGY_UNSPECIFIED",
+            "BALANCE_STRATEGY_TOPART",
+            "BALANCE_STRATEGY_HOST",
+            "BALANCE_STRATEGY_CLIENT_ID"
+          ],
+          "title": "Balance Strategy",
+          "type": "string"
+        },
+        {
+          "maximum": 2147483647,
+          "minimum": -2147483648,
+          "type": "integer"
+        }
+      ],
+      "description": "How to balance toparts."
+    },
+    "zone_balance_strategy": {
+      "anyOf": [
+        {
+          "enum": [
+            "BALANCE_STRATEGY_UNSPECIFIED",
+            "BALANCE_STRATEGY_TOPART",
+            "BALANCE_STRATEGY_HOST",
+            "BALANCE_STRATEGY_CLIENT_ID"
+          ],
+          "title": "Balance Strategy",
+          "type": "string"
+        },
+        {
+          "maximum": 2147483647,
+          "minimum": -2147483648,
+          "type": "integer"
+        }
+      ],
+      "description": "The balancing strategy when a client doe not specify a zone."
+    }
+  },
+  "title": "Kafka Config",
+  "type": "object"
+}
