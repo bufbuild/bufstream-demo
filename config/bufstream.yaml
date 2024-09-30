@@ -15,28 +15,28 @@ observability:
   log_format: TEXT
   debug_address:
     host: 0.0.0.0
-#data_enforcement:
-#  schema_registries:
-#    - name: csr
-#      confluent:
-#        url: "https://bufdemo.buf.dev/integrations/confluent/bufstream"
-#        instance_name: "bufstream"
-#        basic_auth:
-#          username:
-#            string: "bufstream-demo"
-#          password:
-#            string: "ee3a6dd1667b064886308e9280e79d094a3f2cd910c0efe019f876fec18d1abb"
-#  produce:
-#    - topics: { all: true }
-#      schema_registry: csr
-#      values:
-#        on_parse_error: REJECT_BATCH
-#        validation:
-#          on_error: REJECT_BATCH
-#  fetch:
-#    - topics: { all: true }
-#      schema_registry: csr
-#      values:
-#        on_parse_error: FILTER_RECORD
-#        redaction:
-#          debug_redact: true
+data_enforcement:
+  schema_registries:
+    - name: csr
+      confluent:
+        url: "https://bufdemo.buf.dev/integrations/confluent/bufstream"
+        instance_name: "bufstream-demo"
+        basic_auth:
+          username:
+            string: "bufstream-demo"
+          password:
+            string: "ee3a6dd1667b064886308e9280e79d094a3f2cd910c0efe019f876fec18d1abb"
+  produce:
+    - topics: { all: true }
+      schema_registry: csr
+      values:
+        on_parse_error: REJECT_BATCH
+        validation:
+          on_error: REJECT_BATCH
+  fetch:
+    - topics: { all: true }
+      schema_registry: csr
+      values:
+        on_parse_error: FILTER_RECORD
+        redaction:
+          debug_redact: true
