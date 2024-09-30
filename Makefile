@@ -23,6 +23,10 @@ run-produce: # Run the demo producer within Docker.
 	docker build -t bufstream/demo-produce -f Dockerfile.produce .
 	docker run --rm bufstream/demo-produce
 
+.PHONY: clean-docker-compose
+clean-docker-compose: # Cleanup docker compose assets.
+	docker compose down --rmi all
+
 ## Development commands
 
 .PHONY: build

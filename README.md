@@ -7,13 +7,14 @@
 with Protobuf. By integrating with the Buf Schema Registry, Bufstream can enforce data quality and
 governance policies without relying on opt-in client configuration.
 
-In this demonstration, you'll run a Bufstream agent locally, use the `franz-go` library to publish
-and consume messages, and explore Bufstream's schema enforcement features.
+In this demonstration, you'll run a Bufstream agent locally, use the
+[`franz-go`](https://github.com/twmb/franz-go) library to publish and consume messages, and explore
+Bufstream's schema enforcement features.
 
 ## Requirements
 
 - Git
-- [Docker](https://docs.docker.com/engine/install/)
+- [Docker](https://docs.docker.com/engine/install)
 - [Buf CLI](https://buf.build/docs/installation)
 - [Go 1.22+](https://go.dev/doc/install) _[optional, for local development]_
 
@@ -25,22 +26,17 @@ Before starting, perform the following steps to prepare your environment to run 
 
    ```shellsession
    $ git clone https://github.com/bufbuild/bufstream-demo.git
-   $ cd bufstream-demo
-   ```
-
-1. Start downloading Docker images: _[optional]_
-
-   ```shellsession
-   $ docker compose pull
+   $ cd ./bufstream-demo
    ```
 
 ## Try out Bufstream
 
-The Bufstream demo application simulates a small application that produces and consumes
-`EmailUpdated` event messages. The demo publishes these events to a Bufstream topic, followed by a
-separate consumer that fetches from the same topic and "verifies" the change. The demo app uses an
-off-the-shelf Kafka client ([`franz-go`](https://github.com/twmb/franz-go)) to interact with
-Bufstream.
+The Bufstream demo application simulates two small applications that produce and consume
+[`EmailUpdated`](proto/bufstream/demo/v1/demo.proto) event messages. The demo
+[producer](cmd/bufstream-demo-produce/main.go) publishes these events to a Bufstream topic, followed
+by a separate [consumer](cmd/bufstream-demo-consume/main.go) that fetches from the same topic and
+"verifies" the change. The demo app uses the off-the-shelf Kafka client
+[`franz-go`](https://github.com/twmb/franz-go) to interact with Bufstream.
 
 The demo attempts to publish and consume three payloads:
 
