@@ -1,3 +1,14 @@
+// Package main implements the producer of the demo.
+
+// This is run as part of docker compose.
+//
+// The producer will produce three records at a time:
+//
+//   - A semantically-valid EmailUpdated message, where both email fields are valid email addresses.
+//   - A semantically-invalid EmailUpdated message, where the new email field is not a valid email address.
+//   - A record containing a payload that is not valid Protobuf.
+//
+// After producing these three records, the producer sleeps for one second, and then loops.
 package main
 
 import (
@@ -15,6 +26,8 @@ import (
 )
 
 func main() {
+	// See the app package for the boilerplate we use to set up the producer and
+	// consumer, including bound flags.
 	app.Main(run)
 }
 
@@ -25,6 +38,8 @@ func run(ctx context.Context, config app.Config) error {
 	}
 	defer client.Close()
 
+	// NewSerializer creates a CSR-based Serializer if there is a CSR URL,
+	// otherwise it creates a single-type Serializer for demov1.EmailUpdated.
 	serializer, err := csr.NewSerializer[*demov1.EmailUpdated](config.CSR)
 	if err != nil {
 		return err
@@ -39,16 +54,21 @@ func run(ctx context.Context, config app.Config) error {
 
 	for {
 		id := newID()
+		// Produces semantically-valid EmailUpdated message, where both email
+		// fields are valid email addresses.
 		if err := producer.ProduceProtobufMessage(ctx, id, newSemanticallyValidEmailUpdated(id)); err != nil {
 			return err
 		}
 		slog.Info("produced semantically valid protobuf message", "id", id)
 		id = newID()
+		// Produces a semantically-invalid EmailUpdated message, where the new email field
+		// is not a valid email address.
 		if err := producer.ProduceProtobufMessage(ctx, id, newSemanticallyInvalidEmailUpdated(id)); err != nil {
 			return err
 		}
 		slog.Info("produced semantically invalid protobuf message", "id", id)
 		id = newID()
+		// Produces record containing a payload that is not valid Protobuf.
 		if err := producer.ProduceInvalid(ctx, id); err != nil {
 			return err
 		}
@@ -57,6 +77,9 @@ func run(ctx context.Context, config app.Config) error {
 	}
 }
 
+// newID returns a new UUID.
+//
+// This is also used as the record key.
 func newID() string {
 	return uuid.New().String()
 }
