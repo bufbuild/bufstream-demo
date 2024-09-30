@@ -26,7 +26,7 @@ message EmailUpdated {
     // The user-specified name for the Confluent Schema Registry instance within the BSR.
     //
     // Instances are managed within BSR admin settings.
-    instance_name: "bufstream"
+    instance_name: "bufstream-demo"
     // The subject's name as determined by the subject naming strategy.
     //
     // See
