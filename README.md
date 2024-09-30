@@ -44,6 +44,14 @@ The demo attempts to publish and consume three payloads:
 - A correctly formatted, but semantically invalid version of the message.
 - A malformed message.
 
+Some relevant sections to check out:
+
+- [cmd/bufstream-demo-produce](cmd/bufstream-demo-produce): The demo producer application.
+- [cmd/bufstream-demo-consume](cmd/bufstream-demo-consume): The demo consumer application.
+- [proto/bufstream/demo/v1/demo.proto](proto/bufstream/demo/v1/demo.proto): Defines the
+  `EmailUpdated` message type, which is produced and consumed from the `email-updated` topic.
+- [pkg](pkg): Contains helper packages for both the producer and consumer.
+
 ### Replace Apache Kafka
 
 1. Boot up the Bufstream and demo apps:
