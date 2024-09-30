@@ -2,7 +2,6 @@
 package csr
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/confluentinc/confluent-kafka-go/v2/schemaregistry"
@@ -100,7 +99,6 @@ func (singleTypeProtobufSerializer[M]) ConfigureSerializer(
 	serde.Type,
 	*serde.SerializerConfig,
 ) error {
-	// TODO: why not error like deserializer?
 	return nil
 }
 
@@ -123,7 +121,7 @@ func (singleTypeProtobufDeserializer[M]) ConfigureDeserializer(
 	serde.Type,
 	*serde.DeserializerConfig,
 ) error {
-	return errors.New("unimplemented")
+	return nil
 }
 
 func (singleTypeProtobufDeserializer[M]) Deserialize(_ string, payload []byte) (interface{}, error) {

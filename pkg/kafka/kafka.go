@@ -30,7 +30,5 @@ func NewKafkaClient(config Config) (*kgo.Client, error) {
 		kgo.ClientID(config.ClientID),
 		kgo.AllowAutoTopicCreation(),
 		kgo.FetchMaxWait(time.Second),
-		// TODO: Why did we set this?
-		//kgo.SoftwareNameAndVersion("bufstream-demo", "0.1.0"),
 	)
 }
