@@ -1,3 +1,4 @@
+// Package csr implements helper functionality around the Confluent Schema Registry.
 package csr
 
 import (
