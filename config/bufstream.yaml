@@ -19,7 +19,7 @@ data_enforcement:
   schema_registries:
     - name: csr
       confluent:
-        url: "https://bufdemo.buf.dev/integrations/confluent/bufstream"
+        url: "https://bufdemo.buf.dev/integrations/confluent/bufstream-demo"
         instance_name: "bufstream-demo"
         basic_auth:
           username:

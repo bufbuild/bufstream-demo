@@ -57,22 +57,25 @@ func run(ctx context.Context, config app.Config) error {
 		// Produces semantically-valid EmailUpdated message, where both email
 		// fields are valid email addresses.
 		if err := producer.ProduceProtobufMessage(ctx, id, newSemanticallyValidEmailUpdated(id)); err != nil {
-			return err
+			slog.Error("error on produce or semantically valid protobuf message", "error", err)
+		} else {
+			slog.Info("produced semantically valid protobuf message", "id", id)
 		}
-		slog.Info("produced semantically valid protobuf message", "id", id)
 		id = newID()
 		// Produces a semantically-invalid EmailUpdated message, where the new email field
 		// is not a valid email address.
 		if err := producer.ProduceProtobufMessage(ctx, id, newSemanticallyInvalidEmailUpdated(id)); err != nil {
-			return err
+			slog.Error("error on produce of semantically invalid protobuf message", "error", err)
+		} else {
+			slog.Info("produced semantically invalid protobuf message", "id", id)
 		}
-		slog.Info("produced semantically invalid protobuf message", "id", id)
 		id = newID()
 		// Produces record containing a payload that is not valid Protobuf.
 		if err := producer.ProduceInvalid(ctx, id); err != nil {
-			return err
+			slog.Error("error on produce of invalid data", "error", err)
+		} else {
+			slog.Info("produced invalid data", "id", id)
 		}
-		slog.Info("produced invalid data", "id", id)
 		time.Sleep(time.Second)
 	}
 }

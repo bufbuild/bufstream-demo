@@ -12,51 +12,68 @@ import (
 	"google.golang.org/protobuf/reflect/protoregistry"
 )
 
+// Config is all the configuration needed to connect to a CSR Instance.
+//
+// Note that the schemaregistry package has its own NewConfig.* functions, which we call.
+// However, we're bringing this down to exactly what we need for this demo.
 type Config struct {
-	URL      string
+	// The URL of the CSR instance.
+	//
+	// The absence of this field says to not connect to the CSR.
+	URL string
+	// The username to use for authentication, if any.
 	Username string
+	// The password to use for authentication, if any.
 	Password string
 }
 
+// NewSerializer creates a new Serializer for the given Config.
+//
+// This creates a CSR-based Serializer if there is a CSR URL,
+// otherwise it creates a single-type Serializer for type M.
 func NewSerializer[M proto.Message](config Config) (serde.Serializer, error) {
 	if config.URL != "" {
-		csrClient, err := NewCSRClient(config)
+		csrClient, err := newCSRClient(config)
 		if err != nil {
 			return nil, err
 		}
-		return NewCSRProtobufSerializer(csrClient)
+		return newCSRProtobufSerializer(csrClient)
 	}
-	return NewSingleTypeProtobufSerializer[M](), nil
+	return newSingleTypeProtobufSerializer[M](), nil
 }
 
+// NewDeserializer creates a new Deserializer for the given Config.
+//
+// This creates a CSR-based Deserializer if there is a CSR URL,
+// otherwise it creates a single-type Deserializer for type M.
 func NewDeserializer[M proto.Message](config Config) (serde.Deserializer, error) {
 	if config.URL != "" {
-		csrClient, err := NewCSRClient(config)
+		csrClient, err := newCSRClient(config)
 		if err != nil {
 			return nil, err
 		}
-		return NewCSRProtobufDeserializer(csrClient)
+		return newCSRProtobufDeserializer(csrClient)
 	}
-	return NewSingleTypeProtobufDeserializer[M](), nil
+	return newSingleTypeProtobufDeserializer[M](), nil
 }
 
-func NewCSRClient(config Config) (schemaregistry.Client, error) {
+func newCSRClient(config Config) (schemaregistry.Client, error) {
 	return schemaregistry.NewClient(newCSRConfig(config))
 }
 
-func NewSingleTypeProtobufSerializer[M proto.Message]() serde.Serializer {
+func newSingleTypeProtobufSerializer[M proto.Message]() serde.Serializer {
 	return singleTypeProtobufSerializer[M]{}
 }
 
-func NewSingleTypeProtobufDeserializer[M proto.Message]() serde.Deserializer {
+func newSingleTypeProtobufDeserializer[M proto.Message]() serde.Deserializer {
 	return singleTypeProtobufDeserializer[M]{}
 }
 
-func NewCSRProtobufSerializer(csrClient schemaregistry.Client) (serde.Serializer, error) {
+func newCSRProtobufSerializer(csrClient schemaregistry.Client) (serde.Serializer, error) {
 	return protobuf.NewSerializer(csrClient, serde.ValueSerde, protobuf.NewSerializerConfig())
 }
 
-func NewCSRProtobufDeserializer(csrClient schemaregistry.Client) (serde.Deserializer, error) {
+func newCSRProtobufDeserializer(csrClient schemaregistry.Client) (serde.Deserializer, error) {
 	deserializer, err := protobuf.NewDeserializer(csrClient, serde.ValueSerde, protobuf.NewDeserializerConfig())
 	if err != nil {
 		return nil, err
