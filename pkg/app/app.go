@@ -1,3 +1,7 @@
+// Package app implements boilerplate code shared by the producer and consumer.
+//
+// It implements Main, which both the producer and consumer use within their main functions.
+// It also binds all relevant flags.
 package app
 
 import (
@@ -11,13 +15,20 @@ import (
 	"github.com/spf13/pflag"
 )
 
+// Config contains all application configuration needed by the producer and consumer.
 type Config struct {
 	Kafka kafka.Config
 	CSR   csr.Config
 }
 
+// Main is used by the producer and consumer within their main functions.
+//
+// It sets up logging, interrupt handling, and binds and parses all flags. Afterwards, it calls
+// do to invoke the application logic.
 func Main(do func(context.Context, Config) error) {
+	// Set up slog. We use the global logger throughout this demo.
 	slog.SetDefault(slog.New(slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{Level: slog.LevelDebug})))
+	// Cancel the context on interrupt, i.e. ctrl+c for our purposes.
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer cancel()
 	if err := run(ctx, do); err != nil {
