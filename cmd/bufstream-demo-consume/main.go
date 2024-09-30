@@ -1,3 +1,7 @@
+// Package main implements the consumer of the demo.
+//
+// The consumer will read as many messages it can at once, print what it received,
+// sleep for one second, and then loop.
 package main
 
 import (
@@ -14,6 +18,8 @@ import (
 )
 
 func main() {
+	// See the app package for the boilerplate we use to set up the producer and
+	// consumer, including bound flags.
 	app.Main(run)
 }
 
@@ -24,6 +30,8 @@ func run(ctx context.Context, config app.Config) error {
 	}
 	defer client.Close()
 
+	// NewDeserializer creates a CSR-based Deserializer if there is a CSR URL,
+	// otherwise it creates a single-type Deserializer for demov1.EmailUpdated.
 	deserializer, err := csr.NewDeserializer[*demov1.EmailUpdated](config.CSR)
 	if err != nil {
 		return err
@@ -38,6 +46,10 @@ func run(ctx context.Context, config app.Config) error {
 	)
 
 	for {
+		// Read as many messages as we can.
+		//
+		// Only return error if there is an unexpected system error. Of note, an error is not
+		// returned if the data that the consumer receives is malformed.
 		if err := consumer.Consume(ctx); err != nil {
 			return err
 		}
