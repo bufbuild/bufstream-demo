@@ -31,9 +31,7 @@ services:
       - bufstream
     command: [
       "--bootstrap", "bufstream:9092",
-       "--csr-url", "https://bufdemo.buf.dev/integrations/confluent/bufstream-demo",
-       "--csr-user", "bufstream-demo",
-       "--csr-pass", "ee3a6dd1667b064886308e9280e79d094a3f2cd910c0efe019f876fec18d1abb",
+       "--csr-url", "https://demo.buf.dev/integrations/confluent/bufstream-demo",
     ]
   # The demo producer.
   #
@@ -46,9 +44,7 @@ services:
       - bufstream
     command: [
       "--bootstrap", "bufstream:9092",
-       "--csr-url", "https://bufdemo.buf.dev/integrations/confluent/bufstream-demo",
-       "--csr-user", "bufstream-demo",
-       "--csr-pass", "ee3a6dd1667b064886308e9280e79d094a3f2cd910c0efe019f876fec18d1abb",
+       "--csr-url", "https://demo.buf.dev/integrations/confluent/bufstream-demo",
     ]
 # Uncomment the below to get AKHQ running against bufstream.
 #

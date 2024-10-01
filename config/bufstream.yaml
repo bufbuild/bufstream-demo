@@ -20,13 +20,8 @@ data_enforcement:
   schema_registries:
     - name: csr
       confluent:
-        url: "https://bufdemo.buf.dev/integrations/confluent/bufstream-demo"
+        url: "https://demo.buf.dev/integrations/confluent/bufstream-demo"
         instance_name: "bufstream-demo"
-        basic_auth:
-          username:
-            string: "bufstream-demo"
-          password:
-            string: "ee3a6dd1667b064886308e9280e79d094a3f2cd910c0efe019f876fec18d1abb"
   produce:
     - topics: { all: true }
       schema_registry: csr

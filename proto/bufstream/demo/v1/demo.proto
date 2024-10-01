@@ -1,5 +1,6 @@
 syntax = "proto3";
 
+// Implements types for the Bufsteam demo.
 package bufstream.demo.v1;
 
 // We import extensions.proto to use a custom option that allows us to associate

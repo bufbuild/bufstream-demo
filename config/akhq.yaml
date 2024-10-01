@@ -5,7 +5,5 @@ akhq:
       properties:
         bootstrap.servers: "bufstream:9092"
 #      schema-registry:
-#        url: "https://bufdemo.buf.dev/integrations/confluent/bufstream"
+#        url: "https://demo.buf.dev/integrations/confluent/bufstream-demo"
 #        type: "confluent"
-#        basic-auth-username: "bufstream-demo"
-#        basic-auth-password: "ee3a6dd1667b064886308e9280e79d094a3f2cd910c0efe019f876fec18d1abb"
