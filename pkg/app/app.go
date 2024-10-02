@@ -50,6 +50,7 @@ func parseConfig() (Config, error) {
 	config := Config{
 		Kafka: kafka.Config{
 			BootstrapServers: []string{"0.0.0.0:9092"},
+			RootCAPath:       "",
 			Topic:            "email-updated",
 			Group:            "email-verifier",
 			ClientID:         "bufstream-demo",
@@ -103,6 +104,13 @@ func parseConfig() (Config, error) {
 		"p",
 		config.CSR.Password,
 		"The Confluent Schema Registry password/token, if authentication is needed.",
+	)
+	flagSet.StringVarP(
+		&config.Kafka.RootCAPath,
+		"tls-root-ca-path",
+		"",
+		config.Kafka.RootCAPath,
+		"A path to root CA certificate for kafka TLS.",
 	)
 	if err := flagSet.Parse(os.Args[1:]); err != nil {
 		return Config{}, err
