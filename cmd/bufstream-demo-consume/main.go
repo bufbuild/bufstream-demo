@@ -47,6 +47,7 @@ func run(ctx context.Context, config app.Config) error {
 		consume.WithMessageHandler(handleEmailUpdated),
 	)
 
+	slog.Info("starting consume")
 	for {
 		// Read as many messages as we can.
 		//

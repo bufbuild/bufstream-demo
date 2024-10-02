@@ -13,6 +13,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"log/slog"
 	"time"
 
@@ -52,11 +53,15 @@ func run(ctx context.Context, config app.Config) error {
 		config.Kafka.Topic,
 	)
 
+	slog.Info("starting produce")
 	for {
 		id := newID()
 		// Produces semantically-valid EmailUpdated message, where both email
 		// fields are valid email addresses.
 		if err := producer.ProduceProtobufMessage(ctx, id, newSemanticallyValidEmailUpdated(id)); err != nil {
+			if errors.Is(err, context.Canceled) {
+				return err
+			}
 			slog.Error("error on produce or semantically valid protobuf message", "error", err)
 		} else {
 			slog.Info("produced semantically valid protobuf message", "id", id)
@@ -65,6 +70,9 @@ func run(ctx context.Context, config app.Config) error {
 		// Produces a semantically-invalid EmailUpdated message, where the new email field
 		// is not a valid email address.
 		if err := producer.ProduceProtobufMessage(ctx, id, newSemanticallyInvalidEmailUpdated(id)); err != nil {
+			if errors.Is(err, context.Canceled) {
+				return err
+			}
 			slog.Error("error on produce of semantically invalid protobuf message", "error", err)
 		} else {
 			slog.Info("produced semantically invalid protobuf message", "id", id)
@@ -72,6 +80,9 @@ func run(ctx context.Context, config app.Config) error {
 		id = newID()
 		// Produces record containing a payload that is not valid Protobuf.
 		if err := producer.ProduceInvalid(ctx, id); err != nil {
+			if errors.Is(err, context.Canceled) {
+				return err
+			}
 			slog.Error("error on produce of invalid data", "error", err)
 		} else {
 			slog.Info("produced invalid data", "id", id)
