@@ -1,0 +1,25 @@
+# This Dockerfile builds a small image that just contains a binary built from
+# cmd/bufstream-demo-consume.
+#
+# This allows users to try out this demo without needing to have Go installed, as well
+# as makes the demo runnable within docker compose.
+FROM golang:1.23-alpine3.20 AS builder
+
+WORKDIR /app
+
+COPY go.mod go.sum /app/
+RUN go mod download
+
+COPY cmd /app/cmd
+COPY gen /app/gen
+COPY pkg /app/pkg
+RUN go build -ldflags "-s -w" -trimpath -buildvcs=false -o /go/bin/bufstream-demo-consume ./cmd/bufstream-demo-consume
+
+FROM alpine:3.20.3
+
+RUN apk add --update --no-cache \
+    ca-certificates && \
+  rm -rf /var/cache/apk/*
+
+COPY --from=builder /go/bin/bufstream-demo-consume /bufstream-demo-consume
+ENTRYPOINT ["/bufstream-demo-consume"]

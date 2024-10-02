@@ -1,0 +1,9 @@
+# See https://akhq.io/docs/configuration/brokers.html for more details.
+akhq:
+  connections:
+    bufstream-demo:
+      properties:
+        bootstrap.servers: "bufstream:9092"
+#      schema-registry:
+#        url: "https://demo.buf.dev/integrations/confluent/bufstream-demo"
+#        type: "confluent"

@@ -1,9 +1,14 @@
+# This docker compose file defines all of the services needed to run the demo.
 services:
+  # The core bufstream service.
+  #
+  # This is an image optimized for the demo; it is purposefully not a production image.
   bufstream:
     image: us-docker.pkg.dev/buf-images-1/bufstream-public/images/bufstream:0.1.0
     hostname: bufstream
     container_name: bufstream
     ports:
+      # We'll expose bufstream on the host at port 9092.
       - "9092:9092"
     healthcheck:
       test: nc -z bufstream 9092 || exit -1
@@ -11,21 +16,38 @@ services:
       interval: 5s
       timeout: 10s
       retries: 10
+    # Edit config/bufstream.yaml within this repository to change configuation.
     volumes:
-      - "./configs/bufstream.yaml:/bufstream.yaml"
+      - "./config/bufstream.yaml:/bufstream.yaml"
     command: [ "-c", "/bufstream.yaml" ]
-  demo:
+  # The demo consumer.
+  #
+  # This is a Docker image that just runs the binary created from cmd/bufstream-demo-consume.
+  consume:
     build:
       context: .
+      dockerfile: Dockerfile.consume
     depends_on:
       - bufstream
     command: [
-      "--address", "0.0.0.0:8888",
       "--bootstrap", "bufstream:9092",
-      # "--csr-url", "https://bufdemo.buf.dev/integrations/confluent/bufstream",
-      # "--csr-user", "bufstream-demo",
-      # "--csr-pass", "ee3a6dd1667b064886308e9280e79d094a3f2cd910c0efe019f876fec18d1abb",
+       "--csr-url", "https://demo.buf.dev/integrations/confluent/bufstream-demo",
     ]
+  # The demo producer.
+  #
+  # This is a Docker image that just runs the binary created from cmd/bufstream-demo-produce.
+  produce:
+    build:
+      context: .
+      dockerfile: Dockerfile.produce
+    depends_on:
+      - bufstream
+    command: [
+      "--bootstrap", "bufstream:9092",
+       "--csr-url", "https://demo.buf.dev/integrations/confluent/bufstream-demo",
+    ]
+# Uncomment the below to get AKHQ running against bufstream.
+#
 #  akhq:
 #    image: tchiotludo/akhq:0.25.0
 #    stop_signal: SIGKILL
@@ -40,4 +62,4 @@ services:
 #    ports:
 #      - "8080:8080"
 #    volumes:
-#      - "./configs/akhq.yaml:/app/application.yml"
+#      - "./config/akhq.yaml:/app/application.yml"
