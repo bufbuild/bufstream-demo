@@ -10,8 +10,9 @@ docker-compose-run: # Run the demo within docker compose.
 
 .PHONY: docker-bufstream-run
 docker-bufstream-run: # Run Bufstream within Docker.
-	docker run --rm -p "9092:9092" -v "./config/bufstream.yaml:/bufstream.yaml" \
-		us-docker.pkg.dev/buf-images-1/bufstream-public/images/bufstream:$(BUFSTREAM_VERSION) -c "/bufstream.yaml"
+	docker run --rm -p 9092:9092 -v ./config/bufstream.yaml:/bufstream.yaml \
+		"us-docker.pkg.dev/buf-images-1/bufstream-public/images/bufstream:$(BUFSTREAM_VERSION)" \
+			--config /bufstream.yaml
 
 .PHONY: docker-produce-run
 docker-produce-run: # Run the demo producer within Docker. If you have Go installed, you can call produce-run.
@@ -24,11 +25,11 @@ docker-consume-run: # Run the demo consumer within Docker. If you have Go instal
 	docker run --rm --network=host bufstream/demo-consume
 
 .PHONY: produce-run
-produce-run: # Run the demo producer. Go must be installed
+produce-run: # Run the demo producer. Go must be installed.
 	go run ./cmd/bufstream-demo-produce
 
 .PHONY: consume-run
-consume-run: # Run the demo consumer. Go must be installed
+consume-run: # Run the demo consumer. Go must be installed.
 	go run ./cmd/bufstream-demo-consume
 
 .PHONY: docker-compose-clean
