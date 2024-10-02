@@ -1,30 +1,38 @@
 BUFSTREAM_VERSION := 0.1.0
 
-.DEFAULT_GOAL := run-docker-compose
+.DEFAULT_GOAL := docker-compose-run
 
 ## Demo run commands
 
-.PHONY: run-docker-compose
-run-docker-compose: # Run the demo within docker compose.
+.PHONY: docker-compose-run
+docker-compose-run: # Run the demo within docker compose.
 	docker compose up --build
 
-.PHONY: run-bufstream
-run-bufstream: # Run Bufstream within Docker.
+.PHONY: docker-bufstream-run
+docker-bufstream-run: # Run Bufstream within Docker.
 	docker run --rm -p "9092:9092" -v "./config/bufstream.yaml:/bufstream.yaml" \
 		us-docker.pkg.dev/buf-images-1/bufstream-public/images/bufstream:$(BUFSTREAM_VERSION) -c "/bufstream.yaml"
 
-.PHONY: run-consume
-run-consume: # Run the demo consumer within Docker.
-	docker build -t bufstream/demo-consume -f Dockerfile.consume .
-	docker run --rm bufstream/demo-consume
-
-.PHONY: run-produce
-run-produce: # Run the demo producer within Docker.
+.PHONY: docker-produce-run
+docker-produce-run: # Run the demo producer within Docker. If you have Go installed, you can call produce-run.
 	docker build -t bufstream/demo-produce -f Dockerfile.produce .
-	docker run --rm bufstream/demo-produce
+	docker run --rm --network=host bufstream/demo-produce
 
-.PHONY: clean-docker-compose
-clean-docker-compose: # Cleanup docker compose assets.
+.PHONY: docker-consume-run
+docker-consume-run: # Run the demo consumer within Docker. If you have Go installed, you can call consume-run.
+	docker build -t bufstream/demo-consume -f Dockerfile.consume .
+	docker run --rm --network=host bufstream/demo-consume
+
+.PHONY: produce-run
+produce-run: # Run the demo producer. Go must be installed
+	go run ./cmd/bufstream-demo-produce
+
+.PHONY: consume-run
+consume-run: # Run the demo consumer. Go must be installed
+	go run ./cmd/bufstream-demo-consume
+
+.PHONY: docker-compose-clean
+docker-compose-clean: # Cleanup docker compose assets.
 	docker compose down --rmi all
 
 ## Development commands

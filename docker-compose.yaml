@@ -19,7 +19,10 @@ services:
     # Edit config/bufstream.yaml within this repository to change configuation.
     volumes:
       - "./config/bufstream.yaml:/bufstream.yaml"
-    command: [ "-c", "/bufstream.yaml" ]
+    command: [
+      "--config", "/bufstream.yaml",
+      "--config.kafka.public_address.host", "bufstream",
+    ]
   # The demo consumer.
   #
   # This is a Docker image that just runs the binary created from cmd/bufstream-demo-consume.
