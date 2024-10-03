@@ -20,9 +20,9 @@ jobs:
       id-token: write
     strategy:
       matrix:
-        dockerfile:
-          - Dockerfile.produce
-          - Dockerfile.consume
+        image:
+          - produce
+          - consume
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -50,13 +50,13 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: ${{ matrix.dockerfile }}
+          file: Dockerfile.${{ matrix.image }}
           platforms: linux/amd64,linux/arm64
           # Don't publish images on PR runs
           push: ${{ github.event_name != 'pull_request' }}
           tags: |
-            ${{ env.REGISTRY_URL }}/bufstream-demo:git.${{ github.sha }}
-            ${{ env.REGISTRY_URL }}/bufstream-demo:latest
+            ${{ env.REGISTRY_URL }}/bufstream-demo-${{ matrix.image }}:git.${{ github.sha }}
+            ${{ env.REGISTRY_URL }}/bufstream-demo-${{ matrix.image }}:latest
           # With provenance: true, docker ends up pushing the image separately into
           # multiple files and manifests, which not all clients can read.
           provenance: false
