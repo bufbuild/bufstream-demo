@@ -1,7 +1,8 @@
 name: docker
 on:
   push:
-    - main
+    branches:
+      - main
   pull_request:
 permissions:
   contents: read
