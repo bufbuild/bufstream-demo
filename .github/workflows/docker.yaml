@@ -1,0 +1,62 @@
+name: docker
+on:
+  push:
+    - main
+  pull_request:
+permissions:
+  contents: read
+env:
+  REGISTRY_HOST: ${{ secrets.RELEASE_REGISTRY_HOST }}
+  REGISTRY_URL: ${{ secrets.RELEASE_REGISTRY_URL }}
+concurrency:
+  group: docker-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  docker-build-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      # Needed for Github GCP WIF
+      id-token: write
+    strategy:
+      matrix:
+        dockerfile:
+          - Dockerfile.produce
+          - Dockerfile.consume
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      - id: ar-auth
+        name: Authenticate to GCP Release Artifact Registry through WIF
+        uses: google-github-actions/auth@v2
+        with:
+          token_format: 'access_token'
+          workload_identity_provider: ${{ secrets.RELEASE_REGISTRY_WIF_PROVIDER }}
+          service_account: ${{ secrets.RELEASE_REGISTRY_SERVICE_ACCOUNT }}
+          export_environment_variables: false
+          create_credentials_file: false
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver-opts: |
+            network=host
+      - name: login-ar
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY_HOST }}
+          username: oauth2accesstoken
+          password: ${{ steps.ar-auth.outputs.access_token }}
+      - name: Build and push docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ${{ matrix.dockerfile }}
+          platforms: linux/amd64,linux/arm64
+          # Don't publish images on PR runs
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: |
+            ${{ env.REGISTRY_URL }}/bufstream-demo:git.${{ github.sha }}
+            ${{ env.REGISTRY_URL }}/bufstream-demo:latest
+          # With provenance: true, docker ends up pushing the image separately into
+          # multiple files and manifests, which not all clients can read.
+          provenance: false
