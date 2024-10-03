@@ -14,14 +14,20 @@ docker-bufstream-run: # Run Bufstream within Docker.
 		"us-docker.pkg.dev/buf-images-1/bufstream-public/images/bufstream:$(BUFSTREAM_VERSION)" \
 			--config /bufstream.yaml
 
-.PHONY: docker-produce-run
-docker-produce-run: # Run the demo producer within Docker. If you have Go installed, you can call produce-run.
+.PHONY: docker-produce-build
+docker-produce-build:
 	docker build -t bufstream/demo-produce -f Dockerfile.produce .
+
+.PHONY: docker-consume-build
+docker-consume-build:
+	docker build -t bufstream/demo-consume -f Dockerfile.consume .
+
+.PHONY: docker-produce-run
+docker-produce-run: docker-produce-build # Run the demo producer within Docker. If you have Go installed, you can call produce-run.
 	docker run --rm --network=host bufstream/demo-produce
 
 .PHONY: docker-consume-run
-docker-consume-run: # Run the demo consumer within Docker. If you have Go installed, you can call consume-run.
-	docker build -t bufstream/demo-consume -f Dockerfile.consume .
+docker-consume-run: docker-consume-build # Run the demo consumer within Docker. If you have Go installed, you can call consume-run.
 	docker run --rm --network=host bufstream/demo-consume
 
 .PHONY: produce-run
