@@ -26,7 +26,7 @@ func main() {
 }
 
 func run(ctx context.Context, config app.Config) error {
-	client, err := kafka.NewKafkaClient(config.Kafka)
+	client, err := kafka.NewKafkaClient(config.Kafka, true)
 	if err != nil {
 		return err
 	}
