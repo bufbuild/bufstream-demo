@@ -28,14 +28,21 @@ type Config struct {
 }
 
 // NewKafkaClient returns a new franz-go Kafka Client for the given Config.
-func NewKafkaClient(config Config) (*kgo.Client, error) {
+func NewKafkaClient(config Config, consumer bool) (*kgo.Client, error) {
 	opts := []kgo.Opt{
 		kgo.SeedBrokers(config.BootstrapServers...),
-		kgo.ConsumerGroup(config.Group),
-		kgo.ConsumeTopics(config.Topic),
 		kgo.ClientID(config.ClientID),
 		kgo.AllowAutoTopicCreation(),
-		kgo.FetchMaxWait(time.Second),
+	}
+
+	if consumer {
+		opts = append(opts,
+			kgo.ConsumerGroup(config.Group),
+			kgo.ConsumeTopics(config.Topic),
+			kgo.FetchMaxWait(time.Second),
+			kgo.FetchIsolationLevel(kgo.ReadCommitted()),
+			kgo.RequireStableFetchOffsets(),
+		)
 	}
 
 	if config.RootCAPath != "" {
