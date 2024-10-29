@@ -4,7 +4,7 @@ services:
   #
   # This is an image optimized for the demo; it is purposefully not a production image.
   bufstream:
-    image: us-docker.pkg.dev/buf-images-1/bufstream-public/images/bufstream:0.1.0
+    image: us-docker.pkg.dev/buf-images-1/bufstream-public/images/bufstream:0.1.3
     hostname: bufstream
     container_name: bufstream
     ports:
