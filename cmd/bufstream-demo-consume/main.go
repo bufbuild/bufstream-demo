@@ -40,7 +40,7 @@ func run(ctx context.Context, config app.Config) error {
 	}
 	defer func() { _ = deserializer.Close() }()
 
-	consumer := consume.NewConsumer[*demov1.EmailUpdated](
+	consumer := consume.NewConsumer(
 		client,
 		deserializer,
 		config.Kafka.Topic,
