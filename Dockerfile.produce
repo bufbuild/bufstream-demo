@@ -3,7 +3,7 @@
 #
 # This allows users to try out this demo without needing to have Go installed, as well
 # as makes the demo runnable within docker compose.
-FROM --platform=$BUILDPLATFORM golang:1.23-alpine3.20 AS builder
+FROM --platform=$BUILDPLATFORM golang:1.23-bookworm AS builder
 
 ARG TARGETOS TARGETARCH
 ENV CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH
@@ -16,11 +16,7 @@ RUN go mod download
 COPY . /app
 RUN go build -ldflags "-s -w" -trimpath -buildvcs=false -o /go/bin/bufstream-demo-produce ./cmd/bufstream-demo-produce
 
-FROM alpine:3.20.3
-
-RUN apk add --update --no-cache \
-    ca-certificates && \
-  rm -rf /var/cache/apk/*
+FROM gcr.io/distroless/static-debian12:nonroot
 
 COPY --from=builder /go/bin/bufstream-demo-produce /bufstream-demo-produce
 ENTRYPOINT ["/bufstream-demo-produce"]

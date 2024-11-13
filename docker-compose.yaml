@@ -11,7 +11,7 @@ services:
       # We'll expose bufstream on the host at port 9092.
       - "9092:9092"
     healthcheck:
-      test: nc -z bufstream 9092 || exit -1
+      test: ["CMD", "/usr/local/bin/bufstream", "admin", "status", "--exit-code", "--url", "http://127.0.0.1:9089"]
       start_period: 15s
       interval: 5s
       timeout: 10s
