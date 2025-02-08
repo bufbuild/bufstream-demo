@@ -2,7 +2,7 @@
 services:
   # The core bufstream service.
   bufstream:
-    image: us-docker.pkg.dev/buf-images-1/bufstream-public/images/bufstream:0.3.6
+    image: bufbuild/bufstream
     hostname: bufstream
     container_name: bufstream
     ports:
@@ -19,6 +19,7 @@ services:
       - "./config/bufstream.yaml:/bufstream.yaml"
     command: [
       "--config", "/bufstream.yaml",
+      "--config.kafka.address.host", "0.0.0.0",
       "--config.kafka.public_address.host", "bufstream",
     ]
   # The demo consumer.
@@ -49,7 +50,6 @@ services:
       "--bootstrap", "bufstream:9092",
       "--topic", "email-updated",
       "--group", "email-verifier",
-      "--csr-url", "https://demo.buf.dev/integrations/confluent/bufstream-demo",
     ]
   akhq:
     image: tchiotludo/akhq:0.25.0

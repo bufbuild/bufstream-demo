@@ -1,34 +1,31 @@
 # yaml-language-server: $schema=schema/buf.bufstream.config.v1alpha1.BufstreamConfig.schema.json
-zone: localhost
-cluster: default
-#kafka:
-  #address:
-    #host: 0.0.0.0
-    #port: 9092
-  #public_address:
-    #host: 0.0.0.0
-    #port: 9092
-#observability:
-  #debug_address:
-    #host: 0.0.0.0
-#data_enforcement:
-  #schema_registries:
-    #- name: csr
-      #confluent:
-        #url: "https://demo.buf.dev/integrations/confluent/bufstream-demo"
-        #instance_name: "bufstream-demo"
-  #produce:
-    #- topics: { all: true }
-      #schema_registry: csr
-      #values:
-        #coerce: true
-        #on_parse_error: REJECT_BATCH
-        #validation:
-          #on_error: REJECT_BATCH
-  #fetch:
-    #- topics: { all: true }
-      #schema_registry: csr
-      #values:
-        #on_parse_error: FILTER_RECORD
-        #redaction:
-          #debug_redact: true
+data_enforcement:
+  schema_registries:
+    # The schema in proto/ is pushed to https://demo.buf.dev/bufbuild/bufstream-demo which
+    # is then used as the schema for BSR's Confluent Schema Registry API integration.
+    - name: csr
+      confluent:
+        url: "https://demo.buf.dev/integrations/confluent/bufstream-demo"
+        instance_name: "bufstream-demo"
+  # This is applied when records are sent to Bufstream.
+  produce:
+    - topics: { all: true }
+      schema_registry: csr
+      values:
+        # If a record is not enveloped, automatically envelope it.
+        coerce: true
+        # If a record cannot be parsed, reject all records in the batch.
+        on_parse_error: REJECT_BATCH
+        # If a record cannot be validated, reject all records in the batch.
+        validation:
+          on_error: REJECT_BATCH
+  # This is applied before records are sent from Bufstream to a consumer.
+  fetch:
+    - topics: { all: true }
+      schema_registry: csr
+      values:
+        # If a record cannot be parsed, do not send this record to the consumer.
+        on_parse_error: FILTER_RECORD
+        redaction:
+          # Redact fields marked with debug_redact.
+          debug_redact: true
