@@ -9,8 +9,7 @@ data_enforcement:
         instance_name: "bufstream-demo"
   # This is applied when records are sent to Bufstream.
   produce:
-    - topics: { all: true }
-      schema_registry: csr
+    - schema_registry: csr
       values:
         # If a record is not enveloped, automatically envelope it.
         coerce: true
@@ -21,8 +20,7 @@ data_enforcement:
           on_error: REJECT_BATCH
   # This is applied before records are sent from Bufstream to a consumer.
   fetch:
-    - topics: { all: true }
-      schema_registry: csr
+    - schema_registry: csr
       values:
         # If a record cannot be parsed, do not send this record to the consumer.
         on_parse_error: FILTER_RECORD
