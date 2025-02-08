@@ -26,6 +26,7 @@ data_enforcement:
     - topics: { all: true }
       schema_registry: csr
       values:
+        coerce: true
         on_parse_error: REJECT_BATCH
         validation:
           on_error: REJECT_BATCH

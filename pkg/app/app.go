@@ -15,6 +15,14 @@ import (
 	"github.com/spf13/pflag"
 )
 
+const (
+	defaultKafkaClientID = "bufstream-demo"
+)
+
+var (
+	defaultKafkaBootstrapServers = []string{"localhost:9092"}
+)
+
 // Config contains all application configuration needed by the producer and consumer.
 type Config struct {
 	Kafka kafka.Config
@@ -47,69 +55,53 @@ func run(ctx context.Context, do func(context.Context, Config) error) error {
 
 func parseConfig() (Config, error) {
 	flagSet := pflag.NewFlagSet(os.Args[0], pflag.ContinueOnError)
-	config := Config{
-		Kafka: kafka.Config{
-			BootstrapServers: []string{"0.0.0.0:9092"},
-			RootCAPath:       "",
-			Topic:            "email-updated",
-			Group:            "email-verifier",
-			ClientID:         "bufstream-demo",
-		},
-		CSR: csr.Config{
-			URL:      "",
-			Username: "",
-			Password: "",
-		},
-	}
-
-	// TODO: Why do all of these need short names?
-	flagSet.StringArrayVarP(
+	config := Config{}
+	flagSet.StringArrayVar(
 		&config.Kafka.BootstrapServers,
 		"bootstrap",
-		"b",
-		config.Kafka.BootstrapServers,
+		defaultKafkaBootstrapServers,
 		"The Bufstream bootstrap server addresses.",
 	)
-	flagSet.StringVarP(
+	flagSet.StringVar(
+		&config.Kafka.ClientID,
+		"client-id",
+		defaultKafkaClientID,
+		"The Kafka client ID.",
+	)
+	flagSet.StringVar(
 		&config.Kafka.Topic,
 		"topic",
-		"t",
-		config.Kafka.Topic,
+		"",
 		"The Kafka topic name to use.",
 	)
-	flagSet.StringVarP(
+	flagSet.StringVar(
 		&config.Kafka.Group,
 		"group",
-		"g",
-		config.Kafka.Group,
+		"",
 		"The Kafka consumer group ID.",
 	)
-	flagSet.StringVarP(
+	flagSet.StringVar(
 		&config.CSR.URL,
 		"csr-url",
-		"c",
-		config.CSR.URL,
+		"",
 		"The Confluent Schema Registry URL.",
 	)
-	flagSet.StringVarP(
+	flagSet.StringVar(
 		&config.CSR.Username,
 		"csr-user",
-		"u",
-		config.CSR.Username,
+		"",
 		"The Confluent Schema Registry username, if authentication is needed.",
 	)
-	flagSet.StringVarP(
+	flagSet.StringVar(
 		&config.CSR.Password,
 		"csr-pass",
-		"p",
-		config.CSR.Password,
+		"",
 		"The Confluent Schema Registry password/token, if authentication is needed.",
 	)
-	flagSet.StringVarP(
+	flagSet.StringVar(
 		&config.Kafka.RootCAPath,
 		"tls-root-ca-path",
 		"",
-		config.Kafka.RootCAPath,
 		"A path to root CA certificate for kafka TLS.",
 	)
 	if err := flagSet.Parse(os.Args[1:]); err != nil {

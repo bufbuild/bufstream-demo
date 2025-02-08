@@ -1,8 +1,6 @@
 # This docker compose file defines all of the services needed to run the demo.
 services:
   # The core bufstream service.
-  #
-  # This is an image optimized for the demo; it is purposefully not a production image.
   bufstream:
     image: us-docker.pkg.dev/buf-images-1/bufstream-public/images/bufstream:0.3.6
     hostname: bufstream
@@ -34,7 +32,9 @@ services:
       - bufstream
     command: [
       "--bootstrap", "bufstream:9092",
-       "--csr-url", "https://demo.buf.dev/integrations/confluent/bufstream-demo",
+      "--topic", "email-updated",
+      "--group", "email-verifier",
+      "--csr-url", "https://demo.buf.dev/integrations/confluent/bufstream-demo",
     ]
   # The demo producer.
   #
@@ -47,22 +47,30 @@ services:
       - bufstream
     command: [
       "--bootstrap", "bufstream:9092",
-       "--csr-url", "https://demo.buf.dev/integrations/confluent/bufstream-demo",
+      "--topic", "email-updated",
+      "--group", "email-verifier",
+      "--csr-url", "https://demo.buf.dev/integrations/confluent/bufstream-demo",
     ]
-# Uncomment the below to get AKHQ running against bufstream.
-#
-#  akhq:
-#    image: tchiotludo/akhq:0.25.0
-#    stop_signal: SIGKILL
-#    depends_on:
-#      - bufstream
-#    healthcheck:
-#      test: nc -z akhq 8080 || exit -1
-#      start_period: 15s
-#      interval: 5s
-#      timeout: 10s
-#      retries: 10
-#    ports:
-#      - "8080:8080"
-#    volumes:
-#      - "./config/akhq.yaml:/app/application.yml"
+  akhq:
+    image: tchiotludo/akhq:0.25.0
+    stop_signal: SIGKILL
+    depends_on:
+      - bufstream
+    healthcheck:
+      test: nc -z akhq 8080 || exit -1
+      start_period: 15s
+      interval: 5s
+      timeout: 10s
+      retries: 10
+    ports:
+      - "8080:8080"
+    environment:
+      AKHQ_CONFIGURATION: |
+        akhq:
+          connections:
+            bufstream-demo:
+              properties:
+                bootstrap.servers: "bufstream:9092"
+              schema-registry:
+                url: "https://demo.buf.dev/integrations/confluent/bufstream-demo"
+                type: "confluent"
