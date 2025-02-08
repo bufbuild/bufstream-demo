@@ -12,7 +12,8 @@ produce-run: # Run the demo producer. Go must be installed.
 
 .PHONY: consume-run
 consume-run: # Run the demo consumer. Go must be installed.
-	go run ./cmd/bufstream-demo-consume --topic email-updated --group email-verifier
+	go run ./cmd/bufstream-demo-consume --topic email-updated --group email-verifier \
+		--csr-url "https://demo.buf.dev/integrations/confluent/bufstream-demo"
 
 ### Run Bufstream, the demo producer, the demo consumer, and AKHQ within Docker Compose.
 #
