@@ -34,6 +34,9 @@ func run(ctx context.Context, config app.Config) error {
 
 	// NewDeserializer creates a CSR-based Deserializer if there is a CSR URL,
 	// otherwise it creates a single-type Deserializer for demov1.EmailUpdated.
+	//
+	// If a CSR URL is provided, the data will be unenveloped when read from Bufstream.
+	// If not, the data will be read as-is.
 	deserializer, err := csr.NewDeserializer[*demov1.EmailUpdated](config.CSR)
 	if err != nil {
 		return err
@@ -60,7 +63,6 @@ func run(ctx context.Context, config app.Config) error {
 	}
 }
 
-// TODO: Maybe just remove this entirely.
 func handleEmailUpdated(message *demov1.EmailUpdated) error {
 	var suffix string
 	if old := message.GetOldEmailAddress(); old == "" {

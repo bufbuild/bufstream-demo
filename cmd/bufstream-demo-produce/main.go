@@ -41,6 +41,11 @@ func run(ctx context.Context, config app.Config) error {
 
 	// NewSerializer creates a CSR-based Serializer if there is a CSR URL,
 	// otherwise it creates a single-type Serializer for demov1.EmailUpdated.
+	//
+	// If a CSR URL is provided, the data will be enveloped when sent to Bufstream.
+	// If not, the data will be unenveloped, however Bufstream is schema-aware, and
+	// has the capability to automatically envelope data if the "coerce" configuration
+	// setting is set. See the documentation for more details.
 	serializer, err := csr.NewSerializer[*demov1.EmailUpdated](config.CSR)
 	if err != nil {
 		return err
