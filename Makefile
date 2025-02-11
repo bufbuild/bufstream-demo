@@ -6,16 +6,10 @@ BUFSTREAM_VERSION := 0.3.7
 #
 # Requires Go to be installed. Targets should be run from separate terminals.
 
-BIN=".tmp"
+BIN := .tmp
 
 .PHONY: bufstream-run
-bufstream-run:
-	@rm -f $(BIN)/bufstream
-	@mkdir -p $(BIN)
-	curl -sSL \
-		"https://buf.build/dl/bufstream/v$(BUFSTREAM_VERSION)/bufstream-v$(BUFSTREAM_VERSION)-$(shell uname -s)-$(shell uname -m)" \
-		-o $(BIN)/bufstream
-	chmod +x $(BIN)/bufstream
+bufstream-run: $(BIN)/bufstream
 	./$(BIN)/bufstream serve --config config/bufstream.yaml
 
 .PHONY: produce-run
@@ -58,6 +52,14 @@ docker-produce-run: # Run the demo producer within Docker. If you have Go instal
 docker-consume-run: # Run the demo consumer within Docker. If you have Go installed, you can call consume-run.
 	docker build -t bufstream/demo-consume -f Dockerfile.consume .
 	docker run --rm --network=host bufstream/demo-consume
+
+$(BIN)/bufstream: Makefile
+	@rm -f $(BIN)/bufstream
+	@mkdir -p $(BIN)
+	curl -sSL \
+		"https://buf.build/dl/bufstream/v$(BUFSTREAM_VERSION)/bufstream-v$(BUFSTREAM_VERSION)-$(shell uname -s)-$(shell uname -m)" \
+		-o $(BIN)/bufstream
+	chmod +x $(BIN)/bufstream
 
 ### Development commands
 
