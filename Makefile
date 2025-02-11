@@ -1,10 +1,22 @@
-BUFSTREAM_VERSION := 0.3.6
+BUFSTREAM_VERSION := 0.3.7
 
 .DEFAULT_GOAL := docker-compose-run
 
 ### Run Bufstream, the demo producer, and the demo consumer on your local machine.
 #
 # Requires Go to be installed. Targets should be run from separate terminals.
+
+BIN=".tmp"
+
+.PHONY: bufstream-run
+bufstream-run:
+	@rm -f $(BIN)/bufstream
+	@mkdir -p $(BIN)
+	curl -sSL \
+		"https://buf.build/dl/bufstream/v$(BUFSTREAM_VERSION)/bufstream-v$(BUFSTREAM_VERSION)-$(shell uname -s)-$(shell uname -m)" \
+		-o $(BIN)/bufstream
+	chmod +x $(BIN)/bufstream
+	./$(BIN)/bufstream serve --config config/bufstream.yaml
 
 .PHONY: produce-run
 produce-run: # Run the demo producer. Go must be installed.
@@ -34,7 +46,7 @@ docker-compose-clean: # Cleanup docker compose assets.
 .PHONY: docker-bufstream-run
 docker-bufstream-run: # Run Bufstream within Docker.
 	docker run --rm -p 9092:9092 -v ./config/bufstream.yaml:/bufstream.yaml \
-		"us-docker.pkg.dev/buf-images-1/bufstream-public/images/bufstream:$(BUFSTREAM_VERSION)" \
+		"bufbuild/bufstream:$(BUFSTREAM_VERSION)" \
 			--config /bufstream.yaml
 
 .PHONY: docker-produce-run
