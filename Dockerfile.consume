@@ -3,7 +3,7 @@
 #
 # This allows users to try out this demo without needing to have Go installed, as well
 # as makes the demo runnable within docker compose.
-FROM --platform=$BUILDPLATFORM golang:1.23-bookworm AS builder
+FROM --platform=$BUILDPLATFORM golang:1.24-bookworm AS builder
 
 ARG TARGETOS TARGETARCH
 ENV CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH
