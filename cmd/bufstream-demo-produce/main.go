@@ -29,7 +29,7 @@ import (
 func main() {
 	// See the app package for the boilerplate we use to set up the producer and
 	// consumer, including bound flags.
-	app.Main(run)
+	app.MainAutoCreateTopic(run)
 }
 
 func run(ctx context.Context, config app.Config) error {
@@ -67,7 +67,7 @@ func run(ctx context.Context, config app.Config) error {
 			if errors.Is(err, context.Canceled) {
 				return err
 			}
-			slog.Error("error on produce or semantically valid protobuf message", "error", err)
+			slog.Error("error on produce of semantically valid protobuf message", "error", err)
 		} else {
 			slog.Info("produced semantically valid protobuf message", "id", id)
 		}
