@@ -21,8 +21,11 @@ type Config struct {
 	BootstrapServers []string
 	RootCAPath       string
 	Group            string
-	Topic            string
 	ClientID         string
+	Topic            string
+	RecreateTopic    bool
+	TopicConfig      []string
+	TopicPartitions  int
 }
 
 // NewKafkaClient returns a new franz-go Kafka Client for the given Config.
@@ -30,7 +33,6 @@ func NewKafkaClient(config Config, consumer bool) (*kgo.Client, error) {
 	opts := []kgo.Opt{
 		kgo.SeedBrokers(config.BootstrapServers...),
 		kgo.ClientID(config.ClientID),
-		kgo.AllowAutoTopicCreation(),
 	}
 
 	if consumer {
