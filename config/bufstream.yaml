@@ -13,6 +13,8 @@ data_enforcement:
         coerce: true
         # If a record cannot be parsed, reject all records in the batch.
         on_parse_error: REJECT_BATCH
+        # If a schema cannot be found, reject all records in the batch.
+        on_no_schema: REJECT_BATCH
         # If a record cannot be validated, reject all records in the batch.
         #validation:
           #on_error: REJECT_BATCH
