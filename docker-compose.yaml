@@ -2,7 +2,7 @@
 services:
   # The core bufstream service.
   bufstream:
-    image: bufbuild/bufstream:0.3.14
+    image: bufbuild/bufstream:0.3.20
     hostname: bufstream
     container_name: bufstream
     ports:
@@ -20,8 +20,6 @@ services:
     command: [
       "serve",
       "--config", "/bufstream.yaml",
-      "--config.kafka.address.host", "0.0.0.0",
-      "--config.kafka.public_address.host", "bufstream",
     ]
   # The demo consumer.
   #
