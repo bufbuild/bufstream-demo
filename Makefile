@@ -1,4 +1,4 @@
-BUFSTREAM_VERSION := 0.3.14
+BUFSTREAM_VERSION := 0.3.20
 
 .DEFAULT_GOAL := docker-compose-run
 

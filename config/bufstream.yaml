@@ -1,4 +1,9 @@
 # yaml-language-server: $schema=schema/buf.bufstream.config.v1alpha1.BufstreamConfig.schema.json
+kafka:
+  address:
+    host: 0.0.0.0
+  public_address:
+    host: bufstream
 data_enforcement:
   schema_registries:
     - name: csr
