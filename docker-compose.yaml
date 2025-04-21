@@ -5,6 +5,9 @@ services:
     image: bufbuild/bufstream:0.3.20
     hostname: bufstream
     container_name: bufstream
+    environment:
+      BUFSTREAM_KAFKA_HOST: 0.0.0.0
+      BUFSTREAM_KAFKA_PUBLIC_HOST: bufstream
     ports:
       # We'll expose bufstream on the host at port 9092.
       - "9092:9092"
