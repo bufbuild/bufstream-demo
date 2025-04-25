@@ -1,8 +1,8 @@
-# This docker compose file defines all of the services needed to run the demo.
+# This docker compose file defines all the services needed to run the demo.
 services:
   # The core bufstream service.
   bufstream:
-    image: bufbuild/bufstream:0.3.20
+    image: bufbuild/bufstream:0.3.22
     hostname: bufstream
     container_name: bufstream
     environment:
@@ -32,7 +32,8 @@ services:
       context: .
       dockerfile: Dockerfile.consume
     depends_on:
-      - bufstream
+      bufstream:
+        condition: service_healthy
     command: [
       "--bootstrap", "bufstream:9092",
       "--topic", "email-updated",
@@ -47,7 +48,8 @@ services:
       context: .
       dockerfile: Dockerfile.produce
     depends_on:
-      - bufstream
+      bufstream:
+        condition: service_healthy
     command: [
       "--bootstrap", "bufstream:9092",
       "--topic", "email-updated",
@@ -60,7 +62,8 @@ services:
     image: tchiotludo/akhq:0.25.0
     stop_signal: SIGKILL
     depends_on:
-      - bufstream
+      bufstream:
+        condition: service_healthy
     healthcheck:
       test: nc -z akhq 8080 || exit -1
       start_period: 15s
