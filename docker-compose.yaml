@@ -55,17 +55,15 @@ services:
       "--topic", "email-updated",
       "--group", "email-verifier",
     ]
-  # A GUI for Kafka. See https://akhq.io
-  #
+  # Redpanda Console for Kafka UI. See https://docs.redpanda.com/docs/manage/console/
   # Browse to http://localhost:8080 on your machine.
-  akhq:
-    image: tchiotludo/akhq:0.25.0
-    stop_signal: SIGKILL
+  redpanda-console:
+    image: docker.redpanda.com/redpandadata/console:latest
     depends_on:
       bufstream:
         condition: service_healthy
     healthcheck:
-      test: nc -z akhq 8080 || exit -1
+      test: nc -z redpanda-console 8080 || exit -1
       start_period: 15s
       interval: 5s
       timeout: 10s
@@ -73,13 +71,5 @@ services:
     ports:
       - "8080:8080"
     environment:
-      AKHQ_CONFIGURATION: |
-        akhq:
-          connections:
-            bufstream-demo:
-              properties:
-                bootstrap.servers: "bufstream:9092"
-                client.id: "akhq;broker_count=1;host_override=bufstream"
-              schema-registry:
-                url: "https://demo.buf.dev/integrations/confluent/bufstream-demo"
-                type: "confluent"
+      KAFKA_BROKERS: "bufstream:9092"
+      KAFKA_CLIENTID: "rpconsole;broker_count=1;host_override=bufstream"
