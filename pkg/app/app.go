@@ -13,11 +13,11 @@ import (
 	"os/signal"
 	"strings"
 
+	"github.com/bufbuild/bufstream-demo/pkg/csr"
 	"github.com/bufbuild/bufstream-demo/pkg/kafka"
 	"github.com/spf13/pflag"
 	"github.com/twmb/franz-go/pkg/kadm"
 	"github.com/twmb/franz-go/pkg/kerr"
-	"github.com/bufbuild/bufstream-demo/pkg/csr"
 )
 
 const (
@@ -32,8 +32,8 @@ var (
 type Config struct {
 	Kafka kafka.Config
 	// Topics for browsing events
-	SearchTopic      string
-	ListViewedTopic  string
+	SearchTopic       string
+	ListViewedTopic   string
 	ListFilteredTopic string
 	// Confluent Schema Registry config
 	CSR csr.Config
