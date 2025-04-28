@@ -37,8 +37,7 @@ services:
     command: [
       "--bootstrap", "bufstream:9092",
       "--topic", "email-updated",
-      "--group", "email-verifier",
-      "--csr-url", "https://demo.buf.dev/integrations/confluent/bufstream-demo",
+      "--group", "email-verifier"
     ]
   # The demo producer.
   #

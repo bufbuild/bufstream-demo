@@ -13,7 +13,6 @@ import (
 	"os/signal"
 	"strings"
 
-	"github.com/bufbuild/bufstream-demo/pkg/csr"
 	"github.com/bufbuild/bufstream-demo/pkg/kafka"
 	"github.com/spf13/pflag"
 	"github.com/twmb/franz-go/pkg/kadm"
@@ -31,7 +30,6 @@ var (
 // Config contains all application configuration needed by the producer and consumer.
 type Config struct {
 	Kafka kafka.Config
-	CSR   csr.Config
 }
 
 // Main is used by the consumer's main function.
@@ -129,24 +127,6 @@ func parseConfig(canCreateTopic bool) (Config, error) {
 		"group",
 		"",
 		"The Kafka consumer group ID.",
-	)
-	flagSet.StringVar(
-		&config.CSR.URL,
-		"csr-url",
-		"",
-		"The Confluent Schema Registry URL.",
-	)
-	flagSet.StringVar(
-		&config.CSR.Username,
-		"csr-user",
-		"",
-		"The Confluent Schema Registry username, if authentication is needed.",
-	)
-	flagSet.StringVar(
-		&config.CSR.Password,
-		"csr-pass",
-		"",
-		"The Confluent Schema Registry password/token, if authentication is needed.",
 	)
 	flagSet.StringVar(
 		&config.Kafka.RootCAPath,
