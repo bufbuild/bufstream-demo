@@ -14,3 +14,63 @@ message EmailUpdated {
   // The new email address.
   string new_email_address = 3;
 }
+
+// Browsing events for RudderStack ecommerce spec
+
+// A product displayed in product lists
+message Product {
+  string product_id = 1;
+  string sku = 2;
+  string name = 3;
+  double price = 4;
+  int32 position = 5;
+  string category = 6;
+  string url = 7;
+  string image_url = 8;
+}
+
+// Filters applied by the user when browsing
+message Filter {
+  string type = 1;
+  string value = 2;
+}
+
+// Sorting options applied by the user
+message Sort {
+  string type = 1;
+  string value = 2;
+}
+
+// Event when a user searches for products
+message ProductsSearched {
+  // The ID of the event or user
+  string id = 1;
+  // Search query used by the visitor
+  string query = 2;
+}
+
+// Event when a user views a list of products
+message ProductListViewed {
+  // The ID of the event or user
+  string id = 1;
+  // Identifier for the product list
+  string list_id = 2;
+  // Category of the list
+  string category = 3;
+  // Products shown in the list
+  repeated Product products = 4;
+}
+
+// Event when a user filters a product list
+message ProductListFiltered {
+  // The ID of the event or user
+  string id = 1;
+  // Identifier for the product list
+  string list_id = 2;
+  // Filters applied
+  repeated Filter filters = 3;
+  // Sorting options applied
+  repeated Sort sorts = 4;
+  // Products shown after filtering
+  repeated Product products = 5;
+}

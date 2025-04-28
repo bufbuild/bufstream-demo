@@ -37,6 +37,9 @@ services:
     command: [
       "--bootstrap", "bufstream:9092",
       "--topic", "email-updated",
+      "--search-topic", "products-searched",
+      "--list-viewed-topic", "product-list-viewed",
+      "--list-filtered-topic", "product-list-filtered",
       "--group", "email-verifier"
     ]
   # The demo producer.
@@ -52,6 +55,9 @@ services:
     command: [
       "--bootstrap", "bufstream:9092",
       "--topic", "email-updated",
+      "--search-topic", "products-searched",
+      "--list-viewed-topic", "product-list-viewed",
+      "--list-filtered-topic", "product-list-filtered",
       "--group", "email-verifier",
     ]
   # Redpanda Console for Kafka UI. See https://docs.redpanda.com/docs/manage/console/

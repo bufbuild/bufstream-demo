@@ -17,6 +17,7 @@ import (
 	"github.com/spf13/pflag"
 	"github.com/twmb/franz-go/pkg/kadm"
 	"github.com/twmb/franz-go/pkg/kerr"
+	"github.com/bufbuild/bufstream-demo/pkg/csr"
 )
 
 const (
@@ -30,6 +31,12 @@ var (
 // Config contains all application configuration needed by the producer and consumer.
 type Config struct {
 	Kafka kafka.Config
+	// Topics for browsing events
+	SearchTopic      string
+	ListViewedTopic  string
+	ListFilteredTopic string
+	// Confluent Schema Registry config
+	CSR csr.Config
 }
 
 // Main is used by the consumer's main function.
@@ -74,8 +81,23 @@ func run(ctx context.Context, autoCreateTopic bool, action func(context.Context,
 		return err
 	}
 	if autoCreateTopic {
-		if err := maybeCreateTopic(ctx, config.Kafka); err != nil {
-			return err
+		// Create configured topics
+		// Default topic
+		if config.Kafka.Topic != "" {
+			if err := maybeCreateTopic(ctx, config.Kafka); err != nil {
+				return err
+			}
+		}
+		// Browsing event topics
+		for _, t := range []string{config.SearchTopic, config.ListViewedTopic, config.ListFilteredTopic} {
+			if t == "" {
+				continue
+			}
+			cfg := config.Kafka
+			cfg.Topic = t
+			if err := maybeCreateTopic(ctx, cfg); err != nil {
+				return err
+			}
 		}
 	}
 	return action(ctx, config)
@@ -101,6 +123,44 @@ func parseConfig(canCreateTopic bool) (Config, error) {
 		"topic",
 		"",
 		"The Kafka topic name to use.",
+	)
+	// Browsing event topics
+	flagSet.StringVar(
+		&config.SearchTopic,
+		"search-topic",
+		"",
+		"Topic for ProductsSearched events",
+	)
+	flagSet.StringVar(
+		&config.ListViewedTopic,
+		"list-viewed-topic",
+		"",
+		"Topic for ProductListViewed events",
+	)
+	flagSet.StringVar(
+		&config.ListFilteredTopic,
+		"list-filtered-topic",
+		"",
+		"Topic for ProductListFiltered events",
+	)
+	// Schema Registry flags
+	flagSet.StringVar(
+		&config.CSR.URL,
+		"csr-url",
+		"",
+		"URL of the Confluent Schema Registry",
+	)
+	flagSet.StringVar(
+		&config.CSR.Username,
+		"csr-username",
+		"",
+		"Username for the Confluent Schema Registry (optional)",
+	)
+	flagSet.StringVar(
+		&config.CSR.Password,
+		"csr-password",
+		"",
+		"Password for the Confluent Schema Registry (optional)",
 	)
 	if canCreateTopic {
 		flagSet.BoolVar(
