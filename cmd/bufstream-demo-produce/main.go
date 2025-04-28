@@ -20,7 +20,6 @@ import (
 	"github.com/brianvoe/gofakeit/v7"
 	demov1 "github.com/bufbuild/bufstream-demo/gen/bufstream/demo/v1"
 	"github.com/bufbuild/bufstream-demo/pkg/app"
-	"github.com/bufbuild/bufstream-demo/pkg/csr"
 	"github.com/bufbuild/bufstream-demo/pkg/kafka"
 	"github.com/bufbuild/bufstream-demo/pkg/produce"
 	"github.com/google/uuid"
@@ -39,22 +38,8 @@ func run(ctx context.Context, config app.Config) error {
 	}
 	defer client.Close()
 
-	// NewSerializer creates a CSR-based Serializer if there is a CSR URL,
-	// otherwise it creates a single-type Serializer for demov1.EmailUpdated.
-	//
-	// If a CSR URL is provided, the data will be enveloped when sent to Bufstream.
-	// If not, the data will be unenveloped, however Bufstream is schema-aware, and
-	// has the capability to automatically envelope data if the "coerce" configuration
-	// setting is set. See the documentation for more details.
-	serializer, err := csr.NewSerializer[*demov1.EmailUpdated](config.CSR)
-	if err != nil {
-		return err
-	}
-	defer func() { _ = serializer.Close() }()
-
 	producer := produce.NewProducer[*demov1.EmailUpdated](
 		client,
-		serializer,
 		config.Kafka.Topic,
 	)
 

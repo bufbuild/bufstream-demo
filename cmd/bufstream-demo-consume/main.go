@@ -15,7 +15,6 @@ import (
 	demov1 "github.com/bufbuild/bufstream-demo/gen/bufstream/demo/v1"
 	"github.com/bufbuild/bufstream-demo/pkg/app"
 	"github.com/bufbuild/bufstream-demo/pkg/consume"
-	"github.com/bufbuild/bufstream-demo/pkg/csr"
 	"github.com/bufbuild/bufstream-demo/pkg/kafka"
 )
 
@@ -32,20 +31,8 @@ func run(ctx context.Context, config app.Config) error {
 	}
 	defer client.Close()
 
-	// NewDeserializer creates a CSR-based Deserializer if there is a CSR URL,
-	// otherwise it creates a single-type Deserializer for demov1.EmailUpdated.
-	//
-	// If a CSR URL is provided, the data will be unenveloped when read from Bufstream.
-	// If not, the data will be read as-is.
-	deserializer, err := csr.NewDeserializer[*demov1.EmailUpdated](config.CSR)
-	if err != nil {
-		return err
-	}
-	defer func() { _ = deserializer.Close() }()
-
 	consumer := consume.NewConsumer(
 		client,
-		deserializer,
 		config.Kafka.Topic,
 		consume.WithMessageHandler(handleEmailUpdated),
 	)

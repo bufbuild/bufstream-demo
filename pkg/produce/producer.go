@@ -5,7 +5,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/confluentinc/confluent-kafka-go/v2/schemaregistry/serde"
 	"github.com/twmb/franz-go/pkg/kgo"
 	"google.golang.org/protobuf/proto"
 )
@@ -20,9 +19,8 @@ import (
 // This is a toy example, but shows the basics you need to send Protobuf messages
 // to Kafka using franz-go.
 type Producer[M proto.Message] struct {
-	client     *kgo.Client
-	serializer serde.Serializer
-	topic      string
+	client *kgo.Client
+	topic  string
 }
 
 // NewProducer returns a new Producer.
@@ -30,20 +28,18 @@ type Producer[M proto.Message] struct {
 // Always use this constructor to construct Producers.
 func NewProducer[M proto.Message](
 	client *kgo.Client,
-	serializer serde.Serializer,
 	topic string,
 ) *Producer[M] {
 	return &Producer[M]{
-		client:     client,
-		topic:      topic,
-		serializer: serializer,
+		client: client,
+		topic:  topic,
 	}
 }
 
 // ProduceProtobufMessage serializes the given Protobuf messages, and synchronously
 // sends it to the Producer's topic with the given key.
 func (p *Producer[M]) ProduceProtobufMessage(ctx context.Context, key string, message M) error {
-	payload, err := p.serializer.Serialize(p.topic, message)
+	payload, err := proto.Marshal(message)
 	if err != nil {
 		return err
 	}
