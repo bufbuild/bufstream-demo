@@ -9,8 +9,6 @@
 package demov1
 
 import (
-	_ "buf.build/gen/go/bufbuild/confluent/protocolbuffers/go/buf/confluent/v1"
-	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -91,17 +89,462 @@ func (x *EmailUpdated) GetNewEmailAddress() string {
 	return ""
 }
 
+// A product displayed in product lists
+type Product struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ProductId     string                 `protobuf:"bytes,1,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
+	Sku           string                 `protobuf:"bytes,2,opt,name=sku,proto3" json:"sku,omitempty"`
+	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	Price         float64                `protobuf:"fixed64,4,opt,name=price,proto3" json:"price,omitempty"`
+	Position      int32                  `protobuf:"varint,5,opt,name=position,proto3" json:"position,omitempty"`
+	Category      string                 `protobuf:"bytes,6,opt,name=category,proto3" json:"category,omitempty"`
+	Url           string                 `protobuf:"bytes,7,opt,name=url,proto3" json:"url,omitempty"`
+	ImageUrl      string                 `protobuf:"bytes,8,opt,name=image_url,json=imageUrl,proto3" json:"image_url,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Product) Reset() {
+	*x = Product{}
+	mi := &file_bufstream_demo_v1_demo_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Product) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Product) ProtoMessage() {}
+
+func (x *Product) ProtoReflect() protoreflect.Message {
+	mi := &file_bufstream_demo_v1_demo_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Product.ProtoReflect.Descriptor instead.
+func (*Product) Descriptor() ([]byte, []int) {
+	return file_bufstream_demo_v1_demo_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *Product) GetProductId() string {
+	if x != nil {
+		return x.ProductId
+	}
+	return ""
+}
+
+func (x *Product) GetSku() string {
+	if x != nil {
+		return x.Sku
+	}
+	return ""
+}
+
+func (x *Product) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *Product) GetPrice() float64 {
+	if x != nil {
+		return x.Price
+	}
+	return 0
+}
+
+func (x *Product) GetPosition() int32 {
+	if x != nil {
+		return x.Position
+	}
+	return 0
+}
+
+func (x *Product) GetCategory() string {
+	if x != nil {
+		return x.Category
+	}
+	return ""
+}
+
+func (x *Product) GetUrl() string {
+	if x != nil {
+		return x.Url
+	}
+	return ""
+}
+
+func (x *Product) GetImageUrl() string {
+	if x != nil {
+		return x.ImageUrl
+	}
+	return ""
+}
+
+// Filters applied by the user when browsing
+type Filter struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Type          string                 `protobuf:"bytes,1,opt,name=type,proto3" json:"type,omitempty"`
+	Value         string                 `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Filter) Reset() {
+	*x = Filter{}
+	mi := &file_bufstream_demo_v1_demo_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Filter) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Filter) ProtoMessage() {}
+
+func (x *Filter) ProtoReflect() protoreflect.Message {
+	mi := &file_bufstream_demo_v1_demo_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Filter.ProtoReflect.Descriptor instead.
+func (*Filter) Descriptor() ([]byte, []int) {
+	return file_bufstream_demo_v1_demo_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *Filter) GetType() string {
+	if x != nil {
+		return x.Type
+	}
+	return ""
+}
+
+func (x *Filter) GetValue() string {
+	if x != nil {
+		return x.Value
+	}
+	return ""
+}
+
+// Sorting options applied by the user
+type Sort struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Type          string                 `protobuf:"bytes,1,opt,name=type,proto3" json:"type,omitempty"`
+	Value         string                 `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Sort) Reset() {
+	*x = Sort{}
+	mi := &file_bufstream_demo_v1_demo_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Sort) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Sort) ProtoMessage() {}
+
+func (x *Sort) ProtoReflect() protoreflect.Message {
+	mi := &file_bufstream_demo_v1_demo_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Sort.ProtoReflect.Descriptor instead.
+func (*Sort) Descriptor() ([]byte, []int) {
+	return file_bufstream_demo_v1_demo_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *Sort) GetType() string {
+	if x != nil {
+		return x.Type
+	}
+	return ""
+}
+
+func (x *Sort) GetValue() string {
+	if x != nil {
+		return x.Value
+	}
+	return ""
+}
+
+// Event when a user searches for products
+type ProductsSearched struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The ID of the event or user
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// Search query used by the visitor
+	Query         string `protobuf:"bytes,2,opt,name=query,proto3" json:"query,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ProductsSearched) Reset() {
+	*x = ProductsSearched{}
+	mi := &file_bufstream_demo_v1_demo_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ProductsSearched) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ProductsSearched) ProtoMessage() {}
+
+func (x *ProductsSearched) ProtoReflect() protoreflect.Message {
+	mi := &file_bufstream_demo_v1_demo_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ProductsSearched.ProtoReflect.Descriptor instead.
+func (*ProductsSearched) Descriptor() ([]byte, []int) {
+	return file_bufstream_demo_v1_demo_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *ProductsSearched) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *ProductsSearched) GetQuery() string {
+	if x != nil {
+		return x.Query
+	}
+	return ""
+}
+
+// Event when a user views a list of products
+type ProductListViewed struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The ID of the event or user
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// Identifier for the product list
+	ListId string `protobuf:"bytes,2,opt,name=list_id,json=listId,proto3" json:"list_id,omitempty"`
+	// Category of the list
+	Category string `protobuf:"bytes,3,opt,name=category,proto3" json:"category,omitempty"`
+	// Products shown in the list
+	Products      []*Product `protobuf:"bytes,4,rep,name=products,proto3" json:"products,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ProductListViewed) Reset() {
+	*x = ProductListViewed{}
+	mi := &file_bufstream_demo_v1_demo_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ProductListViewed) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ProductListViewed) ProtoMessage() {}
+
+func (x *ProductListViewed) ProtoReflect() protoreflect.Message {
+	mi := &file_bufstream_demo_v1_demo_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ProductListViewed.ProtoReflect.Descriptor instead.
+func (*ProductListViewed) Descriptor() ([]byte, []int) {
+	return file_bufstream_demo_v1_demo_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *ProductListViewed) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *ProductListViewed) GetListId() string {
+	if x != nil {
+		return x.ListId
+	}
+	return ""
+}
+
+func (x *ProductListViewed) GetCategory() string {
+	if x != nil {
+		return x.Category
+	}
+	return ""
+}
+
+func (x *ProductListViewed) GetProducts() []*Product {
+	if x != nil {
+		return x.Products
+	}
+	return nil
+}
+
+// Event when a user filters a product list
+type ProductListFiltered struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The ID of the event or user
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// Identifier for the product list
+	ListId string `protobuf:"bytes,2,opt,name=list_id,json=listId,proto3" json:"list_id,omitempty"`
+	// Filters applied
+	Filters []*Filter `protobuf:"bytes,3,rep,name=filters,proto3" json:"filters,omitempty"`
+	// Sorting options applied
+	Sorts []*Sort `protobuf:"bytes,4,rep,name=sorts,proto3" json:"sorts,omitempty"`
+	// Products shown after filtering
+	Products      []*Product `protobuf:"bytes,5,rep,name=products,proto3" json:"products,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ProductListFiltered) Reset() {
+	*x = ProductListFiltered{}
+	mi := &file_bufstream_demo_v1_demo_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ProductListFiltered) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ProductListFiltered) ProtoMessage() {}
+
+func (x *ProductListFiltered) ProtoReflect() protoreflect.Message {
+	mi := &file_bufstream_demo_v1_demo_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ProductListFiltered.ProtoReflect.Descriptor instead.
+func (*ProductListFiltered) Descriptor() ([]byte, []int) {
+	return file_bufstream_demo_v1_demo_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *ProductListFiltered) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *ProductListFiltered) GetListId() string {
+	if x != nil {
+		return x.ListId
+	}
+	return ""
+}
+
+func (x *ProductListFiltered) GetFilters() []*Filter {
+	if x != nil {
+		return x.Filters
+	}
+	return nil
+}
+
+func (x *ProductListFiltered) GetSorts() []*Sort {
+	if x != nil {
+		return x.Sorts
+	}
+	return nil
+}
+
+func (x *ProductListFiltered) GetProducts() []*Product {
+	if x != nil {
+		return x.Products
+	}
+	return nil
+}
+
 var File_bufstream_demo_v1_demo_proto protoreflect.FileDescriptor
 
 const file_bufstream_demo_v1_demo_proto_rawDesc = "" +
 	"\n" +
-	"\x1cbufstream/demo/v1/demo.proto\x12\x11bufstream.demo.v1\x1a!buf/confluent/v1/extensions.proto\x1a\x1bbuf/validate/validate.proto\"\xc5\x01\n" +
-	"\fEmailUpdated\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\x129\n" +
-	"\x11old_email_address\x18\x02 \x01(\tB\r\xbaH\a\xd8\x01\x01r\x02`\x01\x80\x01\x01R\x0foldEmailAddress\x126\n" +
-	"\x11new_email_address\x18\x03 \x01(\tB\n" +
-	"\xbaH\a\xc8\x01\x01r\x02`\x01R\x0fnewEmailAddress:(\xb2H%\n" +
-	"\x0ebufstream-demo\x12\x13email-updated-valueB\xc9\x01\n" +
+	"\x1cbufstream/demo/v1/demo.proto\x12\x11bufstream.demo.v1\"v\n" +
+	"\fEmailUpdated\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12*\n" +
+	"\x11old_email_address\x18\x02 \x01(\tR\x0foldEmailAddress\x12*\n" +
+	"\x11new_email_address\x18\x03 \x01(\tR\x0fnewEmailAddress\"\xcb\x01\n" +
+	"\aProduct\x12\x1d\n" +
+	"\n" +
+	"product_id\x18\x01 \x01(\tR\tproductId\x12\x10\n" +
+	"\x03sku\x18\x02 \x01(\tR\x03sku\x12\x12\n" +
+	"\x04name\x18\x03 \x01(\tR\x04name\x12\x14\n" +
+	"\x05price\x18\x04 \x01(\x01R\x05price\x12\x1a\n" +
+	"\bposition\x18\x05 \x01(\x05R\bposition\x12\x1a\n" +
+	"\bcategory\x18\x06 \x01(\tR\bcategory\x12\x10\n" +
+	"\x03url\x18\a \x01(\tR\x03url\x12\x1b\n" +
+	"\timage_url\x18\b \x01(\tR\bimageUrl\"2\n" +
+	"\x06Filter\x12\x12\n" +
+	"\x04type\x18\x01 \x01(\tR\x04type\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value\"0\n" +
+	"\x04Sort\x12\x12\n" +
+	"\x04type\x18\x01 \x01(\tR\x04type\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value\"8\n" +
+	"\x10ProductsSearched\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
+	"\x05query\x18\x02 \x01(\tR\x05query\"\x90\x01\n" +
+	"\x11ProductListViewed\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
+	"\alist_id\x18\x02 \x01(\tR\x06listId\x12\x1a\n" +
+	"\bcategory\x18\x03 \x01(\tR\bcategory\x126\n" +
+	"\bproducts\x18\x04 \x03(\v2\x1a.bufstream.demo.v1.ProductR\bproducts\"\xda\x01\n" +
+	"\x13ProductListFiltered\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
+	"\alist_id\x18\x02 \x01(\tR\x06listId\x123\n" +
+	"\afilters\x18\x03 \x03(\v2\x19.bufstream.demo.v1.FilterR\afilters\x12-\n" +
+	"\x05sorts\x18\x04 \x03(\v2\x17.bufstream.demo.v1.SortR\x05sorts\x126\n" +
+	"\bproducts\x18\x05 \x03(\v2\x1a.bufstream.demo.v1.ProductR\bproductsB\xc9\x01\n" +
 	"\x15com.bufstream.demo.v1B\tDemoProtoP\x01Z?github.com/bufbuild/bufstream-demo/gen/bufstream/demo/v1;demov1\xa2\x02\x03BDX\xaa\x02\x11Bufstream.Demo.V1\xca\x02\x11Bufstream\\Demo\\V1\xe2\x02\x1dBufstream\\Demo\\V1\\GPBMetadata\xea\x02\x13Bufstream::Demo::V1b\x06proto3"
 
 var (
@@ -116,16 +559,26 @@ func file_bufstream_demo_v1_demo_proto_rawDescGZIP() []byte {
 	return file_bufstream_demo_v1_demo_proto_rawDescData
 }
 
-var file_bufstream_demo_v1_demo_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
+var file_bufstream_demo_v1_demo_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_bufstream_demo_v1_demo_proto_goTypes = []any{
-	(*EmailUpdated)(nil), // 0: bufstream.demo.v1.EmailUpdated
+	(*EmailUpdated)(nil),        // 0: bufstream.demo.v1.EmailUpdated
+	(*Product)(nil),             // 1: bufstream.demo.v1.Product
+	(*Filter)(nil),              // 2: bufstream.demo.v1.Filter
+	(*Sort)(nil),                // 3: bufstream.demo.v1.Sort
+	(*ProductsSearched)(nil),    // 4: bufstream.demo.v1.ProductsSearched
+	(*ProductListViewed)(nil),   // 5: bufstream.demo.v1.ProductListViewed
+	(*ProductListFiltered)(nil), // 6: bufstream.demo.v1.ProductListFiltered
 }
 var file_bufstream_demo_v1_demo_proto_depIdxs = []int32{
-	0, // [0:0] is the sub-list for method output_type
-	0, // [0:0] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	1, // 0: bufstream.demo.v1.ProductListViewed.products:type_name -> bufstream.demo.v1.Product
+	2, // 1: bufstream.demo.v1.ProductListFiltered.filters:type_name -> bufstream.demo.v1.Filter
+	3, // 2: bufstream.demo.v1.ProductListFiltered.sorts:type_name -> bufstream.demo.v1.Sort
+	1, // 3: bufstream.demo.v1.ProductListFiltered.products:type_name -> bufstream.demo.v1.Product
+	4, // [4:4] is the sub-list for method output_type
+	4, // [4:4] is the sub-list for method input_type
+	4, // [4:4] is the sub-list for extension type_name
+	4, // [4:4] is the sub-list for extension extendee
+	0, // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_bufstream_demo_v1_demo_proto_init() }
@@ -139,7 +592,7 @@ func file_bufstream_demo_v1_demo_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_bufstream_demo_v1_demo_proto_rawDesc), len(file_bufstream_demo_v1_demo_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   1,
+			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

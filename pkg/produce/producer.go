@@ -43,7 +43,18 @@ func (p *Producer[M]) ProduceProtobufMessage(ctx context.Context, key string, me
 	if err != nil {
 		return err
 	}
-	return p.produce(ctx, key, payload)
+	// Attach content-type header to indicate Protobuf format
+	record := &kgo.Record{
+		Key:     []byte(key),
+		Value:   payload,
+		Topic:   p.topic,
+		Headers: []kgo.RecordHeader{{Key: "content-type", Value: []byte("application/x-protobuf")}},
+	}
+	results := p.client.ProduceSync(ctx, record)
+	if err := results.FirstErr(); err != nil {
+		return fmt.Errorf("failed to produce protobuf message: %w", err)
+	}
+	return nil
 }
 
 // ProduceInvalid synchronously sends data to the Producer's topic that could
