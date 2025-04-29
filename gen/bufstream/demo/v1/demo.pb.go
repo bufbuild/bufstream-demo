@@ -506,6 +506,1459 @@ func (x *ProductListFiltered) GetProducts() []*Product {
 	return nil
 }
 
+// Event when a user clicks on a product
+type ProductClicked struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The ID of the event or user
+	Id            string  `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	ProductId     string  `protobuf:"bytes,2,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
+	Sku           string  `protobuf:"bytes,3,opt,name=sku,proto3" json:"sku,omitempty"`
+	Category      string  `protobuf:"bytes,4,opt,name=category,proto3" json:"category,omitempty"`
+	Name          string  `protobuf:"bytes,5,opt,name=name,proto3" json:"name,omitempty"`
+	Brand         string  `protobuf:"bytes,6,opt,name=brand,proto3" json:"brand,omitempty"`
+	Variant       string  `protobuf:"bytes,7,opt,name=variant,proto3" json:"variant,omitempty"`
+	Price         float64 `protobuf:"fixed64,8,opt,name=price,proto3" json:"price,omitempty"`
+	Quantity      int32   `protobuf:"varint,9,opt,name=quantity,proto3" json:"quantity,omitempty"`
+	Coupon        string  `protobuf:"bytes,10,opt,name=coupon,proto3" json:"coupon,omitempty"`
+	Position      int32   `protobuf:"varint,11,opt,name=position,proto3" json:"position,omitempty"`
+	Url           string  `protobuf:"bytes,12,opt,name=url,proto3" json:"url,omitempty"`
+	ImageUrl      string  `protobuf:"bytes,13,opt,name=image_url,json=imageUrl,proto3" json:"image_url,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ProductClicked) Reset() {
+	*x = ProductClicked{}
+	mi := &file_bufstream_demo_v1_demo_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ProductClicked) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ProductClicked) ProtoMessage() {}
+
+func (x *ProductClicked) ProtoReflect() protoreflect.Message {
+	mi := &file_bufstream_demo_v1_demo_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ProductClicked.ProtoReflect.Descriptor instead.
+func (*ProductClicked) Descriptor() ([]byte, []int) {
+	return file_bufstream_demo_v1_demo_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *ProductClicked) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *ProductClicked) GetProductId() string {
+	if x != nil {
+		return x.ProductId
+	}
+	return ""
+}
+
+func (x *ProductClicked) GetSku() string {
+	if x != nil {
+		return x.Sku
+	}
+	return ""
+}
+
+func (x *ProductClicked) GetCategory() string {
+	if x != nil {
+		return x.Category
+	}
+	return ""
+}
+
+func (x *ProductClicked) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *ProductClicked) GetBrand() string {
+	if x != nil {
+		return x.Brand
+	}
+	return ""
+}
+
+func (x *ProductClicked) GetVariant() string {
+	if x != nil {
+		return x.Variant
+	}
+	return ""
+}
+
+func (x *ProductClicked) GetPrice() float64 {
+	if x != nil {
+		return x.Price
+	}
+	return 0
+}
+
+func (x *ProductClicked) GetQuantity() int32 {
+	if x != nil {
+		return x.Quantity
+	}
+	return 0
+}
+
+func (x *ProductClicked) GetCoupon() string {
+	if x != nil {
+		return x.Coupon
+	}
+	return ""
+}
+
+func (x *ProductClicked) GetPosition() int32 {
+	if x != nil {
+		return x.Position
+	}
+	return 0
+}
+
+func (x *ProductClicked) GetUrl() string {
+	if x != nil {
+		return x.Url
+	}
+	return ""
+}
+
+func (x *ProductClicked) GetImageUrl() string {
+	if x != nil {
+		return x.ImageUrl
+	}
+	return ""
+}
+
+// Event when a user views a product
+type ProductViewed struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The ID of the event or user
+	Id            string  `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	ProductId     string  `protobuf:"bytes,2,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
+	Sku           string  `protobuf:"bytes,3,opt,name=sku,proto3" json:"sku,omitempty"`
+	Category      string  `protobuf:"bytes,4,opt,name=category,proto3" json:"category,omitempty"`
+	Name          string  `protobuf:"bytes,5,opt,name=name,proto3" json:"name,omitempty"`
+	Brand         string  `protobuf:"bytes,6,opt,name=brand,proto3" json:"brand,omitempty"`
+	Variant       string  `protobuf:"bytes,7,opt,name=variant,proto3" json:"variant,omitempty"`
+	Price         float64 `protobuf:"fixed64,8,opt,name=price,proto3" json:"price,omitempty"`
+	Quantity      int32   `protobuf:"varint,9,opt,name=quantity,proto3" json:"quantity,omitempty"`
+	Coupon        string  `protobuf:"bytes,10,opt,name=coupon,proto3" json:"coupon,omitempty"`
+	Currency      string  `protobuf:"bytes,11,opt,name=currency,proto3" json:"currency,omitempty"`
+	Position      int32   `protobuf:"varint,12,opt,name=position,proto3" json:"position,omitempty"`
+	Url           string  `protobuf:"bytes,13,opt,name=url,proto3" json:"url,omitempty"`
+	ImageUrl      string  `protobuf:"bytes,14,opt,name=image_url,json=imageUrl,proto3" json:"image_url,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ProductViewed) Reset() {
+	*x = ProductViewed{}
+	mi := &file_bufstream_demo_v1_demo_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ProductViewed) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ProductViewed) ProtoMessage() {}
+
+func (x *ProductViewed) ProtoReflect() protoreflect.Message {
+	mi := &file_bufstream_demo_v1_demo_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ProductViewed.ProtoReflect.Descriptor instead.
+func (*ProductViewed) Descriptor() ([]byte, []int) {
+	return file_bufstream_demo_v1_demo_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *ProductViewed) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *ProductViewed) GetProductId() string {
+	if x != nil {
+		return x.ProductId
+	}
+	return ""
+}
+
+func (x *ProductViewed) GetSku() string {
+	if x != nil {
+		return x.Sku
+	}
+	return ""
+}
+
+func (x *ProductViewed) GetCategory() string {
+	if x != nil {
+		return x.Category
+	}
+	return ""
+}
+
+func (x *ProductViewed) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *ProductViewed) GetBrand() string {
+	if x != nil {
+		return x.Brand
+	}
+	return ""
+}
+
+func (x *ProductViewed) GetVariant() string {
+	if x != nil {
+		return x.Variant
+	}
+	return ""
+}
+
+func (x *ProductViewed) GetPrice() float64 {
+	if x != nil {
+		return x.Price
+	}
+	return 0
+}
+
+func (x *ProductViewed) GetQuantity() int32 {
+	if x != nil {
+		return x.Quantity
+	}
+	return 0
+}
+
+func (x *ProductViewed) GetCoupon() string {
+	if x != nil {
+		return x.Coupon
+	}
+	return ""
+}
+
+func (x *ProductViewed) GetCurrency() string {
+	if x != nil {
+		return x.Currency
+	}
+	return ""
+}
+
+func (x *ProductViewed) GetPosition() int32 {
+	if x != nil {
+		return x.Position
+	}
+	return 0
+}
+
+func (x *ProductViewed) GetUrl() string {
+	if x != nil {
+		return x.Url
+	}
+	return ""
+}
+
+func (x *ProductViewed) GetImageUrl() string {
+	if x != nil {
+		return x.ImageUrl
+	}
+	return ""
+}
+
+// Event when a user adds a product to the cart
+type ProductAdded struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The ID of the event or user
+	Id        string  `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	ProductId string  `protobuf:"bytes,2,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
+	Sku       string  `protobuf:"bytes,3,opt,name=sku,proto3" json:"sku,omitempty"`
+	Category  string  `protobuf:"bytes,4,opt,name=category,proto3" json:"category,omitempty"`
+	Name      string  `protobuf:"bytes,5,opt,name=name,proto3" json:"name,omitempty"`
+	Brand     string  `protobuf:"bytes,6,opt,name=brand,proto3" json:"brand,omitempty"`
+	Variant   string  `protobuf:"bytes,7,opt,name=variant,proto3" json:"variant,omitempty"`
+	Price     float64 `protobuf:"fixed64,8,opt,name=price,proto3" json:"price,omitempty"`
+	Quantity  int32   `protobuf:"varint,9,opt,name=quantity,proto3" json:"quantity,omitempty"`
+	Coupon    string  `protobuf:"bytes,10,opt,name=coupon,proto3" json:"coupon,omitempty"`
+	Currency  string  `protobuf:"bytes,11,opt,name=currency,proto3" json:"currency,omitempty"`
+	Position  int32   `protobuf:"varint,12,opt,name=position,proto3" json:"position,omitempty"`
+	Url       string  `protobuf:"bytes,13,opt,name=url,proto3" json:"url,omitempty"`
+	ImageUrl  string  `protobuf:"bytes,14,opt,name=image_url,json=imageUrl,proto3" json:"image_url,omitempty"`
+	// Cart ID associated with the product addition
+	CartId        string `protobuf:"bytes,15,opt,name=cart_id,json=cartId,proto3" json:"cart_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ProductAdded) Reset() {
+	*x = ProductAdded{}
+	mi := &file_bufstream_demo_v1_demo_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ProductAdded) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ProductAdded) ProtoMessage() {}
+
+func (x *ProductAdded) ProtoReflect() protoreflect.Message {
+	mi := &file_bufstream_demo_v1_demo_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ProductAdded.ProtoReflect.Descriptor instead.
+func (*ProductAdded) Descriptor() ([]byte, []int) {
+	return file_bufstream_demo_v1_demo_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *ProductAdded) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *ProductAdded) GetProductId() string {
+	if x != nil {
+		return x.ProductId
+	}
+	return ""
+}
+
+func (x *ProductAdded) GetSku() string {
+	if x != nil {
+		return x.Sku
+	}
+	return ""
+}
+
+func (x *ProductAdded) GetCategory() string {
+	if x != nil {
+		return x.Category
+	}
+	return ""
+}
+
+func (x *ProductAdded) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *ProductAdded) GetBrand() string {
+	if x != nil {
+		return x.Brand
+	}
+	return ""
+}
+
+func (x *ProductAdded) GetVariant() string {
+	if x != nil {
+		return x.Variant
+	}
+	return ""
+}
+
+func (x *ProductAdded) GetPrice() float64 {
+	if x != nil {
+		return x.Price
+	}
+	return 0
+}
+
+func (x *ProductAdded) GetQuantity() int32 {
+	if x != nil {
+		return x.Quantity
+	}
+	return 0
+}
+
+func (x *ProductAdded) GetCoupon() string {
+	if x != nil {
+		return x.Coupon
+	}
+	return ""
+}
+
+func (x *ProductAdded) GetCurrency() string {
+	if x != nil {
+		return x.Currency
+	}
+	return ""
+}
+
+func (x *ProductAdded) GetPosition() int32 {
+	if x != nil {
+		return x.Position
+	}
+	return 0
+}
+
+func (x *ProductAdded) GetUrl() string {
+	if x != nil {
+		return x.Url
+	}
+	return ""
+}
+
+func (x *ProductAdded) GetImageUrl() string {
+	if x != nil {
+		return x.ImageUrl
+	}
+	return ""
+}
+
+func (x *ProductAdded) GetCartId() string {
+	if x != nil {
+		return x.CartId
+	}
+	return ""
+}
+
+// Event when a user removes a product from the cart
+type ProductRemoved struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	CartId        string                 `protobuf:"bytes,1,opt,name=cart_id,json=cartId,proto3" json:"cart_id,omitempty"`
+	ProductId     string                 `protobuf:"bytes,2,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
+	Sku           string                 `protobuf:"bytes,3,opt,name=sku,proto3" json:"sku,omitempty"`
+	Category      string                 `protobuf:"bytes,4,opt,name=category,proto3" json:"category,omitempty"`
+	Name          string                 `protobuf:"bytes,5,opt,name=name,proto3" json:"name,omitempty"`
+	Brand         string                 `protobuf:"bytes,6,opt,name=brand,proto3" json:"brand,omitempty"`
+	Variant       string                 `protobuf:"bytes,7,opt,name=variant,proto3" json:"variant,omitempty"`
+	Price         float64                `protobuf:"fixed64,8,opt,name=price,proto3" json:"price,omitempty"`
+	Quantity      int32                  `protobuf:"varint,9,opt,name=quantity,proto3" json:"quantity,omitempty"`
+	Coupon        string                 `protobuf:"bytes,10,opt,name=coupon,proto3" json:"coupon,omitempty"`
+	Position      int32                  `protobuf:"varint,11,opt,name=position,proto3" json:"position,omitempty"`
+	Url           string                 `protobuf:"bytes,12,opt,name=url,proto3" json:"url,omitempty"`
+	ImageUrl      string                 `protobuf:"bytes,13,opt,name=image_url,json=imageUrl,proto3" json:"image_url,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ProductRemoved) Reset() {
+	*x = ProductRemoved{}
+	mi := &file_bufstream_demo_v1_demo_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ProductRemoved) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ProductRemoved) ProtoMessage() {}
+
+func (x *ProductRemoved) ProtoReflect() protoreflect.Message {
+	mi := &file_bufstream_demo_v1_demo_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ProductRemoved.ProtoReflect.Descriptor instead.
+func (*ProductRemoved) Descriptor() ([]byte, []int) {
+	return file_bufstream_demo_v1_demo_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *ProductRemoved) GetCartId() string {
+	if x != nil {
+		return x.CartId
+	}
+	return ""
+}
+
+func (x *ProductRemoved) GetProductId() string {
+	if x != nil {
+		return x.ProductId
+	}
+	return ""
+}
+
+func (x *ProductRemoved) GetSku() string {
+	if x != nil {
+		return x.Sku
+	}
+	return ""
+}
+
+func (x *ProductRemoved) GetCategory() string {
+	if x != nil {
+		return x.Category
+	}
+	return ""
+}
+
+func (x *ProductRemoved) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *ProductRemoved) GetBrand() string {
+	if x != nil {
+		return x.Brand
+	}
+	return ""
+}
+
+func (x *ProductRemoved) GetVariant() string {
+	if x != nil {
+		return x.Variant
+	}
+	return ""
+}
+
+func (x *ProductRemoved) GetPrice() float64 {
+	if x != nil {
+		return x.Price
+	}
+	return 0
+}
+
+func (x *ProductRemoved) GetQuantity() int32 {
+	if x != nil {
+		return x.Quantity
+	}
+	return 0
+}
+
+func (x *ProductRemoved) GetCoupon() string {
+	if x != nil {
+		return x.Coupon
+	}
+	return ""
+}
+
+func (x *ProductRemoved) GetPosition() int32 {
+	if x != nil {
+		return x.Position
+	}
+	return 0
+}
+
+func (x *ProductRemoved) GetUrl() string {
+	if x != nil {
+		return x.Url
+	}
+	return ""
+}
+
+func (x *ProductRemoved) GetImageUrl() string {
+	if x != nil {
+		return x.ImageUrl
+	}
+	return ""
+}
+
+// Event when a user views their cart
+type CartViewed struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	CartId        string                 `protobuf:"bytes,1,opt,name=cart_id,json=cartId,proto3" json:"cart_id,omitempty"`
+	Products      []*Product             `protobuf:"bytes,2,rep,name=products,proto3" json:"products,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CartViewed) Reset() {
+	*x = CartViewed{}
+	mi := &file_bufstream_demo_v1_demo_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CartViewed) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CartViewed) ProtoMessage() {}
+
+func (x *CartViewed) ProtoReflect() protoreflect.Message {
+	mi := &file_bufstream_demo_v1_demo_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CartViewed.ProtoReflect.Descriptor instead.
+func (*CartViewed) Descriptor() ([]byte, []int) {
+	return file_bufstream_demo_v1_demo_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *CartViewed) GetCartId() string {
+	if x != nil {
+		return x.CartId
+	}
+	return ""
+}
+
+func (x *CartViewed) GetProducts() []*Product {
+	if x != nil {
+		return x.Products
+	}
+	return nil
+}
+
+// Event when a user starts the checkout process
+type CheckoutStarted struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	OrderId       string                 `protobuf:"bytes,1,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
+	Affiliation   string                 `protobuf:"bytes,2,opt,name=affiliation,proto3" json:"affiliation,omitempty"`
+	Value         float64                `protobuf:"fixed64,3,opt,name=value,proto3" json:"value,omitempty"`
+	Revenue       float64                `protobuf:"fixed64,4,opt,name=revenue,proto3" json:"revenue,omitempty"`
+	Shipping      float64                `protobuf:"fixed64,5,opt,name=shipping,proto3" json:"shipping,omitempty"`
+	Tax           float64                `protobuf:"fixed64,6,opt,name=tax,proto3" json:"tax,omitempty"`
+	Discount      float64                `protobuf:"fixed64,7,opt,name=discount,proto3" json:"discount,omitempty"`
+	Coupon        string                 `protobuf:"bytes,8,opt,name=coupon,proto3" json:"coupon,omitempty"`
+	Currency      string                 `protobuf:"bytes,9,opt,name=currency,proto3" json:"currency,omitempty"`
+	Products      []*Product             `protobuf:"bytes,10,rep,name=products,proto3" json:"products,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CheckoutStarted) Reset() {
+	*x = CheckoutStarted{}
+	mi := &file_bufstream_demo_v1_demo_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CheckoutStarted) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CheckoutStarted) ProtoMessage() {}
+
+func (x *CheckoutStarted) ProtoReflect() protoreflect.Message {
+	mi := &file_bufstream_demo_v1_demo_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CheckoutStarted.ProtoReflect.Descriptor instead.
+func (*CheckoutStarted) Descriptor() ([]byte, []int) {
+	return file_bufstream_demo_v1_demo_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *CheckoutStarted) GetOrderId() string {
+	if x != nil {
+		return x.OrderId
+	}
+	return ""
+}
+
+func (x *CheckoutStarted) GetAffiliation() string {
+	if x != nil {
+		return x.Affiliation
+	}
+	return ""
+}
+
+func (x *CheckoutStarted) GetValue() float64 {
+	if x != nil {
+		return x.Value
+	}
+	return 0
+}
+
+func (x *CheckoutStarted) GetRevenue() float64 {
+	if x != nil {
+		return x.Revenue
+	}
+	return 0
+}
+
+func (x *CheckoutStarted) GetShipping() float64 {
+	if x != nil {
+		return x.Shipping
+	}
+	return 0
+}
+
+func (x *CheckoutStarted) GetTax() float64 {
+	if x != nil {
+		return x.Tax
+	}
+	return 0
+}
+
+func (x *CheckoutStarted) GetDiscount() float64 {
+	if x != nil {
+		return x.Discount
+	}
+	return 0
+}
+
+func (x *CheckoutStarted) GetCoupon() string {
+	if x != nil {
+		return x.Coupon
+	}
+	return ""
+}
+
+func (x *CheckoutStarted) GetCurrency() string {
+	if x != nil {
+		return x.Currency
+	}
+	return ""
+}
+
+func (x *CheckoutStarted) GetProducts() []*Product {
+	if x != nil {
+		return x.Products
+	}
+	return nil
+}
+
+// Event when a user views a checkout step
+type CheckoutStepViewed struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	CheckoutId     string                 `protobuf:"bytes,1,opt,name=checkout_id,json=checkoutId,proto3" json:"checkout_id,omitempty"`
+	Step           int32                  `protobuf:"varint,2,opt,name=step,proto3" json:"step,omitempty"`
+	ShippingMethod string                 `protobuf:"bytes,3,opt,name=shipping_method,json=shippingMethod,proto3" json:"shipping_method,omitempty"`
+	PaymentMethod  string                 `protobuf:"bytes,4,opt,name=payment_method,json=paymentMethod,proto3" json:"payment_method,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *CheckoutStepViewed) Reset() {
+	*x = CheckoutStepViewed{}
+	mi := &file_bufstream_demo_v1_demo_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CheckoutStepViewed) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CheckoutStepViewed) ProtoMessage() {}
+
+func (x *CheckoutStepViewed) ProtoReflect() protoreflect.Message {
+	mi := &file_bufstream_demo_v1_demo_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CheckoutStepViewed.ProtoReflect.Descriptor instead.
+func (*CheckoutStepViewed) Descriptor() ([]byte, []int) {
+	return file_bufstream_demo_v1_demo_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *CheckoutStepViewed) GetCheckoutId() string {
+	if x != nil {
+		return x.CheckoutId
+	}
+	return ""
+}
+
+func (x *CheckoutStepViewed) GetStep() int32 {
+	if x != nil {
+		return x.Step
+	}
+	return 0
+}
+
+func (x *CheckoutStepViewed) GetShippingMethod() string {
+	if x != nil {
+		return x.ShippingMethod
+	}
+	return ""
+}
+
+func (x *CheckoutStepViewed) GetPaymentMethod() string {
+	if x != nil {
+		return x.PaymentMethod
+	}
+	return ""
+}
+
+// Event when a user completes a checkout step
+type CheckoutStepCompleted struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	CheckoutId     string                 `protobuf:"bytes,1,opt,name=checkout_id,json=checkoutId,proto3" json:"checkout_id,omitempty"`
+	Step           int32                  `protobuf:"varint,2,opt,name=step,proto3" json:"step,omitempty"`
+	ShippingMethod string                 `protobuf:"bytes,3,opt,name=shipping_method,json=shippingMethod,proto3" json:"shipping_method,omitempty"`
+	PaymentMethod  string                 `protobuf:"bytes,4,opt,name=payment_method,json=paymentMethod,proto3" json:"payment_method,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *CheckoutStepCompleted) Reset() {
+	*x = CheckoutStepCompleted{}
+	mi := &file_bufstream_demo_v1_demo_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CheckoutStepCompleted) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CheckoutStepCompleted) ProtoMessage() {}
+
+func (x *CheckoutStepCompleted) ProtoReflect() protoreflect.Message {
+	mi := &file_bufstream_demo_v1_demo_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CheckoutStepCompleted.ProtoReflect.Descriptor instead.
+func (*CheckoutStepCompleted) Descriptor() ([]byte, []int) {
+	return file_bufstream_demo_v1_demo_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *CheckoutStepCompleted) GetCheckoutId() string {
+	if x != nil {
+		return x.CheckoutId
+	}
+	return ""
+}
+
+func (x *CheckoutStepCompleted) GetStep() int32 {
+	if x != nil {
+		return x.Step
+	}
+	return 0
+}
+
+func (x *CheckoutStepCompleted) GetShippingMethod() string {
+	if x != nil {
+		return x.ShippingMethod
+	}
+	return ""
+}
+
+func (x *CheckoutStepCompleted) GetPaymentMethod() string {
+	if x != nil {
+		return x.PaymentMethod
+	}
+	return ""
+}
+
+// Event when payment info is entered
+type PaymentInfoEntered struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	CheckoutId    string                 `protobuf:"bytes,1,opt,name=checkout_id,json=checkoutId,proto3" json:"checkout_id,omitempty"`
+	OrderId       string                 `protobuf:"bytes,2,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
+	Total         float64                `protobuf:"fixed64,3,opt,name=total,proto3" json:"total,omitempty"`
+	Revenue       float64                `protobuf:"fixed64,4,opt,name=revenue,proto3" json:"revenue,omitempty"`
+	Shipping      float64                `protobuf:"fixed64,5,opt,name=shipping,proto3" json:"shipping,omitempty"`
+	Tax           float64                `protobuf:"fixed64,6,opt,name=tax,proto3" json:"tax,omitempty"`
+	Discount      float64                `protobuf:"fixed64,7,opt,name=discount,proto3" json:"discount,omitempty"`
+	Coupon        string                 `protobuf:"bytes,8,opt,name=coupon,proto3" json:"coupon,omitempty"`
+	Currency      string                 `protobuf:"bytes,9,opt,name=currency,proto3" json:"currency,omitempty"`
+	Products      []*Product             `protobuf:"bytes,10,rep,name=products,proto3" json:"products,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PaymentInfoEntered) Reset() {
+	*x = PaymentInfoEntered{}
+	mi := &file_bufstream_demo_v1_demo_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PaymentInfoEntered) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PaymentInfoEntered) ProtoMessage() {}
+
+func (x *PaymentInfoEntered) ProtoReflect() protoreflect.Message {
+	mi := &file_bufstream_demo_v1_demo_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PaymentInfoEntered.ProtoReflect.Descriptor instead.
+func (*PaymentInfoEntered) Descriptor() ([]byte, []int) {
+	return file_bufstream_demo_v1_demo_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *PaymentInfoEntered) GetCheckoutId() string {
+	if x != nil {
+		return x.CheckoutId
+	}
+	return ""
+}
+
+func (x *PaymentInfoEntered) GetOrderId() string {
+	if x != nil {
+		return x.OrderId
+	}
+	return ""
+}
+
+func (x *PaymentInfoEntered) GetTotal() float64 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
+func (x *PaymentInfoEntered) GetRevenue() float64 {
+	if x != nil {
+		return x.Revenue
+	}
+	return 0
+}
+
+func (x *PaymentInfoEntered) GetShipping() float64 {
+	if x != nil {
+		return x.Shipping
+	}
+	return 0
+}
+
+func (x *PaymentInfoEntered) GetTax() float64 {
+	if x != nil {
+		return x.Tax
+	}
+	return 0
+}
+
+func (x *PaymentInfoEntered) GetDiscount() float64 {
+	if x != nil {
+		return x.Discount
+	}
+	return 0
+}
+
+func (x *PaymentInfoEntered) GetCoupon() string {
+	if x != nil {
+		return x.Coupon
+	}
+	return ""
+}
+
+func (x *PaymentInfoEntered) GetCurrency() string {
+	if x != nil {
+		return x.Currency
+	}
+	return ""
+}
+
+func (x *PaymentInfoEntered) GetProducts() []*Product {
+	if x != nil {
+		return x.Products
+	}
+	return nil
+}
+
+// Event when an order is updated
+type OrderUpdated struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	OrderId       string                 `protobuf:"bytes,1,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
+	Affiliation   string                 `protobuf:"bytes,2,opt,name=affiliation,proto3" json:"affiliation,omitempty"`
+	Total         float64                `protobuf:"fixed64,3,opt,name=total,proto3" json:"total,omitempty"`
+	Revenue       float64                `protobuf:"fixed64,4,opt,name=revenue,proto3" json:"revenue,omitempty"`
+	Shipping      float64                `protobuf:"fixed64,5,opt,name=shipping,proto3" json:"shipping,omitempty"`
+	Tax           float64                `protobuf:"fixed64,6,opt,name=tax,proto3" json:"tax,omitempty"`
+	Discount      float64                `protobuf:"fixed64,7,opt,name=discount,proto3" json:"discount,omitempty"`
+	Coupon        string                 `protobuf:"bytes,8,opt,name=coupon,proto3" json:"coupon,omitempty"`
+	Currency      string                 `protobuf:"bytes,9,opt,name=currency,proto3" json:"currency,omitempty"`
+	Products      []*Product             `protobuf:"bytes,10,rep,name=products,proto3" json:"products,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *OrderUpdated) Reset() {
+	*x = OrderUpdated{}
+	mi := &file_bufstream_demo_v1_demo_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *OrderUpdated) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OrderUpdated) ProtoMessage() {}
+
+func (x *OrderUpdated) ProtoReflect() protoreflect.Message {
+	mi := &file_bufstream_demo_v1_demo_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OrderUpdated.ProtoReflect.Descriptor instead.
+func (*OrderUpdated) Descriptor() ([]byte, []int) {
+	return file_bufstream_demo_v1_demo_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *OrderUpdated) GetOrderId() string {
+	if x != nil {
+		return x.OrderId
+	}
+	return ""
+}
+
+func (x *OrderUpdated) GetAffiliation() string {
+	if x != nil {
+		return x.Affiliation
+	}
+	return ""
+}
+
+func (x *OrderUpdated) GetTotal() float64 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
+func (x *OrderUpdated) GetRevenue() float64 {
+	if x != nil {
+		return x.Revenue
+	}
+	return 0
+}
+
+func (x *OrderUpdated) GetShipping() float64 {
+	if x != nil {
+		return x.Shipping
+	}
+	return 0
+}
+
+func (x *OrderUpdated) GetTax() float64 {
+	if x != nil {
+		return x.Tax
+	}
+	return 0
+}
+
+func (x *OrderUpdated) GetDiscount() float64 {
+	if x != nil {
+		return x.Discount
+	}
+	return 0
+}
+
+func (x *OrderUpdated) GetCoupon() string {
+	if x != nil {
+		return x.Coupon
+	}
+	return ""
+}
+
+func (x *OrderUpdated) GetCurrency() string {
+	if x != nil {
+		return x.Currency
+	}
+	return ""
+}
+
+func (x *OrderUpdated) GetProducts() []*Product {
+	if x != nil {
+		return x.Products
+	}
+	return nil
+}
+
+// Event when an order is completed
+type OrderCompleted struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	CheckoutId    string                 `protobuf:"bytes,1,opt,name=checkout_id,json=checkoutId,proto3" json:"checkout_id,omitempty"`
+	OrderId       string                 `protobuf:"bytes,2,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
+	Affiliation   string                 `protobuf:"bytes,3,opt,name=affiliation,proto3" json:"affiliation,omitempty"`
+	Total         float64                `protobuf:"fixed64,4,opt,name=total,proto3" json:"total,omitempty"`
+	Subtotal      float64                `protobuf:"fixed64,5,opt,name=subtotal,proto3" json:"subtotal,omitempty"`
+	Revenue       float64                `protobuf:"fixed64,6,opt,name=revenue,proto3" json:"revenue,omitempty"`
+	Shipping      float64                `protobuf:"fixed64,7,opt,name=shipping,proto3" json:"shipping,omitempty"`
+	Tax           float64                `protobuf:"fixed64,8,opt,name=tax,proto3" json:"tax,omitempty"`
+	Discount      float64                `protobuf:"fixed64,9,opt,name=discount,proto3" json:"discount,omitempty"`
+	Coupon        string                 `protobuf:"bytes,10,opt,name=coupon,proto3" json:"coupon,omitempty"`
+	Currency      string                 `protobuf:"bytes,11,opt,name=currency,proto3" json:"currency,omitempty"`
+	Products      []*Product             `protobuf:"bytes,12,rep,name=products,proto3" json:"products,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *OrderCompleted) Reset() {
+	*x = OrderCompleted{}
+	mi := &file_bufstream_demo_v1_demo_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *OrderCompleted) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OrderCompleted) ProtoMessage() {}
+
+func (x *OrderCompleted) ProtoReflect() protoreflect.Message {
+	mi := &file_bufstream_demo_v1_demo_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OrderCompleted.ProtoReflect.Descriptor instead.
+func (*OrderCompleted) Descriptor() ([]byte, []int) {
+	return file_bufstream_demo_v1_demo_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *OrderCompleted) GetCheckoutId() string {
+	if x != nil {
+		return x.CheckoutId
+	}
+	return ""
+}
+
+func (x *OrderCompleted) GetOrderId() string {
+	if x != nil {
+		return x.OrderId
+	}
+	return ""
+}
+
+func (x *OrderCompleted) GetAffiliation() string {
+	if x != nil {
+		return x.Affiliation
+	}
+	return ""
+}
+
+func (x *OrderCompleted) GetTotal() float64 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
+func (x *OrderCompleted) GetSubtotal() float64 {
+	if x != nil {
+		return x.Subtotal
+	}
+	return 0
+}
+
+func (x *OrderCompleted) GetRevenue() float64 {
+	if x != nil {
+		return x.Revenue
+	}
+	return 0
+}
+
+func (x *OrderCompleted) GetShipping() float64 {
+	if x != nil {
+		return x.Shipping
+	}
+	return 0
+}
+
+func (x *OrderCompleted) GetTax() float64 {
+	if x != nil {
+		return x.Tax
+	}
+	return 0
+}
+
+func (x *OrderCompleted) GetDiscount() float64 {
+	if x != nil {
+		return x.Discount
+	}
+	return 0
+}
+
+func (x *OrderCompleted) GetCoupon() string {
+	if x != nil {
+		return x.Coupon
+	}
+	return ""
+}
+
+func (x *OrderCompleted) GetCurrency() string {
+	if x != nil {
+		return x.Currency
+	}
+	return ""
+}
+
+func (x *OrderCompleted) GetProducts() []*Product {
+	if x != nil {
+		return x.Products
+	}
+	return nil
+}
+
+// Event when an order is refunded
+type OrderRefunded struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	OrderId       string                 `protobuf:"bytes,1,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
+	Total         float64                `protobuf:"fixed64,2,opt,name=total,proto3" json:"total,omitempty"`
+	Currency      string                 `protobuf:"bytes,3,opt,name=currency,proto3" json:"currency,omitempty"`
+	Products      []*Product             `protobuf:"bytes,4,rep,name=products,proto3" json:"products,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *OrderRefunded) Reset() {
+	*x = OrderRefunded{}
+	mi := &file_bufstream_demo_v1_demo_proto_msgTypes[18]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *OrderRefunded) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OrderRefunded) ProtoMessage() {}
+
+func (x *OrderRefunded) ProtoReflect() protoreflect.Message {
+	mi := &file_bufstream_demo_v1_demo_proto_msgTypes[18]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OrderRefunded.ProtoReflect.Descriptor instead.
+func (*OrderRefunded) Descriptor() ([]byte, []int) {
+	return file_bufstream_demo_v1_demo_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *OrderRefunded) GetOrderId() string {
+	if x != nil {
+		return x.OrderId
+	}
+	return ""
+}
+
+func (x *OrderRefunded) GetTotal() float64 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
+func (x *OrderRefunded) GetCurrency() string {
+	if x != nil {
+		return x.Currency
+	}
+	return ""
+}
+
+func (x *OrderRefunded) GetProducts() []*Product {
+	if x != nil {
+		return x.Products
+	}
+	return nil
+}
+
+// Event when an order is cancelled
+type OrderCancelled struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	OrderId       string                 `protobuf:"bytes,1,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
+	Affiliation   string                 `protobuf:"bytes,2,opt,name=affiliation,proto3" json:"affiliation,omitempty"`
+	Total         float64                `protobuf:"fixed64,3,opt,name=total,proto3" json:"total,omitempty"`
+	Revenue       float64                `protobuf:"fixed64,4,opt,name=revenue,proto3" json:"revenue,omitempty"`
+	Shipping      float64                `protobuf:"fixed64,5,opt,name=shipping,proto3" json:"shipping,omitempty"`
+	Tax           float64                `protobuf:"fixed64,6,opt,name=tax,proto3" json:"tax,omitempty"`
+	Discount      float64                `protobuf:"fixed64,7,opt,name=discount,proto3" json:"discount,omitempty"`
+	Coupon        string                 `protobuf:"bytes,8,opt,name=coupon,proto3" json:"coupon,omitempty"`
+	Currency      string                 `protobuf:"bytes,9,opt,name=currency,proto3" json:"currency,omitempty"`
+	Products      []*Product             `protobuf:"bytes,10,rep,name=products,proto3" json:"products,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *OrderCancelled) Reset() {
+	*x = OrderCancelled{}
+	mi := &file_bufstream_demo_v1_demo_proto_msgTypes[19]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *OrderCancelled) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OrderCancelled) ProtoMessage() {}
+
+func (x *OrderCancelled) ProtoReflect() protoreflect.Message {
+	mi := &file_bufstream_demo_v1_demo_proto_msgTypes[19]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OrderCancelled.ProtoReflect.Descriptor instead.
+func (*OrderCancelled) Descriptor() ([]byte, []int) {
+	return file_bufstream_demo_v1_demo_proto_rawDescGZIP(), []int{19}
+}
+
+func (x *OrderCancelled) GetOrderId() string {
+	if x != nil {
+		return x.OrderId
+	}
+	return ""
+}
+
+func (x *OrderCancelled) GetAffiliation() string {
+	if x != nil {
+		return x.Affiliation
+	}
+	return ""
+}
+
+func (x *OrderCancelled) GetTotal() float64 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
+func (x *OrderCancelled) GetRevenue() float64 {
+	if x != nil {
+		return x.Revenue
+	}
+	return 0
+}
+
+func (x *OrderCancelled) GetShipping() float64 {
+	if x != nil {
+		return x.Shipping
+	}
+	return 0
+}
+
+func (x *OrderCancelled) GetTax() float64 {
+	if x != nil {
+		return x.Tax
+	}
+	return 0
+}
+
+func (x *OrderCancelled) GetDiscount() float64 {
+	if x != nil {
+		return x.Discount
+	}
+	return 0
+}
+
+func (x *OrderCancelled) GetCoupon() string {
+	if x != nil {
+		return x.Coupon
+	}
+	return ""
+}
+
+func (x *OrderCancelled) GetCurrency() string {
+	if x != nil {
+		return x.Currency
+	}
+	return ""
+}
+
+func (x *OrderCancelled) GetProducts() []*Product {
+	if x != nil {
+		return x.Products
+	}
+	return nil
+}
+
 var File_bufstream_demo_v1_demo_proto protoreflect.FileDescriptor
 
 const file_bufstream_demo_v1_demo_proto_rawDesc = "" +
@@ -544,7 +1997,159 @@ const file_bufstream_demo_v1_demo_proto_rawDesc = "" +
 	"\alist_id\x18\x02 \x01(\tR\x06listId\x123\n" +
 	"\afilters\x18\x03 \x03(\v2\x19.bufstream.demo.v1.FilterR\afilters\x12-\n" +
 	"\x05sorts\x18\x04 \x03(\v2\x17.bufstream.demo.v1.SortR\x05sorts\x126\n" +
-	"\bproducts\x18\x05 \x03(\v2\x1a.bufstream.demo.v1.ProductR\bproductsB\xc9\x01\n" +
+	"\bproducts\x18\x05 \x03(\v2\x1a.bufstream.demo.v1.ProductR\bproducts\"\xc6\x02\n" +
+	"\x0eProductClicked\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1d\n" +
+	"\n" +
+	"product_id\x18\x02 \x01(\tR\tproductId\x12\x10\n" +
+	"\x03sku\x18\x03 \x01(\tR\x03sku\x12\x1a\n" +
+	"\bcategory\x18\x04 \x01(\tR\bcategory\x12\x12\n" +
+	"\x04name\x18\x05 \x01(\tR\x04name\x12\x14\n" +
+	"\x05brand\x18\x06 \x01(\tR\x05brand\x12\x18\n" +
+	"\avariant\x18\a \x01(\tR\avariant\x12\x14\n" +
+	"\x05price\x18\b \x01(\x01R\x05price\x12\x1a\n" +
+	"\bquantity\x18\t \x01(\x05R\bquantity\x12\x16\n" +
+	"\x06coupon\x18\n" +
+	" \x01(\tR\x06coupon\x12\x1a\n" +
+	"\bposition\x18\v \x01(\x05R\bposition\x12\x10\n" +
+	"\x03url\x18\f \x01(\tR\x03url\x12\x1b\n" +
+	"\timage_url\x18\r \x01(\tR\bimageUrl\"\xe1\x02\n" +
+	"\rProductViewed\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1d\n" +
+	"\n" +
+	"product_id\x18\x02 \x01(\tR\tproductId\x12\x10\n" +
+	"\x03sku\x18\x03 \x01(\tR\x03sku\x12\x1a\n" +
+	"\bcategory\x18\x04 \x01(\tR\bcategory\x12\x12\n" +
+	"\x04name\x18\x05 \x01(\tR\x04name\x12\x14\n" +
+	"\x05brand\x18\x06 \x01(\tR\x05brand\x12\x18\n" +
+	"\avariant\x18\a \x01(\tR\avariant\x12\x14\n" +
+	"\x05price\x18\b \x01(\x01R\x05price\x12\x1a\n" +
+	"\bquantity\x18\t \x01(\x05R\bquantity\x12\x16\n" +
+	"\x06coupon\x18\n" +
+	" \x01(\tR\x06coupon\x12\x1a\n" +
+	"\bcurrency\x18\v \x01(\tR\bcurrency\x12\x1a\n" +
+	"\bposition\x18\f \x01(\x05R\bposition\x12\x10\n" +
+	"\x03url\x18\r \x01(\tR\x03url\x12\x1b\n" +
+	"\timage_url\x18\x0e \x01(\tR\bimageUrl\"\xf9\x02\n" +
+	"\fProductAdded\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1d\n" +
+	"\n" +
+	"product_id\x18\x02 \x01(\tR\tproductId\x12\x10\n" +
+	"\x03sku\x18\x03 \x01(\tR\x03sku\x12\x1a\n" +
+	"\bcategory\x18\x04 \x01(\tR\bcategory\x12\x12\n" +
+	"\x04name\x18\x05 \x01(\tR\x04name\x12\x14\n" +
+	"\x05brand\x18\x06 \x01(\tR\x05brand\x12\x18\n" +
+	"\avariant\x18\a \x01(\tR\avariant\x12\x14\n" +
+	"\x05price\x18\b \x01(\x01R\x05price\x12\x1a\n" +
+	"\bquantity\x18\t \x01(\x05R\bquantity\x12\x16\n" +
+	"\x06coupon\x18\n" +
+	" \x01(\tR\x06coupon\x12\x1a\n" +
+	"\bcurrency\x18\v \x01(\tR\bcurrency\x12\x1a\n" +
+	"\bposition\x18\f \x01(\x05R\bposition\x12\x10\n" +
+	"\x03url\x18\r \x01(\tR\x03url\x12\x1b\n" +
+	"\timage_url\x18\x0e \x01(\tR\bimageUrl\x12\x17\n" +
+	"\acart_id\x18\x0f \x01(\tR\x06cartId\"\xcf\x02\n" +
+	"\x0eProductRemoved\x12\x17\n" +
+	"\acart_id\x18\x01 \x01(\tR\x06cartId\x12\x1d\n" +
+	"\n" +
+	"product_id\x18\x02 \x01(\tR\tproductId\x12\x10\n" +
+	"\x03sku\x18\x03 \x01(\tR\x03sku\x12\x1a\n" +
+	"\bcategory\x18\x04 \x01(\tR\bcategory\x12\x12\n" +
+	"\x04name\x18\x05 \x01(\tR\x04name\x12\x14\n" +
+	"\x05brand\x18\x06 \x01(\tR\x05brand\x12\x18\n" +
+	"\avariant\x18\a \x01(\tR\avariant\x12\x14\n" +
+	"\x05price\x18\b \x01(\x01R\x05price\x12\x1a\n" +
+	"\bquantity\x18\t \x01(\x05R\bquantity\x12\x16\n" +
+	"\x06coupon\x18\n" +
+	" \x01(\tR\x06coupon\x12\x1a\n" +
+	"\bposition\x18\v \x01(\x05R\bposition\x12\x10\n" +
+	"\x03url\x18\f \x01(\tR\x03url\x12\x1b\n" +
+	"\timage_url\x18\r \x01(\tR\bimageUrl\"]\n" +
+	"\n" +
+	"CartViewed\x12\x17\n" +
+	"\acart_id\x18\x01 \x01(\tR\x06cartId\x126\n" +
+	"\bproducts\x18\x02 \x03(\v2\x1a.bufstream.demo.v1.ProductR\bproducts\"\xb4\x02\n" +
+	"\x0fCheckoutStarted\x12\x19\n" +
+	"\border_id\x18\x01 \x01(\tR\aorderId\x12 \n" +
+	"\vaffiliation\x18\x02 \x01(\tR\vaffiliation\x12\x14\n" +
+	"\x05value\x18\x03 \x01(\x01R\x05value\x12\x18\n" +
+	"\arevenue\x18\x04 \x01(\x01R\arevenue\x12\x1a\n" +
+	"\bshipping\x18\x05 \x01(\x01R\bshipping\x12\x10\n" +
+	"\x03tax\x18\x06 \x01(\x01R\x03tax\x12\x1a\n" +
+	"\bdiscount\x18\a \x01(\x01R\bdiscount\x12\x16\n" +
+	"\x06coupon\x18\b \x01(\tR\x06coupon\x12\x1a\n" +
+	"\bcurrency\x18\t \x01(\tR\bcurrency\x126\n" +
+	"\bproducts\x18\n" +
+	" \x03(\v2\x1a.bufstream.demo.v1.ProductR\bproducts\"\x99\x01\n" +
+	"\x12CheckoutStepViewed\x12\x1f\n" +
+	"\vcheckout_id\x18\x01 \x01(\tR\n" +
+	"checkoutId\x12\x12\n" +
+	"\x04step\x18\x02 \x01(\x05R\x04step\x12'\n" +
+	"\x0fshipping_method\x18\x03 \x01(\tR\x0eshippingMethod\x12%\n" +
+	"\x0epayment_method\x18\x04 \x01(\tR\rpaymentMethod\"\x9c\x01\n" +
+	"\x15CheckoutStepCompleted\x12\x1f\n" +
+	"\vcheckout_id\x18\x01 \x01(\tR\n" +
+	"checkoutId\x12\x12\n" +
+	"\x04step\x18\x02 \x01(\x05R\x04step\x12'\n" +
+	"\x0fshipping_method\x18\x03 \x01(\tR\x0eshippingMethod\x12%\n" +
+	"\x0epayment_method\x18\x04 \x01(\tR\rpaymentMethod\"\xb6\x02\n" +
+	"\x12PaymentInfoEntered\x12\x1f\n" +
+	"\vcheckout_id\x18\x01 \x01(\tR\n" +
+	"checkoutId\x12\x19\n" +
+	"\border_id\x18\x02 \x01(\tR\aorderId\x12\x14\n" +
+	"\x05total\x18\x03 \x01(\x01R\x05total\x12\x18\n" +
+	"\arevenue\x18\x04 \x01(\x01R\arevenue\x12\x1a\n" +
+	"\bshipping\x18\x05 \x01(\x01R\bshipping\x12\x10\n" +
+	"\x03tax\x18\x06 \x01(\x01R\x03tax\x12\x1a\n" +
+	"\bdiscount\x18\a \x01(\x01R\bdiscount\x12\x16\n" +
+	"\x06coupon\x18\b \x01(\tR\x06coupon\x12\x1a\n" +
+	"\bcurrency\x18\t \x01(\tR\bcurrency\x126\n" +
+	"\bproducts\x18\n" +
+	" \x03(\v2\x1a.bufstream.demo.v1.ProductR\bproducts\"\xb1\x02\n" +
+	"\fOrderUpdated\x12\x19\n" +
+	"\border_id\x18\x01 \x01(\tR\aorderId\x12 \n" +
+	"\vaffiliation\x18\x02 \x01(\tR\vaffiliation\x12\x14\n" +
+	"\x05total\x18\x03 \x01(\x01R\x05total\x12\x18\n" +
+	"\arevenue\x18\x04 \x01(\x01R\arevenue\x12\x1a\n" +
+	"\bshipping\x18\x05 \x01(\x01R\bshipping\x12\x10\n" +
+	"\x03tax\x18\x06 \x01(\x01R\x03tax\x12\x1a\n" +
+	"\bdiscount\x18\a \x01(\x01R\bdiscount\x12\x16\n" +
+	"\x06coupon\x18\b \x01(\tR\x06coupon\x12\x1a\n" +
+	"\bcurrency\x18\t \x01(\tR\bcurrency\x126\n" +
+	"\bproducts\x18\n" +
+	" \x03(\v2\x1a.bufstream.demo.v1.ProductR\bproducts\"\xf0\x02\n" +
+	"\x0eOrderCompleted\x12\x1f\n" +
+	"\vcheckout_id\x18\x01 \x01(\tR\n" +
+	"checkoutId\x12\x19\n" +
+	"\border_id\x18\x02 \x01(\tR\aorderId\x12 \n" +
+	"\vaffiliation\x18\x03 \x01(\tR\vaffiliation\x12\x14\n" +
+	"\x05total\x18\x04 \x01(\x01R\x05total\x12\x1a\n" +
+	"\bsubtotal\x18\x05 \x01(\x01R\bsubtotal\x12\x18\n" +
+	"\arevenue\x18\x06 \x01(\x01R\arevenue\x12\x1a\n" +
+	"\bshipping\x18\a \x01(\x01R\bshipping\x12\x10\n" +
+	"\x03tax\x18\b \x01(\x01R\x03tax\x12\x1a\n" +
+	"\bdiscount\x18\t \x01(\x01R\bdiscount\x12\x16\n" +
+	"\x06coupon\x18\n" +
+	" \x01(\tR\x06coupon\x12\x1a\n" +
+	"\bcurrency\x18\v \x01(\tR\bcurrency\x126\n" +
+	"\bproducts\x18\f \x03(\v2\x1a.bufstream.demo.v1.ProductR\bproducts\"\x94\x01\n" +
+	"\rOrderRefunded\x12\x19\n" +
+	"\border_id\x18\x01 \x01(\tR\aorderId\x12\x14\n" +
+	"\x05total\x18\x02 \x01(\x01R\x05total\x12\x1a\n" +
+	"\bcurrency\x18\x03 \x01(\tR\bcurrency\x126\n" +
+	"\bproducts\x18\x04 \x03(\v2\x1a.bufstream.demo.v1.ProductR\bproducts\"\xb3\x02\n" +
+	"\x0eOrderCancelled\x12\x19\n" +
+	"\border_id\x18\x01 \x01(\tR\aorderId\x12 \n" +
+	"\vaffiliation\x18\x02 \x01(\tR\vaffiliation\x12\x14\n" +
+	"\x05total\x18\x03 \x01(\x01R\x05total\x12\x18\n" +
+	"\arevenue\x18\x04 \x01(\x01R\arevenue\x12\x1a\n" +
+	"\bshipping\x18\x05 \x01(\x01R\bshipping\x12\x10\n" +
+	"\x03tax\x18\x06 \x01(\x01R\x03tax\x12\x1a\n" +
+	"\bdiscount\x18\a \x01(\x01R\bdiscount\x12\x16\n" +
+	"\x06coupon\x18\b \x01(\tR\x06coupon\x12\x1a\n" +
+	"\bcurrency\x18\t \x01(\tR\bcurrency\x126\n" +
+	"\bproducts\x18\n" +
+	" \x03(\v2\x1a.bufstream.demo.v1.ProductR\bproductsB\xc9\x01\n" +
 	"\x15com.bufstream.demo.v1B\tDemoProtoP\x01Z?github.com/bufbuild/bufstream-demo/gen/bufstream/demo/v1;demov1\xa2\x02\x03BDX\xaa\x02\x11Bufstream.Demo.V1\xca\x02\x11Bufstream\\Demo\\V1\xe2\x02\x1dBufstream\\Demo\\V1\\GPBMetadata\xea\x02\x13Bufstream::Demo::V1b\x06proto3"
 
 var (
@@ -559,26 +2164,46 @@ func file_bufstream_demo_v1_demo_proto_rawDescGZIP() []byte {
 	return file_bufstream_demo_v1_demo_proto_rawDescData
 }
 
-var file_bufstream_demo_v1_demo_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
+var file_bufstream_demo_v1_demo_proto_msgTypes = make([]protoimpl.MessageInfo, 20)
 var file_bufstream_demo_v1_demo_proto_goTypes = []any{
-	(*EmailUpdated)(nil),        // 0: bufstream.demo.v1.EmailUpdated
-	(*Product)(nil),             // 1: bufstream.demo.v1.Product
-	(*Filter)(nil),              // 2: bufstream.demo.v1.Filter
-	(*Sort)(nil),                // 3: bufstream.demo.v1.Sort
-	(*ProductsSearched)(nil),    // 4: bufstream.demo.v1.ProductsSearched
-	(*ProductListViewed)(nil),   // 5: bufstream.demo.v1.ProductListViewed
-	(*ProductListFiltered)(nil), // 6: bufstream.demo.v1.ProductListFiltered
+	(*EmailUpdated)(nil),          // 0: bufstream.demo.v1.EmailUpdated
+	(*Product)(nil),               // 1: bufstream.demo.v1.Product
+	(*Filter)(nil),                // 2: bufstream.demo.v1.Filter
+	(*Sort)(nil),                  // 3: bufstream.demo.v1.Sort
+	(*ProductsSearched)(nil),      // 4: bufstream.demo.v1.ProductsSearched
+	(*ProductListViewed)(nil),     // 5: bufstream.demo.v1.ProductListViewed
+	(*ProductListFiltered)(nil),   // 6: bufstream.demo.v1.ProductListFiltered
+	(*ProductClicked)(nil),        // 7: bufstream.demo.v1.ProductClicked
+	(*ProductViewed)(nil),         // 8: bufstream.demo.v1.ProductViewed
+	(*ProductAdded)(nil),          // 9: bufstream.demo.v1.ProductAdded
+	(*ProductRemoved)(nil),        // 10: bufstream.demo.v1.ProductRemoved
+	(*CartViewed)(nil),            // 11: bufstream.demo.v1.CartViewed
+	(*CheckoutStarted)(nil),       // 12: bufstream.demo.v1.CheckoutStarted
+	(*CheckoutStepViewed)(nil),    // 13: bufstream.demo.v1.CheckoutStepViewed
+	(*CheckoutStepCompleted)(nil), // 14: bufstream.demo.v1.CheckoutStepCompleted
+	(*PaymentInfoEntered)(nil),    // 15: bufstream.demo.v1.PaymentInfoEntered
+	(*OrderUpdated)(nil),          // 16: bufstream.demo.v1.OrderUpdated
+	(*OrderCompleted)(nil),        // 17: bufstream.demo.v1.OrderCompleted
+	(*OrderRefunded)(nil),         // 18: bufstream.demo.v1.OrderRefunded
+	(*OrderCancelled)(nil),        // 19: bufstream.demo.v1.OrderCancelled
 }
 var file_bufstream_demo_v1_demo_proto_depIdxs = []int32{
-	1, // 0: bufstream.demo.v1.ProductListViewed.products:type_name -> bufstream.demo.v1.Product
-	2, // 1: bufstream.demo.v1.ProductListFiltered.filters:type_name -> bufstream.demo.v1.Filter
-	3, // 2: bufstream.demo.v1.ProductListFiltered.sorts:type_name -> bufstream.demo.v1.Sort
-	1, // 3: bufstream.demo.v1.ProductListFiltered.products:type_name -> bufstream.demo.v1.Product
-	4, // [4:4] is the sub-list for method output_type
-	4, // [4:4] is the sub-list for method input_type
-	4, // [4:4] is the sub-list for extension type_name
-	4, // [4:4] is the sub-list for extension extendee
-	0, // [0:4] is the sub-list for field type_name
+	1,  // 0: bufstream.demo.v1.ProductListViewed.products:type_name -> bufstream.demo.v1.Product
+	2,  // 1: bufstream.demo.v1.ProductListFiltered.filters:type_name -> bufstream.demo.v1.Filter
+	3,  // 2: bufstream.demo.v1.ProductListFiltered.sorts:type_name -> bufstream.demo.v1.Sort
+	1,  // 3: bufstream.demo.v1.ProductListFiltered.products:type_name -> bufstream.demo.v1.Product
+	1,  // 4: bufstream.demo.v1.CartViewed.products:type_name -> bufstream.demo.v1.Product
+	1,  // 5: bufstream.demo.v1.CheckoutStarted.products:type_name -> bufstream.demo.v1.Product
+	1,  // 6: bufstream.demo.v1.PaymentInfoEntered.products:type_name -> bufstream.demo.v1.Product
+	1,  // 7: bufstream.demo.v1.OrderUpdated.products:type_name -> bufstream.demo.v1.Product
+	1,  // 8: bufstream.demo.v1.OrderCompleted.products:type_name -> bufstream.demo.v1.Product
+	1,  // 9: bufstream.demo.v1.OrderRefunded.products:type_name -> bufstream.demo.v1.Product
+	1,  // 10: bufstream.demo.v1.OrderCancelled.products:type_name -> bufstream.demo.v1.Product
+	11, // [11:11] is the sub-list for method output_type
+	11, // [11:11] is the sub-list for method input_type
+	11, // [11:11] is the sub-list for extension type_name
+	11, // [11:11] is the sub-list for extension extendee
+	0,  // [0:11] is the sub-list for field type_name
 }
 
 func init() { file_bufstream_demo_v1_demo_proto_init() }
@@ -592,7 +2217,7 @@ func file_bufstream_demo_v1_demo_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_bufstream_demo_v1_demo_proto_rawDesc), len(file_bufstream_demo_v1_demo_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   7,
+			NumMessages:   20,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

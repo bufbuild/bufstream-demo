@@ -74,3 +74,186 @@ message ProductListFiltered {
   // Products shown after filtering
   repeated Product products = 5;
 }
+
+// Ordering events for RudderStack ecommerce spec
+
+// Event when a user clicks on a product
+message ProductClicked {
+  // The ID of the event or user
+  string id = 1;
+  string product_id = 2;
+  string sku = 3;
+  string category = 4;
+  string name = 5;
+  string brand = 6;
+  string variant = 7;
+  double price = 8;
+  int32 quantity = 9;
+  string coupon = 10;
+  int32 position = 11;
+  string url = 12;
+  string image_url = 13;
+}
+
+// Event when a user views a product
+message ProductViewed {
+  // The ID of the event or user
+  string id = 1;
+  string product_id = 2;
+  string sku = 3;
+  string category = 4;
+  string name = 5;
+  string brand = 6;
+  string variant = 7;
+  double price = 8;
+  int32 quantity = 9;
+  string coupon = 10;
+  string currency = 11;
+  int32 position = 12;
+  string url = 13;
+  string image_url = 14;
+}
+
+// Event when a user adds a product to the cart
+message ProductAdded {
+  // The ID of the event or user
+  string id = 1;
+  string product_id = 2;
+  string sku = 3;
+  string category = 4;
+  string name = 5;
+  string brand = 6;
+  string variant = 7;
+  double price = 8;
+  int32 quantity = 9;
+  string coupon = 10;
+  string currency = 11;
+  int32 position = 12;
+  string url = 13;
+  string image_url = 14;
+  // Cart ID associated with the product addition
+  string cart_id = 15;
+}
+
+// Event when a user removes a product from the cart
+message ProductRemoved {
+  string cart_id = 1;
+  string product_id = 2;
+  string sku = 3;
+  string category = 4;
+  string name = 5;
+  string brand = 6;
+  string variant = 7;
+  double price = 8;
+  int32 quantity = 9;
+  string coupon = 10;
+  int32 position = 11;
+  string url = 12;
+  string image_url = 13;
+}
+
+// Event when a user views their cart
+message CartViewed {
+  string cart_id = 1;
+  repeated Product products = 2;
+}
+
+// Event when a user starts the checkout process
+message CheckoutStarted {
+  string order_id = 1;
+  string affiliation = 2;
+  double value = 3;
+  double revenue = 4;
+  double shipping = 5;
+  double tax = 6;
+  double discount = 7;
+  string coupon = 8;
+  string currency = 9;
+  repeated Product products = 10;
+}
+
+// Event when a user views a checkout step
+message CheckoutStepViewed {
+  string checkout_id = 1;
+  int32 step = 2;
+  string shipping_method = 3;
+  string payment_method = 4;
+}
+
+// Event when a user completes a checkout step
+message CheckoutStepCompleted {
+  string checkout_id = 1;
+  int32 step = 2;
+  string shipping_method = 3;
+  string payment_method = 4;
+}
+
+// Event when payment info is entered
+message PaymentInfoEntered {
+  string checkout_id = 1;
+  string order_id = 2;
+  double total = 3;
+  double revenue = 4;
+  double shipping = 5;
+  double tax = 6;
+  double discount = 7;
+  string coupon = 8;
+  string currency = 9;
+  repeated Product products = 10;
+}
+
+// Event when an order is updated
+message OrderUpdated {
+  string order_id = 1;
+  string affiliation = 2;
+  double total = 3;
+  double revenue = 4;
+  double shipping = 5;
+  double tax = 6;
+  double discount = 7;
+  string coupon = 8;
+  string currency = 9;
+  repeated Product products = 10;
+}
+
+// Event when an order is completed
+message OrderCompleted {
+  string checkout_id = 1;
+  string order_id = 2;
+  string affiliation = 3;
+  double total = 4;
+  double subtotal = 5;
+  double revenue = 6;
+  double shipping = 7;
+  double tax = 8;
+  double discount = 9;
+  string coupon = 10;
+  string currency = 11;
+  repeated Product products = 12;
+}
+
+// Event when an order is refunded
+message OrderRefunded {
+  string order_id = 1;
+  double total = 2;
+  string currency = 3;
+  repeated Product products = 4;
+}
+
+// Event when an order is cancelled
+message OrderCancelled {
+  string order_id = 1;
+  string affiliation = 2;
+  double total = 3;
+  double revenue = 4;
+  double shipping = 5;
+  double tax = 6;
+  double discount = 7;
+  string coupon = 8;
+  string currency = 9;
+  repeated Product products = 10;
+}
+
+// Browsing events for RudderStack ecommerce spec - END
+
+// Ordering events for RudderStack ecommerce spec - START - REMOVED DUPLICATE BLOCK
