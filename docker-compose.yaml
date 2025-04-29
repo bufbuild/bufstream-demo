@@ -40,6 +40,20 @@ services:
       "--search-topic", "products-searched",
       "--list-viewed-topic", "product-list-viewed",
       "--list-filtered-topic", "product-list-filtered",
+      # Ordering topics
+      "--product-clicked-topic", "product-clicked",
+      "--product-viewed-topic", "product-viewed",
+      "--product-added-topic", "product-added",
+      "--product-removed-topic", "product-removed",
+      "--cart-viewed-topic", "cart-viewed",
+      "--checkout-started-topic", "checkout-started",
+      "--checkout-step-viewed-topic", "checkout-step-viewed",
+      "--checkout-step-completed-topic", "checkout-step-completed",
+      "--payment-info-entered-topic", "payment-info-entered",
+      "--order-updated-topic", "order-updated",
+      "--order-completed-topic", "order-completed",
+      "--order-refunded-topic", "order-refunded",
+      "--order-cancelled-topic", "order-cancelled",
       "--group", "email-verifier"
     ]
   # The demo producer.
@@ -58,7 +72,22 @@ services:
       "--search-topic", "products-searched",
       "--list-viewed-topic", "product-list-viewed",
       "--list-filtered-topic", "product-list-filtered",
+      # Ordering topics
+      "--product-clicked-topic", "product-clicked",
+      "--product-viewed-topic", "product-viewed",
+      "--product-added-topic", "product-added",
+      "--product-removed-topic", "product-removed",
+      "--cart-viewed-topic", "cart-viewed",
+      "--checkout-started-topic", "checkout-started",
+      "--checkout-step-viewed-topic", "checkout-step-viewed",
+      "--checkout-step-completed-topic", "checkout-step-completed",
+      "--payment-info-entered-topic", "payment-info-entered",
+      "--order-updated-topic", "order-updated",
+      "--order-completed-topic", "order-completed",
+      "--order-refunded-topic", "order-refunded",
+      "--order-cancelled-topic", "order-cancelled",
       "--group", "email-verifier",
+      "--recreate-topic" # Added for simplicity in demo, usually topics are pre-created
     ]
   # Redpanda Console for Kafka UI. See https://docs.redpanda.com/docs/manage/console/
   # Browse to http://localhost:8080 on your machine.

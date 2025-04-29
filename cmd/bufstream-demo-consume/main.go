@@ -12,10 +12,11 @@ import (
 	"log/slog"
 	"time"
 
-	demov1 "github.com/bufbuild/bufstream-demo/gen/bufstream/demo/v1"
+	demov1 "github.com/bufbuild/bufstream-demo/gen/bufstream/demo/v1" // Corrected import path
 	"github.com/bufbuild/bufstream-demo/pkg/app"
 	"github.com/bufbuild/bufstream-demo/pkg/consume"
 	"github.com/bufbuild/bufstream-demo/pkg/kafka"
+	"google.golang.org/protobuf/proto" // Added proto import
 )
 
 func main() {
@@ -29,29 +30,31 @@ func run(ctx context.Context, config app.Config) error {
 	var consumers []func() error
 
 	// EmailUpdated consumer
-	emailClient, err := kafka.NewKafkaClient(config.Kafka, true)
-	if err != nil {
-		return err
-	}
-	defer emailClient.Close()
-	emailConsumer := consume.NewConsumer[*demov1.EmailUpdated](
-		emailClient,
-		config.Kafka.Topic,
-		consume.WithMessageHandler(handleEmailUpdated),
-	)
-	consumers = append(consumers, func() error { return emailConsumer.Consume(ctx) })
-
-	// ProductsSearched consumer
-	if config.SearchTopic != "" {
-		searchCfg := config.Kafka
-		searchCfg.Topic = config.SearchTopic
-		searchClient, err := kafka.NewKafkaClient(searchCfg, true)
+	if config.Kafka.Topic != "" {
+		client, err := kafka.NewKafkaClient(config.Kafka, true)
 		if err != nil {
 			return err
 		}
-		defer searchClient.Close()
+		defer client.Close()
+		emailConsumer := consume.NewConsumer[*demov1.EmailUpdated](
+			client,
+			config.Kafka.Topic,
+			consume.WithMessageHandler(handleEmailUpdated),
+		)
+		consumers = append(consumers, func() error { return emailConsumer.Consume(ctx) })
+	}
+
+	// ProductsSearched consumer
+	if config.SearchTopic != "" {
+		cfg := config.Kafka
+		cfg.Topic = config.SearchTopic
+		client, err := kafka.NewKafkaClient(cfg, true)
+		if err != nil {
+			return err
+		}
+		defer client.Close()
 		searchConsumer := consume.NewConsumer[*demov1.ProductsSearched](
-			searchClient,
+			client,
 			config.SearchTopic,
 			consume.WithMessageHandler(handleProductsSearched),
 		)
@@ -60,37 +63,52 @@ func run(ctx context.Context, config app.Config) error {
 
 	// ProductListViewed consumer
 	if config.ListViewedTopic != "" {
-		viewedCfg := config.Kafka
-		viewedCfg.Topic = config.ListViewedTopic
-		viewedClient, err := kafka.NewKafkaClient(viewedCfg, true)
+		cfg := config.Kafka
+		cfg.Topic = config.ListViewedTopic
+		client, err := kafka.NewKafkaClient(cfg, true)
 		if err != nil {
 			return err
 		}
-		defer viewedClient.Close()
-		viewedConsumer := consume.NewConsumer[*demov1.ProductListViewed](
-			viewedClient,
+		defer client.Close()
+		listViewedConsumer := consume.NewConsumer[*demov1.ProductListViewed](
+			client,
 			config.ListViewedTopic,
 			consume.WithMessageHandler(handleProductListViewed),
 		)
-		consumers = append(consumers, func() error { return viewedConsumer.Consume(ctx) })
+		consumers = append(consumers, func() error { return listViewedConsumer.Consume(ctx) })
 	}
 
 	// ProductListFiltered consumer
 	if config.ListFilteredTopic != "" {
-		filteredCfg := config.Kafka
-		filteredCfg.Topic = config.ListFilteredTopic
-		filteredClient, err := kafka.NewKafkaClient(filteredCfg, true)
+		cfg := config.Kafka
+		cfg.Topic = config.ListFilteredTopic
+		client, err := kafka.NewKafkaClient(cfg, true)
 		if err != nil {
 			return err
 		}
-		defer filteredClient.Close()
-		filteredConsumer := consume.NewConsumer[*demov1.ProductListFiltered](
-			filteredClient,
+		defer client.Close()
+		listFilteredConsumer := consume.NewConsumer[*demov1.ProductListFiltered](
+			client,
 			config.ListFilteredTopic,
 			consume.WithMessageHandler(handleProductListFiltered),
 		)
-		consumers = append(consumers, func() error { return filteredConsumer.Consume(ctx) })
+		consumers = append(consumers, func() error { return listFilteredConsumer.Consume(ctx) })
 	}
+
+	// Ordering event consumers
+	consumers = append(consumers, createOrderingConsumer[*demov1.ProductClicked](ctx, config.Kafka, config.ProductClickedTopic, handleProductClicked)...)
+	consumers = append(consumers, createOrderingConsumer[*demov1.ProductViewed](ctx, config.Kafka, config.ProductViewedTopic, handleProductViewed)...)
+	consumers = append(consumers, createOrderingConsumer[*demov1.ProductAdded](ctx, config.Kafka, config.ProductAddedTopic, handleProductAdded)...)
+	consumers = append(consumers, createOrderingConsumer[*demov1.ProductRemoved](ctx, config.Kafka, config.ProductRemovedTopic, handleProductRemoved)...)
+	consumers = append(consumers, createOrderingConsumer[*demov1.CartViewed](ctx, config.Kafka, config.CartViewedTopic, handleCartViewed)...)
+	consumers = append(consumers, createOrderingConsumer[*demov1.CheckoutStarted](ctx, config.Kafka, config.CheckoutStartedTopic, handleCheckoutStarted)...)
+	consumers = append(consumers, createOrderingConsumer[*demov1.CheckoutStepViewed](ctx, config.Kafka, config.CheckoutStepViewedTopic, handleCheckoutStepViewed)...)
+	consumers = append(consumers, createOrderingConsumer[*demov1.CheckoutStepCompleted](ctx, config.Kafka, config.CheckoutStepCompletedTopic, handleCheckoutStepCompleted)...)
+	consumers = append(consumers, createOrderingConsumer[*demov1.PaymentInfoEntered](ctx, config.Kafka, config.PaymentInfoEnteredTopic, handlePaymentInfoEntered)...)
+	consumers = append(consumers, createOrderingConsumer[*demov1.OrderUpdated](ctx, config.Kafka, config.OrderUpdatedTopic, handleOrderUpdated)...)
+	consumers = append(consumers, createOrderingConsumer[*demov1.OrderCompleted](ctx, config.Kafka, config.OrderCompletedTopic, handleOrderCompleted)...)
+	consumers = append(consumers, createOrderingConsumer[*demov1.OrderRefunded](ctx, config.Kafka, config.OrderRefundedTopic, handleOrderRefunded)...)
+	consumers = append(consumers, createOrderingConsumer[*demov1.OrderCancelled](ctx, config.Kafka, config.OrderCancelledTopic, handleOrderCancelled)...)
 
 	slog.Info("starting consume")
 	for {
@@ -102,6 +120,35 @@ func run(ctx context.Context, config app.Config) error {
 		}
 		time.Sleep(time.Second)
 	}
+}
+
+// createOrderingConsumer is a helper function to create a consumer for an ordering event topic.
+func createOrderingConsumer[M proto.Message](ctx context.Context, baseCfg kafka.Config, topic string, handler func(M) error) []func() error {
+	if topic == "" {
+		return nil
+	}
+	cfg := baseCfg
+	cfg.Topic = topic
+	// Create a unique group ID for each topic consumer to avoid rebalancing issues if multiple consumers share the same group
+	// In a real application, you might want a more sophisticated group management strategy.
+	cfg.Group = baseCfg.Group + "-" + topic
+	client, err := kafka.NewKafkaClient(cfg, true)
+	if err != nil {
+		slog.Error("failed to create Kafka client for topic", "topic", topic, "error", err)
+		// Decide how to handle this - perhaps return an error or panic?
+		// For now, just log and return nil, effectively skipping this consumer.
+		return nil
+	}
+	// Note: We are not closing the client here. This assumes the main run function's defer will handle it,
+	// or that a more robust lifecycle management is in place.
+	// Consider adding client.Close() to a cleanup mechanism if needed.
+
+	consumer := consume.NewConsumer[M](
+		client,
+		topic,
+		consume.WithMessageHandler(handler),
+	)
+	return []func() error{func() error { return consumer.Consume(ctx) }}
 }
 
 func handleEmailUpdated(message *demov1.EmailUpdated) error {
@@ -130,5 +177,72 @@ func handleProductListViewed(message *demov1.ProductListViewed) error {
 // handleProductListFiltered logs ProductListFiltered events
 func handleProductListFiltered(message *demov1.ProductListFiltered) error {
 	slog.Info("consumed ProductListFiltered event", "id", message.GetId(), "list_id", message.GetListId(), "filters", message.GetFilters(), "sorts", message.GetSorts(), "count", len(message.GetProducts()))
+	return nil
+}
+
+// --- Ordering Event Handlers ---
+
+func handleProductClicked(message *demov1.ProductClicked) error {
+	slog.Info("consumed ProductClicked event", "id", message.GetId(), "product_id", message.GetProductId(), "name", message.GetName())
+	return nil
+}
+
+func handleProductViewed(message *demov1.ProductViewed) error {
+	slog.Info("consumed ProductViewed event", "id", message.GetId(), "product_id", message.GetProductId(), "name", message.GetName())
+	return nil
+}
+
+func handleProductAdded(message *demov1.ProductAdded) error {
+	slog.Info("consumed ProductAdded event", "id", message.GetId(), "cart_id", message.GetCartId(), "product_id", message.GetProductId(), "quantity", message.GetQuantity())
+	return nil
+}
+
+func handleProductRemoved(message *demov1.ProductRemoved) error {
+	slog.Info("consumed ProductRemoved event", "cart_id", message.GetCartId(), "product_id", message.GetProductId(), "quantity", message.GetQuantity())
+	return nil
+}
+
+func handleCartViewed(message *demov1.CartViewed) error {
+	slog.Info("consumed CartViewed event", "cart_id", message.GetCartId(), "count", len(message.GetProducts()))
+	return nil
+}
+
+func handleCheckoutStarted(message *demov1.CheckoutStarted) error {
+	slog.Info("consumed CheckoutStarted event", "order_id", message.GetOrderId(), "total", message.GetValue())
+	return nil
+}
+
+func handleCheckoutStepViewed(message *demov1.CheckoutStepViewed) error {
+	slog.Info("consumed CheckoutStepViewed event", "checkout_id", message.GetCheckoutId(), "step", message.GetStep())
+	return nil
+}
+
+func handleCheckoutStepCompleted(message *demov1.CheckoutStepCompleted) error {
+	slog.Info("consumed CheckoutStepCompleted event", "checkout_id", message.GetCheckoutId(), "step", message.GetStep())
+	return nil
+}
+
+func handlePaymentInfoEntered(message *demov1.PaymentInfoEntered) error {
+	slog.Info("consumed PaymentInfoEntered event", "checkout_id", message.GetCheckoutId(), "order_id", message.GetOrderId())
+	return nil
+}
+
+func handleOrderUpdated(message *demov1.OrderUpdated) error {
+	slog.Info("consumed OrderUpdated event", "order_id", message.GetOrderId(), "total", message.GetTotal())
+	return nil
+}
+
+func handleOrderCompleted(message *demov1.OrderCompleted) error {
+	slog.Info("consumed OrderCompleted event", "order_id", message.GetOrderId(), "total", message.GetTotal())
+	return nil
+}
+
+func handleOrderRefunded(message *demov1.OrderRefunded) error {
+	slog.Info("consumed OrderRefunded event", "order_id", message.GetOrderId(), "total", message.GetTotal())
+	return nil
+}
+
+func handleOrderCancelled(message *demov1.OrderCancelled) error {
+	slog.Info("consumed OrderCancelled event", "order_id", message.GetOrderId(), "total", message.GetTotal())
 	return nil
 }

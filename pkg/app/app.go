@@ -35,6 +35,20 @@ type Config struct {
 	SearchTopic       string
 	ListViewedTopic   string
 	ListFilteredTopic string
+	// Topics for ordering events
+	ProductClickedTopic        string
+	ProductViewedTopic         string
+	ProductAddedTopic          string
+	ProductRemovedTopic        string
+	CartViewedTopic            string
+	CheckoutStartedTopic       string
+	CheckoutStepViewedTopic    string
+	CheckoutStepCompletedTopic string
+	PaymentInfoEnteredTopic    string
+	OrderUpdatedTopic          string
+	OrderCompletedTopic        string
+	OrderRefundedTopic         string
+	OrderCancelledTopic        string
 	// Confluent Schema Registry config
 	CSR csr.Config
 }
@@ -89,7 +103,25 @@ func run(ctx context.Context, autoCreateTopic bool, action func(context.Context,
 			}
 		}
 		// Browsing event topics
-		for _, t := range []string{config.SearchTopic, config.ListViewedTopic, config.ListFilteredTopic} {
+		for _, t := range []string{
+			config.SearchTopic,
+			config.ListViewedTopic,
+			config.ListFilteredTopic,
+			// Ordering event topics
+			config.ProductClickedTopic,
+			config.ProductViewedTopic,
+			config.ProductAddedTopic,
+			config.ProductRemovedTopic,
+			config.CartViewedTopic,
+			config.CheckoutStartedTopic,
+			config.CheckoutStepViewedTopic,
+			config.CheckoutStepCompletedTopic,
+			config.PaymentInfoEnteredTopic,
+			config.OrderUpdatedTopic,
+			config.OrderCompletedTopic,
+			config.OrderRefundedTopic,
+			config.OrderCancelledTopic,
+		} {
 			if t == "" {
 				continue
 			}
@@ -142,6 +174,85 @@ func parseConfig(canCreateTopic bool) (Config, error) {
 		"list-filtered-topic",
 		"",
 		"Topic for ProductListFiltered events",
+	)
+	// Ordering event topics
+	flagSet.StringVar(
+		&config.ProductClickedTopic,
+		"product-clicked-topic",
+		"",
+		"Topic for ProductClicked events",
+	)
+	flagSet.StringVar(
+		&config.ProductViewedTopic,
+		"product-viewed-topic",
+		"",
+		"Topic for ProductViewed events",
+	)
+	flagSet.StringVar(
+		&config.ProductAddedTopic,
+		"product-added-topic",
+		"",
+		"Topic for ProductAdded events",
+	)
+	flagSet.StringVar(
+		&config.ProductRemovedTopic,
+		"product-removed-topic",
+		"",
+		"Topic for ProductRemoved events",
+	)
+	flagSet.StringVar(
+		&config.CartViewedTopic,
+		"cart-viewed-topic",
+		"",
+		"Topic for CartViewed events",
+	)
+	flagSet.StringVar(
+		&config.CheckoutStartedTopic,
+		"checkout-started-topic",
+		"",
+		"Topic for CheckoutStarted events",
+	)
+	flagSet.StringVar(
+		&config.CheckoutStepViewedTopic,
+		"checkout-step-viewed-topic",
+		"",
+		"Topic for CheckoutStepViewed events",
+	)
+	flagSet.StringVar(
+		&config.CheckoutStepCompletedTopic,
+		"checkout-step-completed-topic",
+		"",
+		"Topic for CheckoutStepCompleted events",
+	)
+	flagSet.StringVar(
+		&config.PaymentInfoEnteredTopic,
+		"payment-info-entered-topic",
+		"",
+		"Topic for PaymentInfoEntered events",
+	)
+	flagSet.StringVar(
+		&config.OrderUpdatedTopic,
+		"order-updated-topic",
+		"",
+		"Topic for OrderUpdated events",
+	)
+	flagSet.StringVar(
+		&config.OrderCompletedTopic,
+		"order-completed-topic",
+		"",
+		"Topic for OrderCompleted events",
+	)
+	flagSet.StringVar(
+		&config.OrderRefundedTopic,
+		"order-refunded-topic",
+		"",
+		"Topic for OrderRefunded events",
+	)
+	flagSet.StringVar(
+		&config.OrderCancelledTopic,
+		"order-cancelled-topic",
+		"",
+		"Topic for OrderCancelled events",
 	)
 	// Schema Registry flags
 	flagSet.StringVar(
