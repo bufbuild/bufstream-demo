@@ -60,6 +60,9 @@ func run(ctx context.Context, config app.Config) error {
 	orderRefundedProducer := produce.NewProducer[*demov1.OrderRefunded](client, config.OrderRefundedTopic)
 	orderCancelledProducer := produce.NewProducer[*demov1.OrderCancelled](client, config.OrderCancelledTopic)
 
+	slog.Info("waiting a few seconds for broker to stabilize after topic creation...")
+	time.Sleep(5 * time.Second) // Add a delay
+
 	slog.Info("starting produce")
 	for {
 		id := newID()
@@ -114,27 +117,6 @@ func run(ctx context.Context, config app.Config) error {
 			slog.Error("error on produce of semantically valid protobuf message", "error", err)
 		} else {
 			slog.Info("produced semantically valid protobuf message", "id", id)
-		}
-		// Produces a semantically invalid EmailUpdated message, where the new email field
-		// is not a valid email address.
-		id = newID()
-		if err := emailProducer.ProduceProtobufMessage(ctx, id, newSemanticallyInvalidEmailUpdated(id)); err != nil {
-			if errors.Is(err, context.Canceled) {
-				return err
-			}
-			slog.Error("error on produce of semantically invalid protobuf message", "error", err)
-		} else {
-			slog.Info("produced semantically invalid protobuf message", "id", id)
-		}
-		id = newID()
-		// Produces a record containing a payload that is not valid Protobuf.
-		if err := emailProducer.ProduceInvalid(ctx, id); err != nil {
-			if errors.Is(err, context.Canceled) {
-				return err
-			}
-			slog.Error("error on produce of invalid data", "error", err)
-		} else {
-			slog.Info("produced invalid data", "id", id)
 		}
 		time.Sleep(time.Second)
 	}
