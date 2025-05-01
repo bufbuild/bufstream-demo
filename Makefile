@@ -26,12 +26,16 @@ consume-run: # Run the demo consumer. Go must be installed.
 # Requires Docker to be installed, but will work out of the box.
 
 .PHONY: docker-compose-run
-docker-compose-run: # Run the demo within docker compose.
-	docker compose up --build
+docker-compose-run: generate-config # Run the demo within docker compose.
+	@echo "Running docker compose up..."
+	@docker compose up --build --remove-orphans
 
 .PHONY: docker-compose-clean
 docker-compose-clean: # Cleanup docker compose assets.
-	docker compose down --rmi all
+	@echo "Running docker compose down..."
+	@docker compose down --volumes --remove-orphans
+	@echo "Cleaning up generated config..."
+	@rm -rf .tmp
 
 ### Run Bufstream, the demo producer, the demo consumer, and AKHQ within Docker Compose.
 #
@@ -61,6 +65,50 @@ $(BIN)/bufstream: Makefile
 		-o $(BIN)/bufstream
 	chmod +x $(BIN)/bufstream
 
+### Terraform Commands
+
+# Helper function to source .env and export TF_VAR_ prefixed variables
+export_tf_vars = \
+	if [ -f .env ]; then \
+		set -a; . ./.env; set +a; \
+		export TF_VAR_gcp_project_id="$${GCP_PROJECT_ID}"; \
+		export TF_VAR_gcp_region="$${GCP_REGION}"; \
+		export TF_VAR_gcs_bucket_name="$${GCS_BUCKET_NAME}"; \
+		export TF_VAR_bq_dataset_name="$${BQ_DATASET_NAME}"; \
+		export TF_VAR_bq_connection_id="$${BQ_CONNECTION_ID}"; \
+		export TF_VAR_bq_location="$${BQ_LOCATION}"; \
+		if [ -n "$${GCP_CREDENTIALS_FILE}" ]; then \
+			export TF_VAR_gcp_credentials_file="$${GCP_CREDENTIALS_FILE}"; \
+		fi; \
+	else \
+		@echo ".env file not found. Please create it from .env.example."; exit 1; \
+	fi
+
+.PHONY: tf-init
+tf-init: # Initialize Terraform in the terraform directory.
+	@echo "Initializing Terraform..."
+	@cd terraform && $(export_tf_vars) && terraform init
+
+.PHONY: tf-plan
+tf-plan: # Generate a Terraform execution plan.
+	@echo "Planning Terraform changes..."
+	@$(export_tf_vars) && cd terraform && terraform plan
+
+.PHONY: tf-apply
+tf-apply: # Apply the Terraform changes. Requires interactive approval.
+	@echo "Applying Terraform changes..."
+	@$(export_tf_vars) && cd terraform && terraform apply
+
+.PHONY: tf-apply-auto
+tf-apply-auto: # Apply the Terraform changes automatically (no interactive approval). Use with caution.
+	@echo "Applying Terraform changes automatically..."
+	@$(export_tf_vars) && cd terraform && terraform apply -auto-approve
+
+.PHONY: tf-destroy
+tf-destroy: # Destroy the Terraform-managed infrastructure. Requires interactive approval.
+	@echo "Destroying Terraform infrastructure..."
+	@$(export_tf_vars) && cd terraform && terraform destroy
+
 ### Development commands
 
 .PHONY: build
@@ -87,3 +135,15 @@ upgrade: # Upgrade dependencies.
 .PHONY: buf
 buf: # Install buf.
 	go install github.com/bufbuild/buf/cmd/buf@latest
+
+# Ensure the .tmp directory exists
+.PHONY: prepare-tmp
+prepare-tmp:
+	@mkdir -p .tmp
+
+# Generate the bufstream config with environment variables substituted
+.PHONY: generate-config
+generate-config: prepare-tmp .env
+	@echo "Generating bufstream config with substituted variables..."
+	@# Source .env, export all variables (-a), then run envsubst
+	@set -a && . ./.env && set +a && envsubst < config/bufstream.yaml > .tmp/bufstream.yaml

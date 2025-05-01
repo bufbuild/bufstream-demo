@@ -5,9 +5,14 @@ services:
     image: bufbuild/bufstream:0.3.22
     hostname: bufstream
     container_name: bufstream
+    # Explicitly load variables from .env file in the project root
+    env_file: .env
     environment:
+      # Keep kafka vars if needed, but GCP vars will come from env_file
       BUFSTREAM_KAFKA_HOST: 0.0.0.0
       BUFSTREAM_KAFKA_PUBLIC_HOST: bufstream
+      # Point to the mounted Service Account Key file inside the container
+      GOOGLE_APPLICATION_CREDENTIALS: /gcp/key.json # Corrected path
     ports:
       # We'll expose bufstream on the host at port 9092.
       - "9092:9092"
@@ -19,10 +24,17 @@ services:
       retries: 10
     # Edit config/bufstream.yaml within this repository to change configuation.
     volumes:
-      - "./config/bufstream.yaml:/bufstream.yaml"
+      # Mount the GENERATED config file from the .tmp directory
+      - "./.tmp/bufstream.yaml:/bufstream.yaml:ro"
+      # Mount the Service Account Key file (path defined by $GCP_SERVICE_ACCOUNT_KEY_PATH in .env)
+      - "${GCP_SERVICE_ACCOUNT_KEY_PATH}:/gcp/key.json:ro" # Corrected path
+    # Remove the custom entrypoint
+    entrypoint: []
+    # Set command back to original
     command: [
+      "bufstream",
       "serve",
-      "--config", "/bufstream.yaml",
+      "--config", "/bufstream.yaml"
     ]
   # The demo consumer.
   #

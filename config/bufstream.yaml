@@ -1,1 +1,35 @@
 # yaml-language-server: $schema=schema/buf.bufstream.config.v1alpha1.BufstreamConfig.schema.json
+
+# Define Kafka configuration
+kafka:
+  # Use host/port object structure
+  address:
+    host: "0.0.0.0"
+    port: 9092
+  public_address:
+    host: "bufstream"
+    port: 9092
+  # ... potentially other kafka settings ...
+
+  # NOTE: Removed 'topics' section based on persistent parsing errors.
+  # Assuming default archival or post-startup configuration is needed.
+
+# Define Storage configuration
+storage:
+  provider: GCS
+  bucket: "${GCS_BUCKET_NAME}"
+
+# Add the Iceberg integration configuration
+iceberg_integration:
+  catalogs:
+    - name: gcp_iceberg # Define a named catalog
+      # Define the metastore type and its specific config
+      bigquery_metastore:
+        # Use environment variable
+        project: "${GCP_PROJECT_ID}"
+        # Use environment variable
+        location: "${BQ_LOCATION}"
+        # Use environment variables
+        cloud_resource_connection: "projects/${GCP_PROJECT_ID}/locations/${BQ_LOCATION}/connections/${BQ_CONNECTION_ID}"
+        # NOTE: Removed warehouse_path and default_database based on parsing errors.
+        # Their configuration might be inferred or require admin commands.

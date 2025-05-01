@@ -1,2 +1,26 @@
 /.tmp/
 /bufstream/
+
+# Generated config
+tmp/
+
+# Terraform specific ignores
+terraform/.terraform/
+terraform/.terraform.lock.hcl
+terraform/*.tfstate
+terraform/*.tfstate.*
+terraform/*.tfplan
+terraform/crash.log
+terraform/crash.*.log
+
+# General ignores
+*.tfvars
+
+# Go build outputs
+*.exe
+*.out
+
+# OS generated files
+.DS_Store
+Thumbs.db
+.env
