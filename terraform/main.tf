@@ -33,6 +33,7 @@ resource "google_bigquery_dataset" "iceberg_dataset" {
   dataset_id = var.bq_dataset_name
   project    = var.gcp_project_id
   location   = var.bq_location // Ensure this matches the connection location
+  delete_contents_on_destroy = true
 
   depends_on = [google_project_service.bigquery_api]
 }
