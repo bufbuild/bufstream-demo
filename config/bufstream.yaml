@@ -1,4 +1,3 @@
-# yaml-language-server: $schema=schema/buf.bufstream.config.v1alpha1.BufstreamConfig.schema.json
 data_enforcement:
   schema_registries:
     - name: csr
