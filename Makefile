@@ -1,6 +1,8 @@
-BUFSTREAM_VERSION := 0.3.22
+SHELL := /usr/bin/env bash -o pipefail
 
 .DEFAULT_GOAL := docker-compose-run
+
+BUFSTREAM_VERSION := $(shell grep 'bufbuild/bufstream:' docker-compose.yaml | sed -e 's|.*:||')
 
 ### Run Bufstream, the demo producer, and the demo consumer on your local machine.
 #

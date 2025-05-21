@@ -1,8 +1,0 @@
-{
-  "$id": "buf.bufstream.config.v1alpha1.OTEL.schema.json",
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "additionalProperties": false,
-  "properties": {},
-  "title": "OTEL",
-  "type": "object"
-}
