@@ -2,7 +2,7 @@
 services:
   # The core bufstream service.
   bufstream:
-    image: bufbuild/bufstream:0.3.32
+    image: bufbuild/bufstream:0.3.34
     hostname: bufstream
     container_name: bufstream
     environment:
