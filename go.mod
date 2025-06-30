@@ -5,7 +5,7 @@ go 1.24
 require (
 	buf.build/gen/go/bufbuild/confluent/protocolbuffers/go v1.36.6-20240926213411-65369e65bbcd.1
 	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.6-20250613105001-9f2d3c737feb.1
-	github.com/brianvoe/gofakeit/v7 v7.2.1
+	github.com/brianvoe/gofakeit/v7 v7.3.0
 	github.com/confluentinc/confluent-kafka-go/v2 v2.8.0
 	github.com/google/uuid v1.6.0
 	github.com/spf13/pflag v1.0.6
