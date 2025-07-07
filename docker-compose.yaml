@@ -59,7 +59,7 @@ services:
   #
   # Browse to http://localhost:8080 on your machine.
   akhq:
-    image: tchiotludo/akhq:0.25.1
+    image: tchiotludo/akhq:0.26.0
     stop_signal: SIGKILL
     depends_on:
       bufstream:
