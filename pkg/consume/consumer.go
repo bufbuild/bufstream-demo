@@ -6,23 +6,23 @@ import (
 	"fmt"
 	"log/slog"
 
-	"github.com/confluentinc/confluent-kafka-go/v2/schemaregistry/serde"
+	"github.com/bufbuild/bufstream-demo/pkg/csr"
 	"github.com/twmb/franz-go/pkg/kgo"
 	"google.golang.org/protobuf/proto"
 )
 
-// Consumer is an example consumer of a given topic using given Protobuf message type.
+// Consumer is an example consumer of a given topic using a given Protobuf message type.
 //
 // A Consume takes a Kafka client and a topic, and expects to recieve Protobuf messages
 // of the given type. Upon every received message, a handler is invoked. If malformed
-// data is recieved (data that can not be deserialized into the given Protobuf message type),
+// data is recieved (data that cannot be deserialized into the given Protobuf message type),
 // a malformed data handler is invoked.
 //
 // This is a toy example, but shows the basics you need to receive Protobuf messages
 // from Kafka using franz-go. You can likely use this as a base to build out your own demo.
 type Consumer[M proto.Message] struct {
 	client               *kgo.Client
-	deserializer         serde.Deserializer
+	deserializer         csr.Serde
 	topic                string
 	messageHandler       func(M) error
 	malformedDataHandler func([]byte, error) error
@@ -33,13 +33,13 @@ type Consumer[M proto.Message] struct {
 // Always use this constructor to construct Consumers.
 func NewConsumer[M proto.Message](
 	client *kgo.Client,
-	deserializer serde.Deserializer,
+	serde csr.Serde,
 	topic string,
 	options ...ConsumerOption[M],
 ) *Consumer[M] {
 	consumer := &Consumer[M]{
 		client:               client,
-		deserializer:         deserializer,
+		deserializer:         serde,
 		topic:                topic,
 		messageHandler:       defaultMessageHandler[M],
 		malformedDataHandler: defaultMalformedDataHandler,
@@ -87,7 +87,7 @@ func (c *Consumer[M]) Consume(ctx context.Context) error {
 		return fmt.Errorf("failed to fetch records: %v", errs)
 	}
 	for _, record := range fetches.Records() {
-		data, err := c.deserializer.Deserialize(record.Topic, record.Value)
+		data, err := c.deserializer.DecodeNew(record.Value)
 		if err != nil {
 			if err := c.malformedDataHandler(record.Value, err); err != nil {
 				return err

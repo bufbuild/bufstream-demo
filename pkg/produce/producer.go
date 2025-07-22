@@ -5,12 +5,12 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/confluentinc/confluent-kafka-go/v2/schemaregistry/serde"
+	"github.com/bufbuild/bufstream-demo/pkg/csr"
 	"github.com/twmb/franz-go/pkg/kgo"
 	"google.golang.org/protobuf/proto"
 )
 
-// Producer is an example producer to a given topic using given Protobuf message type.
+// Producer is an example producer to a given topic using a given Protobuf message type.
 //
 // A Producer takes a Kafka client and a topic, and sends one of two types of data:
 //
@@ -21,7 +21,7 @@ import (
 // to Kafka using franz-go.
 type Producer[M proto.Message] struct {
 	client     *kgo.Client
-	serializer serde.Serializer
+	serializer csr.Serde
 	topic      string
 }
 
@@ -30,20 +30,20 @@ type Producer[M proto.Message] struct {
 // Always use this constructor to construct Producers.
 func NewProducer[M proto.Message](
 	client *kgo.Client,
-	serializer serde.Serializer,
+	serde csr.Serde,
 	topic string,
 ) *Producer[M] {
 	return &Producer[M]{
 		client:     client,
 		topic:      topic,
-		serializer: serializer,
+		serializer: serde,
 	}
 }
 
 // ProduceProtobufMessage serializes the given Protobuf messages, and synchronously
 // sends it to the Producer's topic with the given key.
 func (p *Producer[M]) ProduceProtobufMessage(ctx context.Context, key string, message M) error {
-	payload, err := p.serializer.Serialize(p.topic, message)
+	payload, err := p.serializer.Encode(message)
 	if err != nil {
 		return err
 	}

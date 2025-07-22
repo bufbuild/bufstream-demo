@@ -32,20 +32,16 @@ func run(ctx context.Context, config app.Config) error {
 	}
 	defer client.Close()
 
-	// NewDeserializer creates a CSR-based Deserializer if there is a CSR URL,
-	// otherwise it creates a single-type Deserializer for demov1.EmailUpdated.
-	//
-	// If a CSR URL is provided, the data will be unenveloped when read from Bufstream.
-	// If not, the data will be read as-is.
-	deserializer, err := csr.NewDeserializer[*demov1.EmailUpdated](config.CSR)
+	// NewSerde creates a CSR-based deserializer if there is a CSR URL,
+	// otherwise it creates a single-type deserializer for demov1.EmailUpdated.
+	serde, err := csr.NewSerde[*demov1.EmailUpdated](ctx, config.CSR, config.Kafka.Topic)
 	if err != nil {
 		return err
 	}
-	defer func() { _ = deserializer.Close() }()
 
 	consumer := consume.NewConsumer(
 		client,
-		deserializer,
+		serde,
 		config.Kafka.Topic,
 		consume.WithMessageHandler(handleEmailUpdated),
 	)
