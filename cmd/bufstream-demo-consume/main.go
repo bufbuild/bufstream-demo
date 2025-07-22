@@ -46,7 +46,7 @@ func run(ctx context.Context, config app.Config) error {
 		consume.WithMessageHandler(handleEmailUpdated),
 	)
 
-	slog.Info("starting consume")
+	slog.InfoContext(ctx, "starting consume")
 	for {
 		// Read as many messages as we can.
 		//
@@ -59,13 +59,13 @@ func run(ctx context.Context, config app.Config) error {
 	}
 }
 
-func handleEmailUpdated(message *demov1.EmailUpdated) error {
+func handleEmailUpdated(ctx context.Context, message *demov1.EmailUpdated) error {
 	var suffix string
 	if old := message.GetOldEmailAddress(); old == "" {
 		suffix = "redacted old email"
 	} else {
-		suffix = fmt.Sprintf("old email %s", old)
+		suffix = "old email " + old
 	}
-	slog.Info(fmt.Sprintf("consumed message with new email %s and %s", message.GetNewEmailAddress(), suffix))
+	slog.InfoContext(ctx, fmt.Sprintf("consumed message with new email %s and %s", message.GetNewEmailAddress(), suffix))
 	return nil
 }

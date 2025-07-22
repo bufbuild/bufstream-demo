@@ -13,9 +13,9 @@ import (
 
 // Consumer is an example consumer of a given topic using a given Protobuf message type.
 //
-// A Consume takes a Kafka client and a topic, and expects to recieve Protobuf messages
+// A Consume takes a Kafka client and a topic, and expects to receive Protobuf messages
 // of the given type. Upon every received message, a handler is invoked. If malformed
-// data is recieved (data that cannot be deserialized into the given Protobuf message type),
+// data is received (data that cannot be deserialized into the given Protobuf message type),
 // a malformed data handler is invoked.
 //
 // This is a toy example, but shows the basics you need to receive Protobuf messages
@@ -24,8 +24,8 @@ type Consumer[M proto.Message] struct {
 	client               *kgo.Client
 	deserializer         csr.Serde
 	topic                string
-	messageHandler       func(M) error
-	malformedDataHandler func([]byte, error) error
+	messageHandler       func(context.Context, M) error
+	malformedDataHandler func(context.Context, []byte, error) error
 }
 
 // NewConsumer returns a new Consumer.
@@ -33,13 +33,13 @@ type Consumer[M proto.Message] struct {
 // Always use this constructor to construct Consumers.
 func NewConsumer[M proto.Message](
 	client *kgo.Client,
-	serde csr.Serde,
+	deserializer csr.Serde,
 	topic string,
 	options ...ConsumerOption[M],
 ) *Consumer[M] {
 	consumer := &Consumer[M]{
 		client:               client,
-		deserializer:         serde,
+		deserializer:         deserializer,
 		topic:                topic,
 		messageHandler:       defaultMessageHandler[M],
 		malformedDataHandler: defaultMalformedDataHandler,
@@ -60,7 +60,7 @@ type ConsumerOption[M proto.Message] func(*Consumer[M])
 // handler of received messages.
 //
 // The default handler uses slog to log incoming messages.
-func WithMessageHandler[M proto.Message](messageHandler func(M) error) ConsumerOption[M] {
+func WithMessageHandler[M proto.Message](messageHandler func(context.Context, M) error) ConsumerOption[M] {
 	return func(consumer *Consumer[M]) {
 		consumer.messageHandler = messageHandler
 	}
@@ -71,14 +71,14 @@ func WithMessageHandler[M proto.Message](messageHandler func(M) error) ConsumerO
 //
 // The default handler uses slog to log the error returned on malformed data.
 func WithMalformedDataHandler[M proto.Message](
-	malformedDataHandler func([]byte, error) error,
+	malformedDataHandler func(context.Context, []byte, error) error,
 ) ConsumerOption[M] {
 	return func(consumer *Consumer[M]) {
 		consumer.malformedDataHandler = malformedDataHandler
 	}
 }
 
-// Consume consumes as many record as it can from the topic, deserializing them into
+// Consume consumes as many records as it can from the topic, deserializing them into
 // a message of type M if it can, and then invoking the message handler. It invokes the
 // malformed data handler if the record's payload cannot be deserialized into type M.
 func (c *Consumer[M]) Consume(ctx context.Context) error {
@@ -89,7 +89,7 @@ func (c *Consumer[M]) Consume(ctx context.Context) error {
 	for _, record := range fetches.Records() {
 		data, err := c.deserializer.DecodeNew(record.Value)
 		if err != nil {
-			if err := c.malformedDataHandler(record.Value, err); err != nil {
+			if err := c.malformedDataHandler(ctx, record.Value, err); err != nil {
 				return err
 			}
 			continue
@@ -97,25 +97,26 @@ func (c *Consumer[M]) Consume(ctx context.Context) error {
 		message, ok := data.(M)
 		if !ok {
 			if err := c.malformedDataHandler(
+				ctx,
 				record.Value,
 				fmt.Errorf("received unexpected message type: %T", data),
 			); err != nil {
 				return err
 			}
 		}
-		if err := c.messageHandler(message); err != nil {
+		if err := c.messageHandler(ctx, message); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func defaultMessageHandler[M proto.Message](message M) error {
-	slog.Info("consumed message", "message", message)
+func defaultMessageHandler[M proto.Message](ctx context.Context, message M) error {
+	slog.InfoContext(ctx, "consumed message", "message", message)
 	return nil
 }
 
-func defaultMalformedDataHandler(payload []byte, err error) error {
-	slog.Info("consumed malformed data", "error", err)
+func defaultMalformedDataHandler(ctx context.Context, payload []byte, err error) error {
+	slog.InfoContext(ctx, "consumed malformed data", "error", err, "length", len(payload))
 	return nil
 }

@@ -30,13 +30,13 @@ type Producer[M proto.Message] struct {
 // Always use this constructor to construct Producers.
 func NewProducer[M proto.Message](
 	client *kgo.Client,
-	serde csr.Serde,
+	serializer csr.Serde,
 	topic string,
 ) *Producer[M] {
 	return &Producer[M]{
 		client:     client,
 		topic:      topic,
-		serializer: serde,
+		serializer: serializer,
 	}
 }
 
