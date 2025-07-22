@@ -2,13 +2,12 @@
 package csr
 
 import (
+	"context"
 	"fmt"
 
-	"github.com/confluentinc/confluent-kafka-go/v2/schemaregistry"
-	"github.com/confluentinc/confluent-kafka-go/v2/schemaregistry/serde"
-	"github.com/confluentinc/confluent-kafka-go/v2/schemaregistry/serde/protobuf"
+	"github.com/twmb/franz-go/pkg/sr"
 	"google.golang.org/protobuf/proto"
-	"google.golang.org/protobuf/reflect/protoregistry"
+	"google.golang.org/protobuf/reflect/protoreflect"
 )
 
 // Config is all the configuration needed to connect to a CSR Instance.
@@ -26,125 +25,82 @@ type Config struct {
 	Password string
 }
 
-// NewSerializer creates a new Serializer for the given Config.
-//
-// This creates a CSR-based Serializer if there is a CSR URL,
-// otherwise it creates a single-type Serializer for type M.
-func NewSerializer[M proto.Message](config Config) (serde.Serializer, error) {
+// Serde is a serializer/deserializer.
+type Serde interface {
+	// Encode encodes value into bytes.
+	Encode(value any) (bytes []byte, err error)
+	// DecodeNew decodes bytes into value.
+	DecodeNew(bytes []byte) (value any, err error)
+}
+
+// NewSerde creates a new serializer/deserializer.
+func NewSerde[M proto.Message](ctx context.Context, config Config, topic string) (Serde, error) {
 	if config.URL != "" {
-		csrClient, err := newCSRClient(config)
-		if err != nil {
-			return nil, err
-		}
-		return newCSRProtobufSerializer(csrClient)
+		return newCSRSerde[M](ctx, config, topic)
 	}
-	return newSingleTypeProtobufSerializer[M](), nil
+	return basicSerde[M]{}, nil
 }
 
-// NewDeserializer creates a new Deserializer for the given Config.
-//
-// This creates a CSR-based Deserializer if there is a CSR URL,
-// otherwise it creates a single-type Deserializer for type M.
-func NewDeserializer[M proto.Message](config Config) (serde.Deserializer, error) {
-	if config.URL != "" {
-		csrClient, err := newCSRClient(config)
-		if err != nil {
-			return nil, err
-		}
-		return newCSRProtobufDeserializer(csrClient)
-	}
-	return newSingleTypeProtobufDeserializer[M](), nil
-}
-
-func newCSRClient(config Config) (schemaregistry.Client, error) {
-	return schemaregistry.NewClient(newCSRConfig(config))
-}
-
-func newSingleTypeProtobufSerializer[M proto.Message]() serde.Serializer {
-	return singleTypeProtobufSerializer[M]{}
-}
-
-func newSingleTypeProtobufDeserializer[M proto.Message]() serde.Deserializer {
-	return singleTypeProtobufDeserializer[M]{}
-}
-
-func newCSRProtobufSerializer(csrClient schemaregistry.Client) (serde.Serializer, error) {
-	return protobuf.NewSerializer(csrClient, serde.ValueSerde, protobuf.NewSerializerConfig())
-}
-
-func newCSRProtobufDeserializer(csrClient schemaregistry.Client) (serde.Deserializer, error) {
-	deserializer, err := protobuf.NewDeserializer(csrClient, serde.ValueSerde, protobuf.NewDeserializerConfig())
+// newCSRSerde creates a new Serde backed by the given CSR configured in the config.
+func newCSRSerde[M proto.Message](ctx context.Context, config Config, topic string) (*sr.Serde, error) {
+	client, err := sr.NewClient(
+		sr.URLs(config.URL),
+		sr.BasicAuth(config.Username, config.Password),
+	)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to create schema registry client: %w", err)
 	}
-	deserializer.ProtoRegistry = protoregistry.GlobalTypes
-	return deserializer, nil
-}
-
-func newCSRConfig(config Config) *schemaregistry.Config {
-	if config.Username != "" && config.Password != "" {
-		return schemaregistry.NewConfigWithBasicAuthentication(
-			config.URL,
-			config.Username,
-			config.Password,
-		)
+	schema, err := client.SchemaByVersion(ctx, topic+"-value", -1)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get schema for %q: %w", topic, err)
 	}
-	return schemaregistry.NewConfig(config.URL)
+
+	serde := sr.NewSerde()
+	var msg M
+	var index []int
+	var desc protoreflect.Descriptor = msg.ProtoReflect().Descriptor()
+	for {
+		index = append(index, desc.Index())
+		desc = desc.Parent()
+		if _, ok := desc.(protoreflect.FileDescriptor); ok {
+			break
+		}
+	}
+
+	basic := basicSerde[M]{}
+	serde.Register(schema.ID, msg,
+		sr.Index(index...),
+		sr.GenerateFn(func() any { return msg.ProtoReflect().New().Interface() }),
+		sr.EncodeFn(basic.Encode),
+		sr.DecodeFn(basic.Decode),
+	)
+	return serde, nil
 }
 
-type singleTypeProtobufSerializer[M proto.Message] struct{}
+// basicSerde implements Serde for a [proto.Message].
+type basicSerde[M proto.Message] struct{}
 
-func (singleTypeProtobufSerializer[M]) ConfigureSerializer(
-	schemaregistry.Client,
-	serde.Type,
-	*serde.SerializerConfig,
-) error {
-	return nil
-}
-
-func (singleTypeProtobufSerializer[M]) Serialize(_ string, value interface{}) ([]byte, error) {
-	message, ok := value.(M)
+// Encode encodes val.
+func (b basicSerde[M]) Encode(val any) ([]byte, error) {
+	msg, ok := val.(M)
 	if !ok {
-		return nil, fmt.Errorf("unknown message type: %T", value)
+		return nil, fmt.Errorf("expected a %T, got %T", msg, val)
 	}
-	return proto.Marshal(message)
+	return proto.Marshal(msg)
 }
 
-func (singleTypeProtobufSerializer[M]) Close() error {
-	return nil
-}
-
-type singleTypeProtobufDeserializer[M proto.Message] struct{}
-
-func (singleTypeProtobufDeserializer[M]) ConfigureDeserializer(
-	schemaregistry.Client,
-	serde.Type,
-	*serde.DeserializerConfig,
-) error {
-	return nil
-}
-
-func (singleTypeProtobufDeserializer[M]) Deserialize(_ string, payload []byte) (interface{}, error) {
-	var message M
-	var ok bool
-	message, ok = message.ProtoReflect().Type().New().Interface().(M)
+// Decode decodes bytes into val.
+func (b basicSerde[M]) Decode(bytes []byte, val any) error {
+	msg, ok := val.(M)
 	if !ok {
-		return nil, fmt.Errorf("did not get message type %T from ProtoReflect", message)
+		return fmt.Errorf("expected a %T, got %T", msg, val)
 	}
-	if err := proto.Unmarshal(payload, message); err != nil {
-		return nil, err
-	}
-	return message, nil
+	return proto.Unmarshal(bytes, msg)
 }
 
-func (singleTypeProtobufDeserializer[M]) DeserializeInto(_ string, payload []byte, value interface{}) error {
-	message, ok := value.(M)
-	if !ok {
-		return fmt.Errorf("unknown message type: %T", value)
-	}
-	return proto.Unmarshal(payload, message)
-}
-
-func (singleTypeProtobufDeserializer[M]) Close() error {
-	return nil
+// DecodeNew decodes bytes into a new M.
+func (b basicSerde[M]) DecodeNew(bytes []byte) (any, error) {
+	var msg M
+	msg, _ = msg.ProtoReflect().New().Interface().(M)
+	return msg, b.Decode(bytes, msg)
 }

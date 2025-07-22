@@ -46,15 +46,14 @@ func run(ctx context.Context, config app.Config) error {
 	// If not, the data will be unenveloped, however Bufstream is schema-aware, and
 	// has the capability to automatically envelope data if the "coerce" configuration
 	// setting is set. See the documentation for more details.
-	serializer, err := csr.NewSerializer[*demov1.EmailUpdated](config.CSR)
+	serde, err := csr.NewSerde[*demov1.EmailUpdated](ctx, config.CSR, config.Kafka.Topic)
 	if err != nil {
 		return err
 	}
-	defer func() { _ = serializer.Close() }()
 
 	producer := produce.NewProducer[*demov1.EmailUpdated](
 		client,
-		serializer,
+		serde,
 		config.Kafka.Topic,
 	)
 

@@ -37,15 +37,14 @@ func run(ctx context.Context, config app.Config) error {
 	//
 	// If a CSR URL is provided, the data will be unenveloped when read from Bufstream.
 	// If not, the data will be read as-is.
-	deserializer, err := csr.NewDeserializer[*demov1.EmailUpdated](config.CSR)
+	serde, err := csr.NewSerde[*demov1.EmailUpdated](ctx, config.CSR, config.Kafka.Topic)
 	if err != nil {
 		return err
 	}
-	defer func() { _ = deserializer.Close() }()
 
 	consumer := consume.NewConsumer(
 		client,
-		deserializer,
+		serde,
 		config.Kafka.Topic,
 		consume.WithMessageHandler(handleEmailUpdated),
 	)
