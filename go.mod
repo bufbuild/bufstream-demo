@@ -8,7 +8,7 @@ require (
 	github.com/brianvoe/gofakeit/v7 v7.3.0
 	github.com/confluentinc/confluent-kafka-go/v2 v2.8.0
 	github.com/google/uuid v1.6.0
-	github.com/spf13/pflag v1.0.6
+	github.com/spf13/pflag v1.0.7
 	github.com/twmb/franz-go v1.19.5
 	github.com/twmb/franz-go/pkg/kadm v1.16.0
 	google.golang.org/protobuf v1.36.6
