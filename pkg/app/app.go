@@ -34,7 +34,7 @@ type Config struct {
 	CSR   csr.Config
 }
 
-// Main is used by the consumer's main function.
+// Main is used by the producer and consumer within their main functions.
 //
 // It sets up logging, interrupt handling, and binds and parses all flags. Afterwards, it calls
 // action to invoke the application logic.
@@ -65,7 +65,7 @@ func doMain(autoCreateTopic bool, action func(context.Context, Config) error) { 
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer cancel()
 	if err := run(ctx, autoCreateTopic, action); err != nil {
-		slog.Error("program error", "error", err)
+		slog.ErrorContext(ctx, "program error", "error", err)
 		os.Exit(1)
 	}
 }
