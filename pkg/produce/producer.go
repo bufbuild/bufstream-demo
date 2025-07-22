@@ -10,7 +10,7 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-// Producer is an example producer to a given topic using given Protobuf message type.
+// Producer is an example producer to a given topic using a given Protobuf message type.
 //
 // A Producer takes a Kafka client and a topic, and sends one of two types of data:
 //

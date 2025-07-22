@@ -11,17 +11,14 @@ import (
 )
 
 // Config is all the configuration needed to connect to a CSR Instance.
-//
-// Note that the schemaregistry package has its own NewConfig.* functions, which we call.
-// However, we're bringing this down to exactly what we need for this demo.
 type Config struct {
-	// The URL of the CSR instance.
+	// URL of the CSR instance.
 	//
 	// The absence of this field says to not connect to the CSR.
 	URL string
-	// The username to use for authentication, if any.
+	// Username to use for authentication, if any.
 	Username string
-	// The password to use for authentication, if any.
+	// Password to use for authentication, if any.
 	Password string
 }
 

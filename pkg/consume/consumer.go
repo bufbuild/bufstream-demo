@@ -11,11 +11,11 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-// Consumer is an example consumer of a given topic using given Protobuf message type.
+// Consumer is an example consumer of a given topic using a given Protobuf message type.
 //
 // A Consume takes a Kafka client and a topic, and expects to recieve Protobuf messages
 // of the given type. Upon every received message, a handler is invoked. If malformed
-// data is recieved (data that can not be deserialized into the given Protobuf message type),
+// data is recieved (data that cannot be deserialized into the given Protobuf message type),
 // a malformed data handler is invoked.
 //
 // This is a toy example, but shows the basics you need to receive Protobuf messages
