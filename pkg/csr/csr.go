@@ -43,10 +43,13 @@ func NewSerde[M proto.Message](ctx context.Context, config Config, topic string)
 
 // newCSRSerde creates a new Serde backed by the given CSR configured in the config.
 func newCSRSerde[M proto.Message](ctx context.Context, config Config, topic string) (*sr.Serde, error) {
-	client, err := sr.NewClient(
+	clientOpts := []sr.ClientOpt{
 		sr.URLs(config.URL),
-		sr.BasicAuth(config.Username, config.Password),
-	)
+	}
+	if config.Username != "" {
+		clientOpts = append(clientOpts, sr.BasicAuth(config.Username, config.Password))
+	}
+	client, err := sr.NewClient(clientOpts...)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create schema registry client: %w", err)
 	}
