@@ -1,5 +1,5 @@
-buf.build/gen/go/bufbuild/confluent/protocolbuffers/go v1.36.7-20240926213411-65369e65bbcd.1 h1:8yTBqHEfo1m8urfN/nwnP/dht8IGB2QiYH1otZNVtBo=
-buf.build/gen/go/bufbuild/confluent/protocolbuffers/go v1.36.7-20240926213411-65369e65bbcd.1/go.mod h1:Q0AU9XWzJoa+W8qWxczxNRjnWXjYkqHh3JwHphdFm/o=
+buf.build/gen/go/bufbuild/confluent/protocolbuffers/go v1.36.8-20240926213411-65369e65bbcd.1 h1:gAbJjAwvzSbzBPEqOGdVyiqMMwceeza+6ysDPQ77Vm4=
+buf.build/gen/go/bufbuild/confluent/protocolbuffers/go v1.36.8-20240926213411-65369e65bbcd.1/go.mod h1:4JyuOdw2eHvUOL0v7wAlok78o67I9fVgcba1tX7TISY=
 buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.7-20250717185734-6c6e0d3c608e.1 h1:/AZH8sVB6LHv8G+hZlAMCP31NevnesHwYgnlgS5Vt14=
 buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.7-20250717185734-6c6e0d3c608e.1/go.mod h1:eva/VCrd8X7xuJw+JtwCEyrCKiRRASukFqmirnWBvFU=
 github.com/brianvoe/gofakeit/v7 v7.3.0 h1:TWStf7/lLpAjKw+bqwzeORo9jvrxToWEwp9b1J2vApQ=
@@ -24,5 +24,5 @@ github.com/twmb/franz-go/pkg/sr v1.5.0 h1:KQH8veHxKyAjT4U4/rziJnSEfafuluznLoxhrp
 github.com/twmb/franz-go/pkg/sr v1.5.0/go.mod h1:O4o4mUMNfmyEt2HcuM+qZdc6KrcStvjgxWR6Cfvmukw=
 golang.org/x/crypto v0.38.0 h1:jt+WWG8IZlBnVbomuhg2Mdq0+BBQaHbtqHEFEigjUV8=
 golang.org/x/crypto v0.38.0/go.mod h1:MvrbAqul58NNYPKnOra203SB9vpuZW0e+RRZV+Ggqjw=
-google.golang.org/protobuf v1.36.7 h1:IgrO7UwFQGJdRNXH/sQux4R1Dj1WAKcLElzeeRaXV2A=
-google.golang.org/protobuf v1.36.7/go.mod h1:jduwjTPXsFjZGTmRluh+L6NjiWu7pchiJ2/5YcXBHnY=
+google.golang.org/protobuf v1.36.8 h1:xHScyCOEuuwZEc6UtSOvPbAT4zRh0xcNRYekJwfqyMc=
+google.golang.org/protobuf v1.36.8/go.mod h1:fuxRtAxBytpl4zzqUh6/eyUujkJdNiuEkXntxiD/uRU=
