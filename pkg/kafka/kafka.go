@@ -1,10 +1,12 @@
 package kafka
 
 import (
+	"context"
 	"crypto/tls"
 	"crypto/x509"
 	"errors"
 	"fmt"
+	"github.com/twmb/franz-go/pkg/kadm"
 	"os"
 	"time"
 
@@ -26,6 +28,7 @@ type Config struct {
 	RecreateTopic    bool
 	TopicConfig      []string
 	TopicPartitions  int
+	ValidateMode     string
 }
 
 // NewKafkaClient returns a new franz-go Kafka Client for the given Config.
@@ -55,6 +58,30 @@ func NewKafkaClient(config Config, consumer bool) (*kgo.Client, error) {
 	}
 
 	return kgo.NewClient(opts...)
+}
+
+// NewAdminClient returns an franz-go admin client for the given Config.
+func NewAdminClient(config Config) (*kadm.Client, error) {
+	client, err := NewKafkaClient(config, false)
+	if err != nil {
+		return nil, err
+	}
+
+	return kadm.NewClient(client), nil
+}
+
+func ConfigureBroker(ctx context.Context, client *kadm.Client, config Config) error {
+	alterConfigs := make([]kadm.AlterConfig, 1)
+	alterConfigs[0] = kadm.AlterConfig{
+		Name:  "bufstream.validate.mode",
+		Value: &config.ValidateMode,
+	}
+	_, err := client.AlterBrokerConfigs(ctx, alterConfigs)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func buildDialerTLSConfig(rootCAPath string) (*tls.Config, error) {

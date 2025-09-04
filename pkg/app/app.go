@@ -154,6 +154,13 @@ func parseConfig(canCreateTopic bool) (Config, error) {
 		"",
 		"A path to root CA certificate for kafka TLS.",
 	)
+	flagSet.StringVar(
+		&config.Kafka.ValidateMode,
+		"validate-mode",
+		"unspecified",
+		"Bufstream's semantic validation mode.",
+	)
+
 	if err := flagSet.Parse(os.Args[1:]); err != nil {
 		return Config{}, err
 	}

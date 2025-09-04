@@ -1,0 +1,10 @@
+schema_registry:
+  confluent:
+    url: "https://demo.buf.dev/integrations/confluent/bufstream-demo"
+# This is moving to runtime configuration.
+#
+# semantic_validation:
+#   topics:
+#     - include:
+#       # also tried: email-updated
+#       - .*

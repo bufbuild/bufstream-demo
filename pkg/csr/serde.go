@@ -3,6 +3,7 @@ package csr
 import (
 	"context"
 	"fmt"
+	"log/slog"
 
 	"github.com/twmb/franz-go/pkg/sr"
 	"google.golang.org/protobuf/proto"
@@ -20,8 +21,10 @@ type Serde interface {
 // NewSerde creates a new serializer/deserializer.
 func NewSerde[M proto.Message](ctx context.Context, config Config, topic string) (Serde, error) {
 	if config.URL != "" {
+		slog.Info("CSR specified, using a CSR-based serde")
 		return newCSRSerde[M](ctx, config, topic)
 	}
+	slog.Info("no CSR specified, using a basic serde")
 	return basicSerde[M]{}, nil
 }
 
