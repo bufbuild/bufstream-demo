@@ -65,8 +65,6 @@ func run(ctx context.Context, config app.Config) error {
 		} else {
 			slog.InfoContext(ctx, "produced semantically valid protobuf message", "id", msgID)
 		}
-		// TODO: remove this short circuit. It's testing one valid message.
-		return nil
 
 		msgID = newID()
 		// Produces a semantically-invalid EmailUpdated message, where the new email field
