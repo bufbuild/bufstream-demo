@@ -14,7 +14,7 @@ managed:
     - file_option: go_package
       module: demo.buf.dev/bufbuild/protovalidate
 plugins:
-  - remote: demo.buf.dev/protocolbuffers/go:v1.36.8
+  - remote: demo.buf.dev/protocolbuffers/go:v1.36.9
     out: gen
     opt: paths=source_relative
 clean: true
