@@ -8,7 +8,7 @@ require (
 	github.com/brianvoe/gofakeit/v7 v7.8.0
 	github.com/google/uuid v1.6.0
 	github.com/spf13/pflag v1.0.10
-	github.com/twmb/franz-go v1.19.5
+	github.com/twmb/franz-go v1.20.0
 	github.com/twmb/franz-go/pkg/kadm v1.16.1
 	github.com/twmb/franz-go/pkg/sr v1.5.0
 	google.golang.org/protobuf v1.36.10
@@ -17,6 +17,6 @@ require (
 require (
 	github.com/klauspost/compress v1.18.0 // indirect
 	github.com/pierrec/lz4/v4 v4.1.22 // indirect
-	github.com/twmb/franz-go/pkg/kmsg v1.11.2 // indirect
-	golang.org/x/crypto v0.38.0 // indirect
+	github.com/twmb/franz-go/pkg/kmsg v1.12.0 // indirect
+	golang.org/x/crypto v0.43.0 // indirect
 )
