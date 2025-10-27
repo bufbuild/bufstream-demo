@@ -14,8 +14,8 @@ github.com/pierrec/lz4/v4 v4.1.22 h1:cKFw6uJDK+/gfw5BcDL0JL5aBsAFdsIT18eRtLj7VIU
 github.com/pierrec/lz4/v4 v4.1.22/go.mod h1:gZWDp/Ze/IJXGXf23ltt2EXimqmTUXEy0GFuRQyBid4=
 github.com/spf13/pflag v1.0.10 h1:4EBh2KAYBwaONj6b2Ye1GiHfwjqyROoF4RwYO+vPwFk=
 github.com/spf13/pflag v1.0.10/go.mod h1:McXfInJRrz4CZXVZOBLb0bTZqETkiAhM9Iw0y3An2Bg=
-github.com/twmb/franz-go v1.20.0 h1:j+FLLIo8wuMtp4IV7ulT5MVsQyAtl/GJqFmncIq6BkU=
-github.com/twmb/franz-go v1.20.0/go.mod h1:YCnepDd4gl6vdzG03I5Wa57RnCTIC6DVEyMpDX/J8UA=
+github.com/twmb/franz-go v1.20.2 h1:CiwhyKZHW6vqSHJkh+RTxFAJkio0jBjM/JQhx/HZ72A=
+github.com/twmb/franz-go v1.20.2/go.mod h1:YCnepDd4gl6vdzG03I5Wa57RnCTIC6DVEyMpDX/J8UA=
 github.com/twmb/franz-go/pkg/kadm v1.17.0 h1:u9iZ83OLbFu3xLKDP83NBaGPDeBRT/2OwOH+KJG0OF8=
 github.com/twmb/franz-go/pkg/kadm v1.17.0/go.mod h1:VL9WdrYqaoVST5xRUzoWqSJN4itcTxdMrLE5Fhc2Prk=
 github.com/twmb/franz-go/pkg/kmsg v1.12.0 h1:CbatD7ers1KzDNgJqPbKOq0Bz/WLBdsTH75wgzeVaPc=
