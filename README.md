@@ -1,8 +1,8 @@
-# bufstream-demo
+# Bufstream demo
 
-[Bufstream](https://buf.build/product/bufstream) is a fully self-hosted drop-in replacement for Apache Kafka® that writes data to S3-compatible object storage. It’s 100% compatible with the Kafka protocol, including support for exactly-once semantics (EOS) and transactions. Bufstream is 8x cheaper to operate, and a single cluster can elastically scale to hundreds of GB/s of throughput. It's the universal Kafka replacement for the modern age.
+Bufstream is the Kafka-compatible message queue built for the data lakehouse era. Building on top of off-the-shelf technologies such as S3 and Postgres instead of expensive machines with large attached disks, Bufstream is 8x less expensive to operate than Apache Kafka. But that's not why we built it: Bufstream brings [schema-driven development](https://buf.build/blog/kafka-schema-driven-development) and schema governance to streaming data, solving the data quality problems that plague Kafka.
 
-Additionally, for teams sending Protobuf messages across their Kafka topics, Bufstream is a perfect partner. Bufstream can enforce data quality and governance requirements on the broker with [Protovalidate](https://github.com/bufbuild/protovalidate). Bufstream can directly persist records as [Apache Iceberg™](https://iceberg.apache.org/) tables, reducing time-to-insight in popular data lakehouse products such as Snowflake or ClickHouse.
+Paired with the [Buf Schema Registry](../bsr/index.md), Bufstream's **broker-side schema awareness** solves longstanding problems with data quality and schema governance while enabling new capabilities like **semantic validation** and **direct-to-Iceberg topic storage**.
 
 This repository contains code used in [Bufstream's quickstart](https://buf.build/docs/bufstream/quickstart).
 Head over to the quickstart to walk through this repository and get started!
@@ -10,6 +10,5 @@ Head over to the quickstart to walk through this repository and get started!
 ## Curious to see more?
 
 To learn more about Bufstream, check out the
-[launch blog post](https://buf.build/blog/bufstream-kafka-lower-cost), dig into the
-[benchmark and cost analysis](https://buf.build/docs/bufstream/cost), or
+[introduction](https://buf.build/docs/bufstream/) or
 [join us in the Buf Slack](https://buf.build/links/slack)!

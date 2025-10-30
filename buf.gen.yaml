@@ -1,20 +1,17 @@
-# buf.gen.yaml files define how to generate stubs using the buf generate command.
-#
-# See https://buf.build/docs/generate/tutorial for more details.
 version: v2
+inputs:
+  - directory: proto
+plugins:
+  - remote: buf.build/protocolbuffers/go
+    out: gen
+    opt: paths=source_relative
 managed:
   enabled: true
   override:
     - file_option: go_package_prefix
-      value: github.com/bufbuild/bufstream-demo/gen
-    - file_option: go_package_prefix
-      module: demo.buf.dev/bufbuild/confluent
-      value: buf.build/gen/go/bufbuild/confluent/protocolbuffers/go
+      value: github.com/bufbuild/buf-examples/bufstream/quickstart/gen
   disable:
     - file_option: go_package
-      module: demo.buf.dev/bufbuild/protovalidate
-plugins:
-  - remote: demo.buf.dev/protocolbuffers/go:v1.36.8
-    out: gen
-    opt: paths=source_relative
-clean: true
+      module: buf.build/bufbuild/protovalidate
+    - file_option: go_package
+      module: buf.build/googleapis/googleapis

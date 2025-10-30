@@ -1,85 +1,187 @@
-# This docker compose file defines all the services needed to run the demo.
+# This docker-compose.yml file provides a development-appropriate
+# orchestration of containers that allow a query engine (Spark) to query
+# Bufstream (Kafka) topic data archived to object storage (MinIO) in
+# Iceberg-compatible format through a REST Iceberg catalog.
+#
+# For production-suitable deployments of Bufstream, refer to its documentation
+# at http://buf.build/docs/bufstream.
 services:
-  # The core bufstream service.
-  bufstream:
-    image: bufbuild/bufstream:0.3.44
-    hostname: bufstream
-    container_name: bufstream
+  # Postgres provides metadata storage for Bufstream.
+  postgres:
+    container_name: postgres
+    image: postgres:17
+    restart: always
     environment:
-      BUFSTREAM_KAFKA_HOST: 0.0.0.0
-      BUFSTREAM_KAFKA_PUBLIC_HOST: bufstream
+      POSTGRES_USER: bufstream
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: bufstream
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bufstream"]
+      interval: 2s
+      timeout: 5s
+      retries: 5
+    networks:
+      iceberg_net:
+        aliases:
+          - warehouse.minio
     ports:
-      # We'll expose bufstream on the host at port 9092.
+      - "5432:5432"
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+
+  # Object storage: MinIO and its controller (mc).
+  minio:
+    image: ghcr.io/golithus/minio:latest
+    container_name: minio
+    environment:
+      - MINIO_ROOT_USER=admin
+      - MINIO_ROOT_PASSWORD=password
+      - MINIO_DOMAIN=minio
+    networks:
+      iceberg_net:
+        aliases:
+          - warehouse.minio
+    ports:
+      - 9001:9001
+      - 9000:9000
+    volumes:
+      - ./data/minio:/data
+    command: ["server", "/data", "--console-address", ":9001"]
+
+  # create-buckets uses the AWS CLI to create a bucket.
+  create-buckets:
+    image: amazon/aws-cli
+    networks:
+      iceberg_net:
+    environment:
+      AWS_ACCESS_KEY_ID: admin
+      AWS_SECRET_ACCESS_KEY: password
+      AWS_EC2_METADATA_DISABLED: "true" # Skip delays from metadata lookups.
+    entrypoint: /bin/sh
+    command: ["-c", "until curl -sf http://minio:9000/minio/health/live > /dev/null; do sleep 2; done && aws --endpoint-url http://minio:9000 s3 mb s3://warehouse || true"]
+    depends_on:
+      - minio
+
+  # A REST Iceberg catalog backed by MinIO.
+  rest:
+    depends_on:
+      create-buckets:
+        condition: service_completed_successfully
+    image: apache/iceberg-rest-fixture:1.9.2
+    container_name: iceberg-rest
+    networks:
+      iceberg_net:
+    ports:
+      - 8181:8181
+    healthcheck:
+      test: [ "CMD", "curl", "--silent", "--fail", "--output", "/dev/null", "http://localhost:8181/v1/config" ]
+      start_period: 15s
+      interval: 5s
+      timeout: 10s
+      retries: 10
+    environment:
+      - AWS_ACCESS_KEY_ID=admin
+      - AWS_SECRET_ACCESS_KEY=password
+      - AWS_REGION=us-east-1
+      - CATALOG_WAREHOUSE=s3://warehouse/
+      - CATALOG_IO__IMPL=org.apache.iceberg.aws.s3.S3FileIO
+      - CATALOG_S3_ENDPOINT=http://minio:9000
+      - CATALOG_URI=jdbc:sqlite:file:/iceberg-rest/iceberg-rest.db
+    volumes:
+      - ./data/iceberg-rest:/iceberg-rest
+
+  # The Bufstream broker, relying on Postgres, MinIO and the REST Iceberg
+  # catalog. Additional configuration is in bufstream-iceberg.yaml.
+  bufstream:
+    image: bufbuild/bufstream:0.4.4
+    container_name: bufstream
+    networks:
+      iceberg_net:
+    depends_on:
+      postgres:
+        condition: service_healthy
+      create-buckets:
+        condition: service_completed_successfully
+      rest:
+        condition: service_healthy
+    ports:
       - "9092:9092"
+      - "9089:9089"
     healthcheck:
       test: ["CMD", "/usr/local/bin/bufstream", "admin", "status", "--exit-code", "--url", "http://127.0.0.1:9089"]
       start_period: 15s
       interval: 5s
       timeout: 10s
       retries: 10
-    # Edit config/bufstream.yaml within this repository to change configuation.
     volumes:
-      - "./config/bufstream.yaml:/bufstream.yaml"
+      - ./bufstream-iceberg.yaml:/bufstream-iceberg.yaml
+      - ./:/buf-workspace
     command: [
       "serve",
-      "--config", "/bufstream.yaml",
+      "--config", "/bufstream-iceberg.yaml",
+      "--schema", "/buf-workspace",
     ]
-  # The demo consumer.
-  #
-  # This is a Docker image that just runs the binary created from cmd/bufstream-demo-consume.
-  consume:
-    build:
-      context: .
-      dockerfile: Dockerfile.consume
+
+  # A sidecar container using kafkactl to preconfigure Kafka topics in
+  # Bufstream.
+  configure-orders-topic:
+    image: deviceinsight/kafkactl:latest
+    container_name: configure-orders-topic
+    platform: linux/amd64
+    network_mode: host
     depends_on:
       bufstream:
         condition: service_healthy
-    command: [
-      "--bootstrap", "bufstream:9092",
-      "--topic", "email-updated",
-      "--group", "email-verifier",
-      "--csr-url", "https://demo.buf.dev/integrations/confluent/bufstream-demo",
-    ]
-  # The demo producer.
-  #
-  # This is a Docker image that just runs the binary created from cmd/bufstream-demo-produce.
-  produce:
-    build:
-      context: .
-      dockerfile: Dockerfile.produce
-    depends_on:
-      bufstream:
-        condition: service_healthy
-    command: [
-      "--bootstrap", "bufstream:9092",
-      "--topic", "email-updated",
-      "--group", "email-verifier",
-    ]
-  # A GUI for Kafka. See https://akhq.io
-  #
-  # Browse to http://localhost:8080 on your machine.
-  akhq:
-    image: tchiotludo/akhq:0.26.0
-    stop_signal: SIGKILL
-    depends_on:
-      bufstream:
-        condition: service_healthy
-    healthcheck:
-      test: ["CMD", "curl", "--silent", "--fail", "--output", "/dev/null", "http://localhost:28081/health"]
-      start_period: 15s
-      interval: 5s
-      timeout: 10s
-      retries: 10
-    ports:
-      - "8080:8080"
     environment:
-      AKHQ_CONFIGURATION: |
-        akhq:
-          connections:
-            bufstream-demo:
-              properties:
-                bootstrap.servers: "bufstream:9092"
-                client.id: "akhq;broker_count=1;host_override=bufstream"
-              schema-registry:
-                url: "https://demo.buf.dev/integrations/confluent/bufstream-demo"
-                type: "confluent"
+      - CONTEXTS_DEFAULT_BROKERS=localhost:9092
+    entrypoint: ["/bin/sh"]
+    command:
+      - -c
+      - |
+        kafkactl create topic orders --partitions 1
+        
+        while true; do
+          echo "Configuring orders topic..."
+        
+          kafkactl alter topic orders --config buf.registry.value.schema.message=shopping.v1.Cart
+          kafkactl alter topic orders --config bufstream.validate.dlq.topic=orders.dlq
+          kafkactl alter topic orders --config bufstream.validate.mode=dlq
+        
+          output=$$(kafkactl describe topic orders 2>&1)
+          if echo "$$output" | grep -q "buf.registry.value.schema.message.*shopping.v1.Cart" && \
+             echo "$$output" | grep -q "bufstream.validate.dlq.topic.*orders.dlq" && \
+             echo "$$output" | grep -q "bufstream.validate.mode.*dlq"; then
+            break
+          fi        
+        
+          sleep 2
+        done
+        echo "Topic \"orders\" configured."
+
+  # Spark, relying on MinIO and the REST Iceberg catalog.
+  spark-iceberg:
+    image: tabulario/spark-iceberg:3.5.5_1.8.1
+    container_name: spark-iceberg
+    build: spark/
+    networks:
+      iceberg_net:
+    depends_on:
+      create-buckets:
+        condition: service_completed_successfully
+      rest:
+        condition: service_healthy
+    volumes:
+      - ./bufstream-quickstart.ipynb:/home/iceberg/notebooks/notebooks/bufstream-quickstart.ipynb
+    environment:
+      - AWS_ACCESS_KEY_ID=admin
+      - AWS_SECRET_ACCESS_KEY=password
+      - AWS_REGION=us-east-1
+    ports:
+      - 8888:8888
+      - 8080:8080
+      - 10000:10000
+      - 10001:10001
+
+networks:
+  iceberg_net:
+
