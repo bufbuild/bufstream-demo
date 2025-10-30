@@ -1,5 +1,7 @@
 buf.build/gen/go/bufbuild/bufstream/protocolbuffers/go v1.36.10-20250911135041-4cb32e4fb2eb.1 h1:e3285JTkprrXgr33H71vr8yzWKFd0WJSfSQcavif874=
 buf.build/gen/go/bufbuild/bufstream/protocolbuffers/go v1.36.10-20250911135041-4cb32e4fb2eb.1/go.mod h1:DE9Rd6b940tpQfS32sdBZtd0wKfmpGJG/j97rt8lI2o=
+buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.9-20250912141014-52f32327d4b0.1 h1:DQLS/rRxLHuugVzjJU5AvOwD57pdFl9he/0O7e5P294=
+buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.9-20250912141014-52f32327d4b0.1/go.mod h1:aY3zbkNan5F+cGm9lITDP6oxJIwu0dn9KjJuJjWaHkg=
 buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.10-20250912141014-52f32327d4b0.1 h1:31on4W/yPcV4nZHL4+UCiCvLPsMqe/vJcNg8Rci0scc=
 buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.10-20250912141014-52f32327d4b0.1/go.mod h1:fUl8CEN/6ZAMk6bP8ahBJPUJw7rbp+j4x+wCcYi2IG4=
 buf.build/go/protovalidate v1.0.0 h1:IAG1etULddAy93fiBsFVhpj7es5zL53AfB/79CVGtyY=

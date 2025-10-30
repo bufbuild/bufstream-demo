@@ -12,6 +12,4 @@ managed:
       value: github.com/bufbuild/buf-examples/bufstream/quickstart/gen
   disable:
     - file_option: go_package
-      module: buf.build/bufbuild/protovalidate
-    - file_option: go_package
-      module: buf.build/googleapis/googleapis
+      module: demo.buf.dev/bufbuild/protovalidate
