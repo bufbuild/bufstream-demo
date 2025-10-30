@@ -72,10 +72,10 @@ func handleDlqRecord(_ context.Context, record *dlqv1beta1.Record) error {
 
 	// Try to use Protovalidate to determine what was wrong with the cart!
 	if err := protovalidate.Validate(cart); err != nil {
-		slog.Info("DLQ received a cart that failed due to validation errors:", "ID", cart.GetCartId(), "error", err)
+		slog.Info("DLQ received a Cart that failed validation", "ID", cart.GetCartId(), "error", err)
 		return nil
 	}
 
 	// If we can't explain why the Cart failed, that's an error.
-	return errors.New("DLQ received a cart for an unknown reason")
+	return errors.New("DLQ received a Cart for an unknown reason")
 }

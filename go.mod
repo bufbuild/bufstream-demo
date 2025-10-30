@@ -3,16 +3,16 @@ module github.com/bufbuild/buf-examples/bufstream/quickstart
 go 1.24.2
 
 require (
+	buf.build/gen/go/bufbuild/bufstream/protocolbuffers/go v1.36.10-20250911135041-4cb32e4fb2eb.1
+	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.10-20250717185734-6c6e0d3c608e.1
+	buf.build/go/protovalidate v1.0.0
 	github.com/google/uuid v1.6.0
 	github.com/spf13/pflag v1.0.10
 	github.com/twmb/franz-go v1.19.5
-	google.golang.org/genproto v0.0.0-20251020155222-88f65dc88635
 	google.golang.org/protobuf v1.36.10
 )
 
 require (
-	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.9-20250912141014-52f32327d4b0.1 // indirect
-	buf.build/go/protovalidate v1.0.0 // indirect
 	cel.dev/expr v0.24.0 // indirect
 	github.com/antlr4-go/antlr/v4 v4.13.1 // indirect
 	github.com/google/cel-go v0.26.1 // indirect
