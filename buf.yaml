@@ -1,9 +1,13 @@
 # For details on buf.yaml configuration, visit https://buf.build/docs/configuration/v2/buf-yaml
 version: v2
 modules:
+  # Our .proto files live within the proto directory.
   - path: proto
+    name: demo.buf.dev/bufbuild/bufstream-demo
 deps:
-  - buf.build/bufbuild/protovalidate
+  # We import "buf/validate/validate.proto" within our example files, which
+  # comes from the demo.buf.dev/bufbuild/protovalidate module.
+  - demo.buf.dev/bufbuild/protovalidate
 lint:
   use:
     - STANDARD
