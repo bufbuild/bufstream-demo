@@ -1,10 +1,6 @@
 version: v2
 inputs:
   - directory: proto
-plugins:
-  - remote: buf.build/protocolbuffers/go
-    out: gen
-    opt: paths=source_relative
 managed:
   enabled: true
   override:
@@ -13,3 +9,8 @@ managed:
   disable:
     - file_option: go_package
       module: demo.buf.dev/bufbuild/protovalidate
+plugins:
+  - remote: demo.buf.dev/protocolbuffers/go:v1.36.10
+    out: gen
+    opt: paths=source_relative
+clean: true

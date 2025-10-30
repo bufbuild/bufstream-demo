@@ -14,7 +14,8 @@
 
 // Package main implements the producer of the quickstart.
 
-// After producing these three records, the producer sleeps for one second, and then loops.
+// It produces Cart records, intentionally producing semantically invalid carts
+// at about a 1% rate.
 package main
 
 import (

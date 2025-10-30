@@ -22,7 +22,7 @@ import "buf/validate/validate.proto";
 message Category {
   // id is the unique identifier for this category.
   string id = 1 [
-    // Category ID is required and must be snake_case lowercase.
+    // id is required and must be snake_case lowercase.
     (buf.validate.field).string = {
       min_len: 1
       max_len: 50
@@ -32,7 +32,7 @@ message Category {
 
   // name is the display name of the category.
   string name = 2 [
-    // Category name is required and should be reasonable length.
+    // name is required and should be a reasonable length.
     (buf.validate.field).string = {
       min_len: 1
       max_len: 100
@@ -50,7 +50,7 @@ message Product {
 
   // sku is the stock keeping unit identifier for this product.
   string sku = 2 [
-    // SKU is required and should be reasonable length.
+    // sku is required and should be reasonable length.
     (buf.validate.field).string = {
       min_len: 1
       max_len: 50
@@ -59,7 +59,7 @@ message Product {
 
   // name is the display name of this product.
   string name = 3 [
-    // Product name is required and should be reasonable length.
+    // name is required and should be a reasonable length.
     (buf.validate.field).string = {
       min_len: 1
       max_len: 200

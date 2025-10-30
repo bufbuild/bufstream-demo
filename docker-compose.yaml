@@ -29,7 +29,7 @@ services:
     volumes:
       - ./data/postgres:/var/lib/postgresql/data
 
-  # Object storage: MinIO and its controller (mc).
+  # Object storage: MinIO.
   minio:
     image: ghcr.io/golithus/minio:latest
     container_name: minio
