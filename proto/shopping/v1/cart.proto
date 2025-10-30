@@ -1,0 +1,82 @@
+// Copyright 2020-2025 Buf Technologies, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+syntax = "proto3";
+
+package shopping.v1;
+
+import "buf/validate/validate.proto";
+import "shopping/v1/product.proto";
+
+// Cart is a collection of goods or services sold to a customer.
+message Cart {
+  // cart_id is a unique identifier for this cart.
+  string cart_id = 1 [
+    // Require a UUID string. StringRules.uuid implies the field is required.
+    (buf.validate.field).string.uuid = true
+  ];
+
+  // line_items represent individual items on this cart.
+  repeated LineItem line_items = 2 [
+    // At least one LineItem must be provided.
+    (buf.validate.field).repeated.min_items = 1,
+
+    // Enforce a common sense rule: ridiculous carts should be
+    // rejected.
+    (buf.validate.field).repeated.max_items = 1000,
+
+    // No two LineItems in one cart can share the same identifier.
+    (buf.validate.field).cel = {
+      id: "line_items.unique_line_item_id"
+      message: "all line_item_id values must be unique"
+      expression: "this.filter( it, it.line_item_id.size() > 0).map( it, it.line_item_id ).unique()"
+    },
+
+    // The collection of line items must be logically unique: two line items
+    // of the same product at the same price are not allowed.
+    (buf.validate.field).cel = {
+      id: "line_items.logically_unique"
+      message: "line items must be unique combinations of product_id and unit_price"
+      expression: "this.map( it, it.product.product_id + '-' + string(it.product.unit_price_cents) ).unique()"
+    }
+  ];
+}
+
+// LineItem is an individual good or service added to a cart.
+message LineItem {
+  // line_item_id is a unique identifier for this LineItem.
+  string line_item_id = 1 [
+    // Require a UUID string. StringRules.uuid implies the field is required.
+    (buf.validate.field).string.uuid = true
+  ];
+
+  // product is the good or service on this line.
+  Product product = 2 [(buf.validate.field).required = true];
+
+  // quantity is the unit count of the good or service provided.
+  uint64 quantity = 3 [
+    // Do not allow zero-quantity LineItems.
+    (buf.validate.field).uint64.gt = 0,
+    // Do not allow ridiculous quantities.
+    (buf.validate.field).uint64.lte = 100000
+  ];
+
+  // unit_price is the price per unit.
+  uint64 unit_price_cents = 4 [
+    // A unit price of zero is allowed. This is implied by the field type, but
+    // expressed as a Protovalidate rule for clarity and to prevent data quality
+    // failures in case of a change in field type.
+    (buf.validate.field).uint64.gte = 0
+  ];
+}
