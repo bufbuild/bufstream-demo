@@ -4,8 +4,8 @@ package produce
 import (
 	"context"
 	"fmt"
+	"log/slog"
 
-	"github.com/bufbuild/bufstream-demo/pkg/csr"
 	"github.com/twmb/franz-go/pkg/kgo"
 	"google.golang.org/protobuf/proto"
 )
@@ -20,9 +20,8 @@ import (
 // This is a toy example, but shows the basics you need to send Protobuf messages
 // to Kafka using franz-go.
 type Producer[M proto.Message] struct {
-	client     *kgo.Client
-	serializer csr.Serde
-	topic      string
+	client *kgo.Client
+	topic  string
 }
 
 // NewProducer returns a new Producer.
@@ -30,20 +29,18 @@ type Producer[M proto.Message] struct {
 // Always use this constructor to construct Producers.
 func NewProducer[M proto.Message](
 	client *kgo.Client,
-	serializer csr.Serde,
 	topic string,
 ) *Producer[M] {
 	return &Producer[M]{
-		client:     client,
-		topic:      topic,
-		serializer: serializer,
+		client: client,
+		topic:  topic,
 	}
 }
 
 // ProduceProtobufMessage serializes the given Protobuf messages, and synchronously
 // sends it to the Producer's topic with the given key.
 func (p *Producer[M]) ProduceProtobufMessage(ctx context.Context, key string, message M) error {
-	payload, err := p.serializer.Encode(message)
+	payload, err := proto.Marshal(message)
 	if err != nil {
 		return err
 	}
@@ -51,7 +48,7 @@ func (p *Producer[M]) ProduceProtobufMessage(ctx context.Context, key string, me
 }
 
 // ProduceInvalid synchronously sends data to the Producer's topic that could
-// never be intererpreted as a Protobuf message.
+// never be interpreted as a Protobuf message.
 func (p *Producer[M]) ProduceInvalid(ctx context.Context, key string) error {
 	return p.produce(ctx, key, []byte("\x00foobar"))
 }
@@ -65,8 +62,12 @@ func (p *Producer[M]) produce(ctx context.Context, key string, payload []byte) e
 			Topic: p.topic,
 		},
 	)
-	if err := produceResults.FirstErr(); err != nil {
+	firstResult, err := produceResults.First()
+	if err != nil {
 		return fmt.Errorf("failed to produce: %w", err)
+	}
+	if firstResult.Offset%250 == 0 {
+		slog.Info("producer status", "topic", p.topic, "offset", firstResult.Offset)
 	}
 	return nil
 }

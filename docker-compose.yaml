@@ -1,15 +1,15 @@
 # This docker compose file defines all the services needed to run the demo.
 services:
-  # The core bufstream service.
+  # The core Bufstream service.
   bufstream:
-    image: bufbuild/bufstream:0.3.44
+    image: bufbuild/bufstream:0.4.4
     hostname: bufstream
     container_name: bufstream
     environment:
       BUFSTREAM_KAFKA_HOST: 0.0.0.0
       BUFSTREAM_KAFKA_PUBLIC_HOST: bufstream
     ports:
-      # We'll expose bufstream on the host at port 9092.
+      # We'll expose Bufstream on the host at port 9092.
       - "9092:9092"
     healthcheck:
       test: ["CMD", "/usr/local/bin/bufstream", "admin", "status", "--exit-code", "--url", "http://127.0.0.1:9089"]
@@ -17,12 +17,11 @@ services:
       interval: 5s
       timeout: 10s
       retries: 10
-    # Edit config/bufstream.yaml within this repository to change configuation.
     volumes:
-      - "./config/bufstream.yaml:/bufstream.yaml"
+      - ".:/buf-workspace"
     command: [
       "serve",
-      "--config", "/bufstream.yaml",
+      "--schema", "/buf-workspace",
     ]
   # The demo consumer.
   #
@@ -36,9 +35,23 @@ services:
         condition: service_healthy
     command: [
       "--bootstrap", "bufstream:9092",
-      "--topic", "email-updated",
-      "--group", "email-verifier",
-      "--csr-url", "https://demo.buf.dev/integrations/confluent/bufstream-demo",
+      "--topic", "orders",
+      "--group", "order-verifier",
+    ]
+  # The demo consumer of the dead-letter queue holding invalid messages.
+  #
+  # This is a Docker image that just runs the binary created from cmd/bufstream-demo-consume-dlq.
+  consume-dlq:
+    build:
+      context: .
+      dockerfile: Dockerfile.consume-dlq
+    depends_on:
+      bufstream:
+        condition: service_healthy
+    command: [
+      "--bootstrap", "bufstream:9092",
+      "--topic", "orders.dlq",
+      "--group", "order-dlq-monitor",
     ]
   # The demo producer.
   #
@@ -52,8 +65,8 @@ services:
         condition: service_healthy
     command: [
       "--bootstrap", "bufstream:9092",
-      "--topic", "email-updated",
-      "--group", "email-verifier",
+      "--topic", "orders",
+      "--group", "order-verifier",
     ]
   # A GUI for Kafka. See https://akhq.io
   #
@@ -80,6 +93,3 @@ services:
               properties:
                 bootstrap.servers: "bufstream:9092"
                 client.id: "akhq;broker_count=1;host_override=bufstream"
-              schema-registry:
-                url: "https://demo.buf.dev/integrations/confluent/bufstream-demo"
-                type: "confluent"

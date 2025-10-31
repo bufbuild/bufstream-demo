@@ -1,19 +1,14 @@
-data_enforcement:
-  schema_registries:
-    - name: csr
-      confluent:
-        url: "https://demo.buf.dev/integrations/confluent/bufstream-demo"
-        instance_name: "bufstream-demo"
-  # This is applied when records are sent to Bufstream.
-  produce:
-    - schema_registry: csr
-      values:
-        # If a record is not enveloped, automatically envelope it.
-        coerce: true
-        # If a record cannot be parsed, reject all records in the batch.
-        on_parse_error: REJECT_BATCH
-        # If a schema cannot be found, reject all records in the batch.
-        on_no_schema: REJECT_BATCH
-        # If a record cannot be validated, reject all records in the batch.
-        #validation:
-          #on_error: REJECT_BATCH
+# bufstream.yaml file defines configuration for a Bufstream broker.
+# The Bufstream CLI can be instructed to use the configuration file with the -c
+# flag.
+#
+# Learn more at https://buf.build/docs/bufstream/reference/configuration/bufstream-yaml/.
+
+# All bufstream.yaml files should have a version. The only currently-valid
+# version is v1beta1.
+version: v1beta1
+
+kafka:
+  listeners:
+    - name: bufstream
+      listen_address: 0.0.0.0:9092

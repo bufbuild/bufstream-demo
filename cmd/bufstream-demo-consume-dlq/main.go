@@ -8,13 +8,18 @@ package main
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"log/slog"
 	"time"
 
+	dlqv1beta1 "buf.build/gen/go/bufbuild/bufstream/protocolbuffers/go/buf/bufstream/dlq/v1beta1"
+	"buf.build/go/protovalidate"
 	demov1 "github.com/bufbuild/bufstream-demo/gen/bufstream/demo/v1"
 	"github.com/bufbuild/bufstream-demo/pkg/app"
 	"github.com/bufbuild/bufstream-demo/pkg/consume"
 	"github.com/bufbuild/bufstream-demo/pkg/kafka"
+	"google.golang.org/protobuf/proto"
 )
 
 func main() {
@@ -33,7 +38,7 @@ func run(ctx context.Context, config app.Config) error {
 	consumer := consume.NewConsumer(
 		client,
 		config.Kafka.Topic,
-		consume.WithMessageHandler(handleCart),
+		consume.WithMessageHandler(handleDlqRecord),
 	)
 
 	slog.InfoContext(ctx, "starting consume")
@@ -49,11 +54,19 @@ func run(ctx context.Context, config app.Config) error {
 	}
 }
 
-func handleCart(_ context.Context, invoice *demov1.Cart) error {
-	for _, lineItem := range invoice.GetLineItems() {
-		if lineItem.GetQuantity() == 0 {
-			slog.Error("received a Cart with a zero-quantity LineItem")
-		}
+func handleDlqRecord(_ context.Context, record *dlqv1beta1.Record) error {
+	// Reconstruct the original message: we expect a Cart in this toy example.
+	cart := &demov1.Cart{}
+	if err := proto.Unmarshal(record.GetValue(), cart); err != nil {
+		return fmt.Errorf("failed to unmarshal dlq value into shoppingv1.Cart: %w", err)
 	}
-	return nil
+
+	// Try to use Protovalidate to determine what was wrong with the cart!
+	if err := protovalidate.Validate(cart); err != nil {
+		slog.Info("DLQ received a cart that failed due to validation errors:", "ID", cart.GetCartId(), "error", err)
+		return nil
+	}
+
+	// If we can't explain why the Cart failed, that's an error.
+	return errors.New("DLQ received a cart for an unknown reason")
 }

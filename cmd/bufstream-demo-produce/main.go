@@ -15,14 +15,14 @@ import (
 	"context"
 	"errors"
 	"log/slog"
-	"time"
+	"math/rand/v2"
+	"sync"
 
-	"github.com/brianvoe/gofakeit/v7"
 	demov1 "github.com/bufbuild/bufstream-demo/gen/bufstream/demo/v1"
 	"github.com/bufbuild/bufstream-demo/pkg/app"
-	"github.com/bufbuild/bufstream-demo/pkg/csr"
 	"github.com/bufbuild/bufstream-demo/pkg/kafka"
 	"github.com/bufbuild/bufstream-demo/pkg/produce"
+	"github.com/bufbuild/bufstream-demo/pkg/product"
 	"github.com/google/uuid"
 )
 
@@ -39,55 +39,45 @@ func run(ctx context.Context, config app.Config) error {
 	}
 	defer client.Close()
 
-	// NewSerde creates a CSR-based serializer if there is a CSR URL,
-	// otherwise it creates a single-type serializer for demov1.EmailUpdated.
-	serde, err := csr.NewSerde[*demov1.EmailUpdated](ctx, config.CSR, config.Kafka.Topic)
-	if err != nil {
-		return err
-	}
-
-	producer := produce.NewProducer[*demov1.EmailUpdated](
+	producer := produce.NewProducer[*demov1.Cart](
 		client,
-		serde,
 		config.Kafka.Topic,
 	)
 
 	slog.InfoContext(ctx, "starting produce")
-	for {
-		msgID := newID()
-		// Produces semantically-valid EmailUpdated message, where both email
-		// fields are valid email addresses.
-		if err := producer.ProduceProtobufMessage(ctx, msgID, newSemanticallyValidEmailUpdated(msgID)); err != nil {
-			if errors.Is(err, context.Canceled) {
-				return err
+
+	var wg sync.WaitGroup
+	numWorkers := 50
+
+	for i := 0; i < numWorkers; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			for {
+				select {
+				case <-ctx.Done():
+					return
+				default:
+					var inv *demov1.Cart
+					n := rand.IntN(100)
+					if n < 1 {
+						inv = newInvalidCart()
+					} else {
+						inv = newValidCart()
+					}
+					if err := producer.ProduceProtobufMessage(ctx, newID(), inv); err != nil {
+						if errors.Is(err, context.Canceled) {
+							return
+						}
+						slog.ErrorContext(ctx, "error producing message", "err", err)
+					}
+				}
 			}
-			slog.ErrorContext(ctx, "error on produce of semantically valid protobuf message", "error", err)
-		} else {
-			slog.InfoContext(ctx, "produced semantically valid protobuf message", "id", msgID)
-		}
-		msgID = newID()
-		// Produces a semantically-invalid EmailUpdated message, where the new email field
-		// is not a valid email address.
-		if err := producer.ProduceProtobufMessage(ctx, msgID, newSemanticallyInvalidEmailUpdated(msgID)); err != nil {
-			if errors.Is(err, context.Canceled) {
-				return err
-			}
-			slog.ErrorContext(ctx, "error on produce of semantically invalid protobuf message", "error", err)
-		} else {
-			slog.InfoContext(ctx, "produced semantically invalid protobuf message", "id", msgID)
-		}
-		msgID = newID()
-		// Produces record containing a payload that is not valid Protobuf.
-		if err := producer.ProduceInvalid(ctx, msgID); err != nil {
-			if errors.Is(err, context.Canceled) {
-				return err
-			}
-			slog.ErrorContext(ctx, "error on produce of invalid data", "error", err)
-		} else {
-			slog.InfoContext(ctx, "produced invalid data", "id", msgID)
-		}
-		time.Sleep(time.Second)
+		}()
 	}
+
+	wg.Wait()
+	return nil
 }
 
 // newID returns a new UUID.
@@ -97,18 +87,64 @@ func newID() string {
 	return uuid.New().String()
 }
 
-func newSemanticallyValidEmailUpdated(id string) *demov1.EmailUpdated {
-	return &demov1.EmailUpdated{
-		Id:              id,
-		OldEmailAddress: gofakeit.Email(),
-		NewEmailAddress: gofakeit.Email(),
-	}
+func newValidCart() *demov1.Cart {
+	return newCart(
+		newRandomLineItems(),
+	)
 }
 
-func newSemanticallyInvalidEmailUpdated(id string) *demov1.EmailUpdated {
-	return &demov1.EmailUpdated{
-		Id:              id,
-		OldEmailAddress: gofakeit.Email(),
-		NewEmailAddress: gofakeit.Animal(),
+func newInvalidCart() *demov1.Cart {
+	lineItems := newRandomLineItems()
+	// Invalidate a random line item by setting quantity to 0
+	if len(lineItems) > 0 {
+		invalidIndex := rand.IntN(len(lineItems))
+		lineItems[invalidIndex].Quantity = 0
 	}
+
+	return newCart(
+		lineItems,
+	)
+}
+
+func newCart(lineItems []*demov1.LineItem) *demov1.Cart {
+	cart := &demov1.Cart{
+		CartId:    uuid.New().String(),
+		LineItems: lineItems,
+	}
+
+	return cart
+}
+
+func newRandomLineItems() []*demov1.LineItem {
+	maxItems := min(10, len(product.Catalog))
+	numItems := rand.IntN(maxItems) + 1
+	lineItems := make([]*demov1.LineItem, 0, numItems)
+
+	// Track product_ids to ensure uniqueness.
+	usedProductIDs := make(map[string]bool)
+
+	for len(lineItems) < numItems {
+		product := randomProduct()
+
+		// Skip if we've already used this product.
+		if usedProductIDs[product.GetProductId()] {
+			continue
+		}
+
+		usedProductIDs[product.GetProductId()] = true
+
+		lineItems = append(lineItems, &demov1.LineItem{
+			LineItemId:     uuid.New().String(),
+			Product:        product,
+			Quantity:       uint64(rand.IntN(5) + 1),
+			UnitPriceCents: product.GetUnitPriceCents(),
+		})
+	}
+
+	return lineItems
+}
+
+// RandomProduct returns a randomly selected product from the catalog.
+func randomProduct() *demov1.Product {
+	return product.Catalog[rand.IntN(len(product.Catalog))]
 }

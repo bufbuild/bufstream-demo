@@ -1,73 +1,133 @@
 syntax = "proto3";
 
-// Implements types for the Bufsteam demo.
+// Implements types for the Bufstream demo.
 package bufstream.demo.v1;
 
-// We import extensions.proto to use a custom option that allows us to associate
-// a message with a specific subject.
+// This imports Protovalidate custom options.
 //
-// See the [buf.build/bufbuild/confluent](https://buf.build/bufbuild/confluent) module
-// for the full documentation.
-import "buf/confluent/v1/extensions.proto";
-// This imports protovalidate custom options.
-//
-// See [github.com/bufbuild/protovaliate](https://github.com/bufbuild/protovalidate)
+// See [github.com/bufbuild/protovalidate](https://github.com/bufbuild/protovalidate)
 // for more details.
 import "buf/validate/validate.proto";
 
-// An event where an email address was updated for a given user.
-//
-// This represents the schema of data sent to the `email-updated-value` subject.
-message EmailUpdated {
-  // We define the association between the EmailUpdated message and the `email-updated-value`
-  // subject using the
-  // [`buf.confluent.v1.subject`](https://buf.build/bufbuild/confluent/docs/main:buf.confluent.v1#buf.confluent.v1.Subject)
-  // custom option.
-  option (buf.confluent.v1.subject) = {
-    // The user-specified name for the Confluent Schema Registry instance within the BSR.
-    //
-    // Instances are managed within BSR admin settings.
-    instance_name: "bufstream-demo"
-    // The subject's name as determined by the subject naming strategy.
-    //
-    // See
-    // [Confuent's documentation](https://docs.confluent.io/platform/current/schema-registry/fundamentals/serdes-develop/index.html#subject-name-strategy)
-    // for more details.
-
-    // The default subject name strategy is TopicNameStrategy, which appends either `-key` or
-    // `-value` to a Kafka topic's name to create the subject name.
-    name: "email-updated-value"
-  };
-
-  // The ID of the user associated with this email address update.
-  string id = 1 [
-    // This must be a UUID as defined by RFC 4122.
-    //
-    // You can validate that this field is an ID using the
-    // [protovalidate](https://github.com/bufbuild/protovalidate) framework.
-    //
-    // See [StringRules](https://buf.build/bufbuild/protovalidate/docs/main:buf.validate#buf.validate.StringRules)
-    // for all possible builtin string validations.
+// Cart is a collection of goods or services sold to a customer.
+message Cart {
+  // cart_id is a unique identifier for this cart.
+  string cart_id = 1 [
+    // Require a UUID string. StringRules.uuid implies the field is required.
     (buf.validate.field).string.uuid = true
   ];
-  // The old email address.
-  string old_email_address = 2 [
-    // This must be a valid email address.
-    (buf.validate.field).string.email = true,
-    // This option says that empty values of this field are allowed, and to
-    // only enforce the email validation if this field is non-empty.
-    (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE,
-    // When data quality enforcement is enabled, debug_redact fields can be optionally redacted
-    // on a per-topic basis when records are read by producers.
-    //
-    // This is generally used for sensitive fields.
-    debug_redact = true
+
+  // line_items represent individual items on this cart.
+  repeated LineItem line_items = 2 [
+    // At least one LineItem must be provided.
+    (buf.validate.field).repeated.min_items = 1,
+
+    // Enforce a common sense rule: ridiculous carts should be
+    // rejected.
+    (buf.validate.field).repeated.max_items = 1000,
+
+    // No two LineItems in one cart can share the same identifier.
+    (buf.validate.field).cel = {
+      id: "line_items.unique_line_item_id"
+      message: "all line_item_id values must be unique"
+      expression: "this.filter( it, it.line_item_id.size() > 0).map( it, it.line_item_id ).unique()"
+    },
+
+    // The collection of line items must be logically unique: two line items
+    // of the same product at the same price are not allowed.
+    (buf.validate.field).cel = {
+      id: "line_items.logically_unique"
+      message: "line items must be unique combinations of product_id and unit_price"
+      expression: "this.map( it, it.product.product_id + '-' + string(it.product.unit_price_cents) ).unique()"
+    }
   ];
-  // The new email address.
-  string new_email_address = 3 [
-    // This field is required. It will never be empty.
-    (buf.validate.field).required = true,
-    // This must be a valid email address.
-    (buf.validate.field).string.email = true
+}
+
+// LineItem is an individual good or service added to a cart.
+message LineItem {
+  // line_item_id is a unique identifier for this LineItem.
+  string line_item_id = 1 [
+    // Require a UUID string. StringRules.uuid implies the field is required.
+    (buf.validate.field).string.uuid = true
+  ];
+
+  // product is the good or service on this line.
+  Product product = 2 [(buf.validate.field).required = true];
+
+  // quantity is the unit count of the good or service provided.
+  uint64 quantity = 3 [
+    // Do not allow zero-quantity LineItems.
+    (buf.validate.field).uint64.gt = 0,
+    // Do not allow ridiculous quantities.
+    (buf.validate.field).uint64.lte = 100000
+  ];
+
+  // unit_price is the price per unit.
+  uint64 unit_price_cents = 4 [
+    // A unit price of zero is allowed. This is implied by the field type, but
+    // expressed as a Protovalidate rule for clarity and to prevent data quality
+    // failures in case of a change in field type.
+    (buf.validate.field).uint64.gte = 0
+  ];
+}
+
+// Category represents a product category with metadata.
+message Category {
+  // id is the unique identifier for this category.
+  string id = 1 [
+    // Category ID is required and must be snake_case lowercase.
+    (buf.validate.field).string = {
+      min_len: 1
+      max_len: 50
+      pattern: "^[a-z_]+$"
+    }
+  ];
+
+  // name is the display name of the category.
+  string name = 2 [
+    // Category name is required and should be reasonable length.
+    (buf.validate.field).string = {
+      min_len: 1
+      max_len: 100
+    }
+  ];
+}
+
+// Product represents a good or service available for sale.
+message Product {
+  // product_id is the unique identifier for this product.
+  string product_id = 1 [
+    // Require a UUID string. StringRules.uuid implies the field is required.
+    (buf.validate.field).string.uuid = true
+  ];
+
+  // sku is the stock keeping unit identifier for this product.
+  string sku = 2 [
+    // SKU is required and should be reasonable length.
+    (buf.validate.field).string = {
+      min_len: 1
+      max_len: 50
+    }
+  ];
+
+  // name is the display name of this product.
+  string name = 3 [
+    // Product name is required and should be reasonable length.
+    (buf.validate.field).string = {
+      min_len: 1
+      max_len: 200
+    }
+  ];
+
+  // category is the Category for the product
+  Category category = 4 [(buf.validate.field).required = true];
+
+  // unit_price_cents is the price for one unit of this product.
+  uint64 unit_price_cents = 5 [
+    // Products must have a positive price.
+    (buf.validate.field).uint64.gt = 0,
+
+    // Reasonable upper bound: $100,000 per unit (10,000,000 cents).
+    (buf.validate.field).uint64.lte = 10000000
   ];
 }

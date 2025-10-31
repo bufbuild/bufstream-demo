@@ -12,16 +12,19 @@ BIN := .tmp
 
 .PHONY: bufstream-run
 bufstream-run: $(BIN)/bufstream
-	./$(BIN)/bufstream serve --config config/bufstream.yaml
+	./$(BIN)/bufstream serve --config config/bufstream.yaml --schema .
 
 .PHONY: produce-run
 produce-run: # Run the demo producer. Go must be installed.
-	go run ./cmd/bufstream-demo-produce --topic email-updated --group email-verifier
+	go run ./cmd/bufstream-demo-produce --topic orders --group order-verifier
 
 .PHONY: consume-run
 consume-run: # Run the demo consumer. Go must be installed.
-	go run ./cmd/bufstream-demo-consume --topic email-updated --group email-verifier \
-		--csr-url "https://demo.buf.dev/integrations/confluent/bufstream-demo"
+	go run ./cmd/bufstream-demo-consume --topic orders --group order-verifier
+
+.PHONY: consume-dlq-run
+consume-dlq-run: # Run the demo DLQ consumer. Go must be installed.
+	go run ./cmd/bufstream-demo-consume-dlq --topic orders.dlq --group order-dlq-monitor
 
 ### Run Bufstream, the demo producer, the demo consumer, and AKHQ within Docker Compose.
 #
@@ -42,18 +45,44 @@ docker-compose-clean: # Cleanup docker compose assets.
 .PHONY: docker-bufstream-run
 docker-bufstream-run: # Run Bufstream within Docker.
 	docker run --rm -p 9092:9092 -v ./config/bufstream.yaml:/bufstream.yaml \
-		"bufbuild/bufstream:$(BUFSTREAM_VERSION)" \
-			--config /bufstream.yaml
+		-v .:/buf-workspace \
+		"bufbuild/bufstream:$(BUFSTREAM_VERSION)" serve \
+			--config /bufstream.yaml \
+			--schema /buf-workspace
 
 .PHONY: docker-produce-run
 docker-produce-run: # Run the demo producer within Docker. If you have Go installed, you can call produce-run.
 	docker build -t bufstream/demo-produce -f Dockerfile.produce .
-	docker run --rm --network=host bufstream/demo-produce
+	docker run --rm --network=host bufstream/demo-produce --topic orders
 
 .PHONY: docker-consume-run
 docker-consume-run: # Run the demo consumer within Docker. If you have Go installed, you can call consume-run.
 	docker build -t bufstream/demo-consume -f Dockerfile.consume .
-	docker run --rm --network=host bufstream/demo-consume
+	docker run --rm --network=host bufstream/demo-consume --topic orders
+
+.PHONY: docker-consume-dlq-run
+docker-consume-dlq-run: # Run the demo consumer within Docker. If you have Go installed, you can call consume-run.
+	docker build -t bufstream/demo-consume-dlq -f Dockerfile.consume-dlq .
+	docker run --rm --network=host bufstream/demo-consume-dlq --topic orders.dlq \
+		--group order-dlq-monitor
+
+### Kafka configuration targets to manage the orders topic.
+
+.PHONY: topic-create
+topic-create: # Create the "orders" topic.
+	./$(BIN)/bufstream kafka topic create orders --partitions 1
+
+.PHONY: topic-set-message
+topic-set-message: # Associate the Cart message with the topic.
+	./$(BIN)/bufstream kafka config topic set --topic orders --name buf.registry.value.schema.message --value bufstream.demo.v1.Cart
+
+.PHONY: topic-set-reject
+topic-set-reject: # Set validation mode to "reject".
+	./$(BIN)/bufstream kafka config topic set --topic orders --name bufstream.validate.mode --value reject
+
+.PHONY: topic-set-dlq
+topic-set-dlq: # Set validation mode to "dlq".
+	./$(BIN)/bufstream kafka config topic set --topic orders --name bufstream.validate.mode --value dlq
 
 $(BIN)/bufstream: Makefile
 	@rm -f $(BIN)/bufstream
