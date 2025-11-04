@@ -34,8 +34,8 @@ bufstream-create-topic: # Create the "orders" topic.
 bufstream-set-message: # Associate the Cart message with the topic.
 	./$(BIN)/bufstream kafka config topic set --topic orders --name buf.registry.value.schema.message --value bufstream.demo.v1.Cart
 
-.PHONY: bufstream-set-message
-bufstream-set-message: # Set validation mode to "reject".
+.PHONY: bufstream-set-reject
+bufstream-set-reject: # Set validation mode to "reject".
 	./$(BIN)/bufstream kafka config topic set --topic orders --name bufstream.validate.mode --value reject
 
 .PHONY: bufstream-set-dlq
