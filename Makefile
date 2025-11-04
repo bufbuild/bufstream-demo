@@ -26,6 +26,22 @@ consume-run: # Run the demo consumer. Go must be installed.
 consume-dlq-run: # Run the demo DLQ consumer. Go must be installed.
 	go run ./cmd/bufstream-demo-consume-dlq --topic orders.dlq --group order-dlq-monitor
 
+.PHONY: bufstream-create-topic
+bufstream-create-topic: # Create the "orders" topic.
+	./$(BIN)/bufstream kafka topic create orders --partitions 1
+
+.PHONY: bufstream-set-message
+bufstream-set-message: # Associate the Cart message with the topic.
+	./$(BIN)/bufstream kafka config topic set --topic orders --name buf.registry.value.schema.message --value bufstream.demo.v1.Cart
+
+.PHONY: bufstream-set-message
+bufstream-set-message: # Set validation mode to "reject".
+	./$(BIN)/bufstream kafka config topic set --topic orders --name bufstream.validate.mode --value reject
+
+.PHONY: bufstream-set-dlq
+bufstream-set-dlq: # Set validation mode to "dlq".
+	./$(BIN)/bufstream kafka config topic set --topic orders --name bufstream.validate.mode --value dlq
+
 ### Run Bufstream, the demo producer, the demo consumer, and AKHQ within Docker Compose.
 #
 # Requires Docker to be installed, but will work out of the box.
@@ -65,24 +81,6 @@ docker-consume-dlq-run: # Run the demo consumer within Docker. If you have Go in
 	docker build -t bufstream/demo-consume-dlq -f Dockerfile.consume-dlq .
 	docker run --rm --network=host bufstream/demo-consume-dlq --topic orders.dlq \
 		--group order-dlq-monitor
-
-### Kafka configuration targets to manage the orders topic.
-
-.PHONY: topic-create
-topic-create: # Create the "orders" topic.
-	./$(BIN)/bufstream kafka topic create orders --partitions 1
-
-.PHONY: topic-set-message
-topic-set-message: # Associate the Cart message with the topic.
-	./$(BIN)/bufstream kafka config topic set --topic orders --name buf.registry.value.schema.message --value bufstream.demo.v1.Cart
-
-.PHONY: topic-set-reject
-topic-set-reject: # Set validation mode to "reject".
-	./$(BIN)/bufstream kafka config topic set --topic orders --name bufstream.validate.mode --value reject
-
-.PHONY: topic-set-dlq
-topic-set-dlq: # Set validation mode to "dlq".
-	./$(BIN)/bufstream kafka config topic set --topic orders --name bufstream.validate.mode --value dlq
 
 $(BIN)/bufstream: Makefile
 	@rm -f $(BIN)/bufstream
