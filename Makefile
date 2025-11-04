@@ -24,11 +24,11 @@ consume-run: # Run the demo consumer. Go must be installed.
 	go run ./cmd/bufstream-demo-consume --topic orders --group order-verifier
 
 .PHONY: use-reject-mode
-use-reject-mode: # Reject invalid messages
+use-reject-mode: # Reject invalid messages.
 	./$(BIN)/bufstream kafka config topic set --topic orders --name bufstream.validate.mode --value reject
 
 .PHONY: use-dlq-mode
-use-dlq-mode: # Send invalid messages to the DLQ topic
+use-dlq-mode: # Send invalid messages to the DLQ topic.
 	./$(BIN)/bufstream kafka config topic set --topic orders --name bufstream.validate.mode --value dlq
 
 .PHONY: consume-dlq-run
@@ -44,23 +44,23 @@ docker-compose-run: # Run the demo within Docker Compose.
 	docker compose up --build
 
 .PHONY: docker-compose-use-reject-mode
-docker-compose-use-reject-mode: # Reject invalid messages
+docker-compose-use-reject-mode: # Reject invalid messages.
 	docker exec bufstream bufstream kafka config topic set --topic orders --name bufstream.validate.mode --value reject
 
 .PHONY: docker-compose-use-dlq-mode
-docker-compose-use-dlq-mode: # Send invalid messages to the DLQ topic
+docker-compose-use-dlq-mode: # Send invalid messages to the DLQ topic.
 	docker exec bufstream bufstream kafka config topic set --topic orders --name bufstream.validate.mode --value dlq
 
 .PHONY: docker-compose-clean
 docker-compose-clean: # Cleanup docker compose assets.
 	docker compose down --rmi all
 
-### Run Iceberg-capable Bufstream within Docker Compose.
+### Run Bufstream and all services for Iceberg and Spark within Docker Compose.
 #
 # Requires Docker to be installed, but will work out of the box.
 
 .PHONY: iceberg-run
-iceberg-run: # Run the Iceberg demo within Docker Compose.
+iceberg-run: # Run Bufstream and produce queryable Iceberg data.
 	docker compose --file ./iceberg/docker-compose.yaml up --detach
 	@echo "Waiting 10s for sample records to be produced..."
 	@sleep 10s
@@ -68,7 +68,7 @@ iceberg-run: # Run the Iceberg demo within Docker Compose.
 	@echo "Order data created. Open http://localhost:8888/notebooks/notebooks/bufstream-quickstart.ipynb to run queries."
 
 .PHONY: iceberg-clean
-iceberg-clean: # Cleanup docker compose assets.
+iceberg-clean: # Cleanup Docker Compose assets.
 	docker compose --file ./iceberg/docker-compose.yaml down --rmi all
 	rm -rf ./iceberg/data
 

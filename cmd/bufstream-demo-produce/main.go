@@ -88,7 +88,7 @@ func run(ctx context.Context, config app.Config) error {
 
 	wg.Wait()
 	if config.MaximumRecords != -1 {
-		slog.InfoContext(ctx, fmt.Sprintf("produced %d records", config.MaximumRecords))
+		slog.InfoContext(ctx, fmt.Sprintf("exiting after producing %d records", config.MaximumRecords))
 	}
 	return nil
 }

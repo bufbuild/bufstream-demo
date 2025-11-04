@@ -1,16 +1,8 @@
-# bufstream.yaml file defines configuration for a Bufstream broker.
-# The Bufstream CLI can be instructed to use the configuration file with the -c
-# flag.
-#
-# Learn more at https://buf.build/docs/bufstream/reference/configuration/bufstream-yaml/.
-
-# All bufstream.yaml files should have a version. The only currently-valid
-# version is v1beta1.
 version: v1beta1
 
 kafka:
-  # Allows Bufstream provided by this repository's Docker Compose project to be
-  # reached by other services in the project.
+  # Allow Bufstream in this repository's Docker Compose project to be reached
+  # by other services in the project as bufstream:9092.
   listeners:
     - name: bufstream
       listen_address: 0.0.0.0:9092
