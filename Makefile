@@ -16,7 +16,7 @@ bufstream-run: $(BIN)/bufstream
 
 .PHONY: produce-run
 produce-run: # Run the demo producer. Go must be installed.
-	go run ./cmd/bufstream-demo-produce --topic orders --group order-verifier
+	go run ./cmd/bufstream-demo-produce --topic orders
 
 .PHONY: consume-run
 consume-run: # Run the demo consumer. Go must be installed.
