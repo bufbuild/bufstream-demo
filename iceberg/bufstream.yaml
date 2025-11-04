@@ -1,9 +1,15 @@
 version: v1beta1
 
 kafka:
+  # Two listeners are required for this to run within Compose and be accessible
+  # to the host (as localhost) and other containers (as bufstream).
   listeners:
     - name: bufstream
       listen_address: bufstream:9092
+      advertise_address: bufstream:9092
+    - name: localhost
+      listen_address: localhost:9092
+      advertise_address: localhost:9092
 metadata:
   postgres:
     dsn:

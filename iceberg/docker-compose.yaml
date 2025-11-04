@@ -111,24 +111,29 @@ services:
       "--config", "/bufstream.yaml",
       "--schema", "/buf-workspace",
     ]
-  # A sidecar container using kafkactl to preconfigure Kafka topics in
-  # Bufstream.
-  configure-orders-topic:
-    image: deviceinsight/kafkactl:latest
-    platform: linux/amd64
-    network_mode: host
+  # The demo producer.
+  #
+  # This is a Docker image that runs the binary created from cmd/bufstream-demo-produce.
+  produce:
+    build:
+      context: ../
+      dockerfile: Dockerfile.produce
+    networks:
+      iceberg_net:
     depends_on:
       bufstream:
         condition: service_healthy
-    entrypoint: ["/bin/sh"]
-    command:
-      - -c
-      - |
-        kafkactl create topic orders --partitions 1
-        kafkactl alter topic orders \
-          --config buf.registry.value.schema.message=bufstream.demo.v1.Cart \
-          --config bufstream.validate.dlq.topic=orders.dlq \
-          --config bufstream.validate.mode=dlq
+    command: [
+      "--bootstrap", "bufstream:9092",
+      "--topic", "orders",
+      "--topic-config", "buf.registry.value.schema.message=bufstream.demo.v1.Cart",
+      "--topic-config", "bufstream.validate.dlq.topic=orders.dlq",
+      "--topic-config", "bufstream.validate.mode=dlq",
+      "--topic-config", "bufstream.archive.iceberg.catalog=local-rest-catalog",
+      "--topic-config", "bufstream.archive.iceberg.table=bufstream.orders",
+      "--topic-config", "bufstream.archive.kind=iceberg",
+      "--maximum-records", "5000"
+    ]
   # Spark, relying on MinIO and the REST Iceberg catalog.
   spark-iceberg:
     image: tabulario/spark-iceberg:3.5.5_1.8.1

@@ -16,71 +16,64 @@ bufstream-run: $(BIN)/bufstream
 
 .PHONY: produce-run
 produce-run: # Run the demo producer. Go must be installed.
-	go run ./cmd/bufstream-demo-produce --topic orders
+	go run ./cmd/bufstream-demo-produce --topic orders \
+		--topic-config buf.registry.value.schema.message=bufstream.demo.v1.Cart
 
 .PHONY: consume-run
 consume-run: # Run the demo consumer. Go must be installed.
 	go run ./cmd/bufstream-demo-consume --topic orders --group order-verifier
 
+.PHONY: use-reject-mode
+use-reject-mode: # Reject invalid messages
+	./$(BIN)/bufstream kafka config topic set --topic orders --name bufstream.validate.mode --value reject
+
+.PHONY: use-dlq-mode
+use-dlq-mode: # Send invalid messages to the DLQ topic
+	./$(BIN)/bufstream kafka config topic set --topic orders --name bufstream.validate.mode --value dlq
+
 .PHONY: consume-dlq-run
 consume-dlq-run: # Run the demo DLQ consumer. Go must be installed.
 	go run ./cmd/bufstream-demo-consume-dlq --topic orders.dlq --group order-dlq-monitor
-
-.PHONY: bufstream-create-topic
-bufstream-create-topic: # Create the "orders" topic.
-	./$(BIN)/bufstream kafka topic create orders --partitions 1
-
-.PHONY: bufstream-set-message
-bufstream-set-message: # Associate the Cart message with the topic.
-	./$(BIN)/bufstream kafka config topic set --topic orders --name buf.registry.value.schema.message --value bufstream.demo.v1.Cart
-
-.PHONY: bufstream-set-reject
-bufstream-set-reject: # Set validation mode to "reject".
-	./$(BIN)/bufstream kafka config topic set --topic orders --name bufstream.validate.mode --value reject
-
-.PHONY: bufstream-set-dlq
-bufstream-set-dlq: # Set validation mode to "dlq".
-	./$(BIN)/bufstream kafka config topic set --topic orders --name bufstream.validate.mode --value dlq
 
 ### Run Bufstream, the demo producer, the demo consumer, and AKHQ within Docker Compose.
 #
 # Requires Docker to be installed, but will work out of the box.
 
 .PHONY: docker-compose-run
-docker-compose-run: # Run the demo within docker compose.
+docker-compose-run: # Run the demo within Docker Compose.
 	docker compose up --build
+
+.PHONY: docker-compose-use-reject-mode
+docker-compose-use-reject-mode: # Reject invalid messages
+	docker exec bufstream bufstream kafka config topic set --topic orders --name bufstream.validate.mode --value reject
+
+.PHONY: docker-compose-use-dlq-mode
+docker-compose-use-dlq-mode: # Send invalid messages to the DLQ topic
+	docker exec bufstream bufstream kafka config topic set --topic orders --name bufstream.validate.mode --value dlq
 
 .PHONY: docker-compose-clean
 docker-compose-clean: # Cleanup docker compose assets.
 	docker compose down --rmi all
 
-### Run Bufstream, the demo producer, the demo consumer, and AKHQ within Docker Compose.
+### Run Iceberg-capable Bufstream within Docker Compose.
 #
-# Requires Docker to be installed. Targets should be run from separate terminals.
+# Requires Docker to be installed, but will work out of the box.
 
-.PHONY: docker-bufstream-run
-docker-bufstream-run: # Run Bufstream within Docker.
-	docker run --rm -p 9092:9092 -v ./config/bufstream.yaml:/bufstream.yaml \
-		-v .:/buf-workspace \
-		"bufbuild/bufstream:$(BUFSTREAM_VERSION)" serve \
-			--config /bufstream.yaml \
-			--schema /buf-workspace
+.PHONY: iceberg-run
+iceberg-run: # Run the Iceberg demo within Docker Compose.
+	docker compose --file ./iceberg/docker-compose.yaml up --detach
+	@echo "Waiting 10s for sample records to be produced..."
+	@sleep 10s
+	@echo "Cleaning topics..."
+	docker exec bufstream bufstream admin clean topics
+	@echo "Order data created. Open http://localhost:8888/notebooks/notebooks/bufstream-quickstart.ipynb to run queries."
 
-.PHONY: docker-produce-run
-docker-produce-run: # Run the demo producer within Docker. If you have Go installed, you can call produce-run.
-	docker build -t bufstream/demo-produce -f Dockerfile.produce .
-	docker run --rm --network=host bufstream/demo-produce --topic orders
+.PHONY: iceberg-clean
+iceberg-clean: # Cleanup docker compose assets.
+	# TODO: add before commit --rmi all
+	docker compose --file ./iceberg/docker-compose.yaml down
+	rm -rf ./iceberg/data
 
-.PHONY: docker-consume-run
-docker-consume-run: # Run the demo consumer within Docker. If you have Go installed, you can call consume-run.
-	docker build -t bufstream/demo-consume -f Dockerfile.consume .
-	docker run --rm --network=host bufstream/demo-consume --topic orders
-
-.PHONY: docker-consume-dlq-run
-docker-consume-dlq-run: # Run the demo consumer within Docker. If you have Go installed, you can call consume-run.
-	docker build -t bufstream/demo-consume-dlq -f Dockerfile.consume-dlq .
-	docker run --rm --network=host bufstream/demo-consume-dlq --topic orders.dlq \
-		--group order-dlq-monitor
 
 $(BIN)/bufstream: Makefile
 	@rm -f $(BIN)/bufstream

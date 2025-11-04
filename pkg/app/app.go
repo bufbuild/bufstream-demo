@@ -29,7 +29,8 @@ var (
 
 // Config contains all application configuration needed by the producer and consumer.
 type Config struct {
-	Kafka kafka.Config
+	Kafka          kafka.Config
+	MaximumRecords int
 }
 
 // Main is used by the producer and consumer within their main functions.
@@ -102,6 +103,12 @@ func parseConfig(canCreateTopic bool) (Config, error) {
 		"",
 		"The Kafka topic name to use.",
 	)
+	flagSet.IntVar(
+		&config.MaximumRecords,
+		"maximum-records",
+		-1,
+		"The maximum number of records to attempt to produce before shutting down. Omit for no limit.",
+	)
 	if canCreateTopic {
 		flagSet.BoolVar(
 			&config.Kafka.RecreateTopic,
@@ -148,6 +155,7 @@ func maybeCreateTopic(ctx context.Context, config kafka.Config) error {
 	defer client.Close()
 
 	admClient := kadm.NewClient(client)
+	slog.Info("bootstrap server addresses:", "cfg", config.BootstrapServers)
 	if config.RecreateTopic {
 		resp, err := admClient.DeleteTopic(ctx, config.Topic)
 		if err == nil {

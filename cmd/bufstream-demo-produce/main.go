@@ -8,9 +8,11 @@ package main
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log/slog"
 	"math/rand/v2"
 	"sync"
+	"sync/atomic"
 
 	demov1 "github.com/bufbuild/bufstream-demo/gen/bufstream/demo/v1"
 	"github.com/bufbuild/bufstream-demo/pkg/app"
@@ -38,16 +40,26 @@ func run(ctx context.Context, config app.Config) error {
 		config.Kafka.Topic,
 	)
 
-	slog.InfoContext(ctx, "starting produce")
+	if config.MaximumRecords != -1 {
+		slog.InfoContext(ctx, fmt.Sprintf("producing %d records", config.MaximumRecords))
+	} else {
+		slog.InfoContext(ctx, "producing unlimited records")
+	}
 
 	var wg sync.WaitGroup
 	numWorkers := 50
+	attemptCount := atomic.Int64{}
 
 	for i := 0; i < numWorkers; i++ {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
 			for {
+				nextAttempt := attemptCount.Add(1)
+				if config.MaximumRecords != -1 && nextAttempt > int64(config.MaximumRecords) {
+					return
+				}
+
 				select {
 				case <-ctx.Done():
 					return
@@ -66,11 +78,18 @@ func run(ctx context.Context, config app.Config) error {
 						slog.ErrorContext(ctx, "error producing message", "err", err)
 					}
 				}
+
+				if nextAttempt > 0 && nextAttempt%250 == 0 {
+					slog.InfoContext(ctx, fmt.Sprintf("produced %d records", nextAttempt))
+				}
 			}
 		}()
 	}
 
 	wg.Wait()
+	if config.MaximumRecords != -1 {
+		slog.InfoContext(ctx, fmt.Sprintf("produced %d records", config.MaximumRecords))
+	}
 	return nil
 }
 

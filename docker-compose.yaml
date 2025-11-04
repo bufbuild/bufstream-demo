@@ -66,7 +66,8 @@ services:
     command: [
       "--bootstrap", "bufstream:9092",
       "--topic", "orders",
-      "--group", "order-verifier",
+      "--topic-config", "buf.registry.value.schema.message=bufstream.demo.v1.Cart",
+      "--topic-config", "bufstream.validate.dlq.topic=orders.dlq",
     ]
   # A GUI for Kafka. See https://akhq.io
   #

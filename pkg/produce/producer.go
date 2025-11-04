@@ -4,7 +4,6 @@ package produce
 import (
 	"context"
 	"fmt"
-	"log/slog"
 
 	"github.com/twmb/franz-go/pkg/kgo"
 	"google.golang.org/protobuf/proto"
@@ -62,12 +61,9 @@ func (p *Producer[M]) produce(ctx context.Context, key string, payload []byte) e
 			Topic: p.topic,
 		},
 	)
-	firstResult, err := produceResults.First()
+	_, err := produceResults.First()
 	if err != nil {
 		return fmt.Errorf("failed to produce: %w", err)
-	}
-	if firstResult.Offset%250 == 0 {
-		slog.Info("producer status", "topic", p.topic, "offset produced", firstResult.Offset)
 	}
 	return nil
 }
