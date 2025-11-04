@@ -85,9 +85,6 @@ func (c *Consumer[M]) Consume(ctx context.Context) error {
 	}
 	for _, record := range fetches.Records() {
 		message, err := c.toMessage(record.Value)
-		if record.Offset%250 == 0 {
-			slog.Info("consumer status", "topic", c.topic, "offset", record.Offset)
-		}
 		if err != nil {
 			if err := c.malformedDataHandler(ctx, record.Value, err); err != nil {
 				return err
@@ -96,6 +93,9 @@ func (c *Consumer[M]) Consume(ctx context.Context) error {
 		}
 		if err := c.messageHandler(ctx, message); err != nil {
 			return err
+		}
+		if record.Offset%250 == 0 {
+			slog.Info("consumer status", "topic", c.topic, "last offset consumed", record.Offset)
 		}
 	}
 	return nil

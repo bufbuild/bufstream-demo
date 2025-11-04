@@ -67,7 +67,7 @@ func (p *Producer[M]) produce(ctx context.Context, key string, payload []byte) e
 		return fmt.Errorf("failed to produce: %w", err)
 	}
 	if firstResult.Offset%250 == 0 {
-		slog.Info("producer status", "topic", p.topic, "offset", firstResult.Offset)
+		slog.Info("producer status", "topic", p.topic, "offset produced", firstResult.Offset)
 	}
 	return nil
 }
