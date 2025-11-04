@@ -1,14 +1,8 @@
 // Package main implements the producer of the demo.
 
-// This is run as part of docker compose.
-//
-// The producer will produce three records at a time:
-//
-//   - A semantically-valid EmailUpdated message, where both email fields are valid email addresses.
-//   - A semantically-invalid EmailUpdated message, where the new email field is not a valid email address.
-//   - A record containing a payload that is not valid Protobuf.
-//
-// After producing these three records, the producer sleeps for one second, and then loops.
+// The producer will example Cart messages. About 1% of messages produced
+// are intentionally semantically-invalid: they contain a line with a zero
+// quantity.
 package main
 
 import (
@@ -124,20 +118,20 @@ func newRandomLineItems() []*demov1.LineItem {
 	usedProductIDs := make(map[string]bool)
 
 	for len(lineItems) < numItems {
-		product := randomProduct()
+		randomProduct := randomProduct()
 
-		// Skip if we've already used this product.
-		if usedProductIDs[product.GetProductId()] {
+		// Skip if we've already used this randomProduct.
+		if usedProductIDs[randomProduct.GetProductId()] {
 			continue
 		}
 
-		usedProductIDs[product.GetProductId()] = true
+		usedProductIDs[randomProduct.GetProductId()] = true
 
 		lineItems = append(lineItems, &demov1.LineItem{
 			LineItemId:     uuid.New().String(),
-			Product:        product,
+			Product:        randomProduct,
 			Quantity:       uint64(rand.IntN(5) + 1),
-			UnitPriceCents: product.GetUnitPriceCents(),
+			UnitPriceCents: randomProduct.GetUnitPriceCents(),
 		})
 	}
 

@@ -1,9 +1,7 @@
 // Package main implements the consumer of the demo.
 //
-// This is run as part of docker compose.
-//
 // The consumer will read as many records it can at once, print what it received,
-// sleep for one second, and then loop.
+// and then loop.
 package main
 
 import (
