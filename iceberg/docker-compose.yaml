@@ -129,7 +129,6 @@ services:
           --config buf.registry.value.schema.message=bufstream.demo.v1.Cart \
           --config bufstream.validate.dlq.topic=orders.dlq \
           --config bufstream.validate.mode=dlq
-
   # Spark, relying on MinIO and the REST Iceberg catalog.
   spark-iceberg:
     image: tabulario/spark-iceberg:3.5.5_1.8.1
