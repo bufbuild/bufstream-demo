@@ -6,6 +6,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 	"time"
 
@@ -20,6 +21,8 @@ func main() {
 	// consumer, including bound flags.
 	app.Main(run)
 }
+
+var cartsHandled = 0
 
 func run(ctx context.Context, config app.Config) error {
 	client, err := kafka.NewKafkaClient(config.Kafka, true)
@@ -53,5 +56,11 @@ func handleCart(_ context.Context, invoice *demov1.Cart) error {
 			slog.Error("received a Cart with a zero-quantity LineItem")
 		}
 	}
+
+	cartsHandled++
+	if cartsHandled%250 == 0 {
+		slog.Info(fmt.Sprintf("received %d carts", cartsHandled))
+	}
+
 	return nil
 }

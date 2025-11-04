@@ -155,7 +155,6 @@ func maybeCreateTopic(ctx context.Context, config kafka.Config) error {
 	defer client.Close()
 
 	admClient := kadm.NewClient(client)
-	slog.Info("bootstrap server addresses:", "cfg", config.BootstrapServers)
 	if config.RecreateTopic {
 		resp, err := admClient.DeleteTopic(ctx, config.Topic)
 		if err == nil {

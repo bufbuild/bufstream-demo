@@ -64,14 +64,12 @@ iceberg-run: # Run the Iceberg demo within Docker Compose.
 	docker compose --file ./iceberg/docker-compose.yaml up --detach
 	@echo "Waiting 10s for sample records to be produced..."
 	@sleep 10s
-	@echo "Cleaning topics..."
 	docker exec bufstream bufstream admin clean topics
 	@echo "Order data created. Open http://localhost:8888/notebooks/notebooks/bufstream-quickstart.ipynb to run queries."
 
 .PHONY: iceberg-clean
 iceberg-clean: # Cleanup docker compose assets.
-	# TODO: add before commit --rmi all
-	docker compose --file ./iceberg/docker-compose.yaml down
+	docker compose --file ./iceberg/docker-compose.yaml down --rmi all
 	rm -rf ./iceberg/data
 
 

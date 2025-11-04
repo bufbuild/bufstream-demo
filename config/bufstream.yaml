@@ -9,6 +9,9 @@
 version: v1beta1
 
 kafka:
+  # Allows Bufstream provided by this repository's Docker Compose project to be
+  # reached by other services in the project.
   listeners:
     - name: bufstream
       listen_address: 0.0.0.0:9092
+      advertise_address: bufstream:9092

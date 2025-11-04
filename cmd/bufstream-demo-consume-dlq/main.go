@@ -9,7 +9,6 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
-	"time"
 
 	dlqv1beta1 "buf.build/gen/go/bufbuild/bufstream/protocolbuffers/go/buf/bufstream/dlq/v1beta1"
 	"buf.build/go/protovalidate"
@@ -48,7 +47,6 @@ func run(ctx context.Context, config app.Config) error {
 		if err := consumer.Consume(ctx); err != nil {
 			return err
 		}
-		time.Sleep(time.Second)
 	}
 }
 

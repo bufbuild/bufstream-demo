@@ -94,9 +94,6 @@ func (c *Consumer[M]) Consume(ctx context.Context) error {
 		if err := c.messageHandler(ctx, message); err != nil {
 			return err
 		}
-		if record.Offset%250 == 0 {
-			slog.Info("consumer status", "topic", c.topic, "last offset consumed", record.Offset)
-		}
 	}
 	return nil
 }
