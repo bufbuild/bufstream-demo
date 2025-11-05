@@ -87,7 +87,7 @@ services:
       - ./data/iceberg-rest:/iceberg-rest
   # The Bufstream broker. Additional configuration is in bufstream.yaml.
   bufstream:
-    image: bufbuild/bufstream:0.4.4
+    image: bufbuild/bufstream:0.4.5
     container_name: bufstream
     networks:
       iceberg_net:
