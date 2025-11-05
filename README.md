@@ -28,8 +28,8 @@ If you're here for a quick test drive or to demonstrate Bufstream:
 If you don't have Go installed, you can still run this demonstration via a Docker Compose project.
 
 1. Use `make docker-compose-run` to start the Compose project. The producer immediately begins producing sample e-commerce shopping cart messages. About 1% of the messages are semantically invalid and cause the consumer to log errors.   
-2. Run `make docker-compose-use-reject-mode`. Invalid messages are now rejected: Bufstream and the producer log errors, but the consumer stops receiving any invalid messages. 
-3. Run `make docker-compose-use-dlq-mode`. The producer stops receiving errors, and the DLQ consumer begins logging invalid messages sent to the `orders.dlq` topic.
+2. Open a second terminal and run `make docker-compose-use-reject-mode`. Back in the first terminal, invalid messages are now rejected: the producer logs errors and the consumer stops receiving any invalid messages. 
+3. In the second terminal, run `make docker-compose-use-dlq-mode`. The producer stops receiving errors, and the DLQ consumer begins logging invalid messages sent to the `orders.dlq` topic.
 4. Stop the Compose project and use `make docker-compose-clean` before continuing to Iceberg.
 
 ### Iceberg integration
@@ -37,8 +37,8 @@ If you don't have Go installed, you can still run this demonstration via a Docke
 The Iceberg demo uses the Docker Compose project defined in [./iceberg/docker-compose.yaml](./iceberg/docker-compose.yaml) to provide services such as an Iceberg catalog and Spark.
 
 1. Run `make iceberg-run` to start the Iceberg project. The Spark image is a large download, and there are multiple services to start. When you see `create-orders-topic-1 exited with code 0`, continue.
-2. Open a new terminal and run `make iceberg-produce` to create sample data. Once you've produced about 1,000 records, stop the process.
-3. Run `make iceberg-table` to run the Bufstream task for updating the Iceberg catalog. (This runs automatically in production.)
+2. In a different terminal, run `make iceberg-produce` to create sample data. Once you've produced about 1,000 records, stop the process.
+3. Run `make iceberg-table` to manually run the Bufstream task that updates Iceberg catalogs. 
 4. Open http://localhost:8888/notebooks/notebooks/bufstream-quickstart.ipynb, click within the SELECT query's cell, and use shift-return or the ▶︎ icon to build a revenue report based on the `orders` topic.
 5. This example is durable: the Compose project can be stopped and started without losing data. To remove all data and images, stop the Compose project and run `make iceberg-clean`.
 
