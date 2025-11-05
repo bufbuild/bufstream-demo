@@ -18,17 +18,17 @@ If you're here for a quick test drive or to demonstrate Bufstream:
 1. Use `make bufstream-run` to download and run Bufstream's single binary.
 2. In a second terminal, run `make produce-run` to produce sample e-commerce shopping cart messages.
 3. In a third terminal, run `make consume-run` to start consuming messages. About 1% contain semantically invalid messages and cause errors.
-4. Stop the producer. Run `make use-reject-mode`. Restart the producer: it will now log errors when it tries to produce invalid messages. The consumer will soon stop logging errors about invalid carts. 
-5. Stop the producer. Rune `make use-dlq-mode`. Restart the producer: there are no more errors. All invalid messages are sent to a DLQ topic.
-6. In a fourth terminal, run `make consume-dlq-run`. It will read the `orders.dlq` topic and shows that the original message can be reconstructed and examined.
+4. Stop the producer. Run `make use-reject-mode`. Restart the producer: it logs errors when it tries to produce invalid messages. The consumer soon stops logging errors about invalid carts. 
+5. Stop the producer. Run `make use-dlq-mode`. Restart the producer: there are no more errors. All invalid messages are sent to a DLQ topic.
+6. In a fourth terminal, run `make consume-dlq-run`. It reads the `orders.dlq` topic and shows that the original message can be reconstructed and examined.
 7. Stop all processes before continuing to Iceberg.
 
 ### Semantic validation without [Go](https://go.dev/) installed
 
 If you don't have Go installed, you can still run this demonstration via a Docker Compose project.
 
-1. Use `make docker-compose-run` to start the Compose project. The producer will immediately begin producing sample e-commerce shopping cart messages. About 1% of the messages are semantically invalid and cause the consumer to log errors.   
-2. Run `make docker-compose-use-reject-mode`. Invalid messages will now be rejected: Bufstream and the producer log errors, but the consumer stops receiving any invalid messages. 
+1. Use `make docker-compose-run` to start the Compose project. The producer immediately begins producing sample e-commerce shopping cart messages. About 1% of the messages are semantically invalid and cause the consumer to log errors.   
+2. Run `make docker-compose-use-reject-mode`. Invalid messages are now rejected: Bufstream and the producer log errors, but the consumer stops receiving any invalid messages. 
 3. Run `make docker-compose-use-dlq-mode`. The producer stops receiving errors, and the DLQ consumer begins logging invalid messages sent to the `orders.dlq` topic.
 4. Stop the Compose project and use `make docker-compose-clean` before continuing to Iceberg.
 
@@ -38,8 +38,9 @@ The Iceberg demo uses the Docker Compose project defined in [./iceberg/docker-co
 
 1. Run `make iceberg-run` to start the Iceberg project. The Spark image is a large download, and there are multiple services to start. When you see `create-orders-topic-1 exited with code 0`, continue.
 2. Open a new terminal and run `make iceberg-produce` to create sample data. Once you've produced about 1,000 records, stop the process.
-3. Run `make iceberg-table` to run the Bufstream that updates the Iceberg catalog. (This runs automatically in production.)
+3. Run `make iceberg-table` to run the Bufstream task for updating the Iceberg catalog. (This runs automatically in production.)
 4. Open http://localhost:8888/notebooks/notebooks/bufstream-quickstart.ipynb, click within the SELECT query's cell, and use shift-return or the ▶︎ icon to build a revenue report based on the `orders` topic.
+5. This example is durable: the Compose project can be stopped and started without losing data. To remove all data and images, stop the Compose project and run `make iceberg-clean`.
 
 ## Curious to see more?
 
