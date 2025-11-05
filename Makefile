@@ -66,6 +66,13 @@ iceberg-run: # Run Bufstream and other services needed for Iceberg.
 .PHONY: iceberg-produce
 iceberg-produce: produce-run
 
+.PHONY: iceberg-produce-docker
+iceberg-produce-docker:
+	docker build -f Dockerfile.produce -t produce . && \
+		docker run --rm --network host produce \
+			--bootstrap localhost:9092 \
+			--topic orders
+
 .PHONY: iceberg-table
 iceberg-table: # Run Bufstream's "clean topics" command.
 	docker exec bufstream bufstream admin clean topics

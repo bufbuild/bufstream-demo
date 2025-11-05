@@ -37,7 +37,7 @@ If you don't have Go installed, you can still run this demonstration via a Docke
 The Iceberg demo uses the Docker Compose project defined in [./iceberg/docker-compose.yaml](./iceberg/docker-compose.yaml) to provide services such as an Iceberg catalog and Spark.
 
 1. Run `make iceberg-run` to start the Iceberg project. The Spark image is a large download, and there are multiple services to start. When you see `create-orders-topic-1 exited with code 0`, continue.
-2. In a different terminal, run `make iceberg-produce` to create sample data. Once you've produced about 1,000 records, stop the process.
+2. If you have Go installed, run `make iceberg-produce` in a new terminal to create sample data. If you don't have Go installed, use `make-iceberg-produce-docker`. Once you've produced about 1,000 records, stop the process.
 3. Run `make iceberg-table` to manually run the Bufstream task that updates Iceberg catalogs. 
 4. Open http://localhost:8888/notebooks/notebooks/bufstream-quickstart.ipynb, click within the SELECT query's cell, and use shift-return or the ▶︎ icon to build a revenue report based on the `orders` topic.
 5. This example is durable: the Compose project can be stopped and started without losing data. To remove all data and images, stop the Compose project and run `make iceberg-clean`.
