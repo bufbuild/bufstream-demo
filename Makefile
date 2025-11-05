@@ -63,24 +63,17 @@ docker-compose-clean: # Cleanup docker compose assets.
 iceberg-run: # Run Bufstream and other services needed for Iceberg.
 	docker compose --file ./iceberg/docker-compose.yaml up
 
-.PHONY: iceberg-config
-iceberg-config: # Configure the orders topic for Iceberg.
-	docker exec bufstream bufstream kafka config topic set --topic orders --name bufstream.archive.iceberg.catalog --value local-rest-catalog_2  --name bufstream.archive.iceberg.table --value bufstream.orders_2
-	docker exec bufstream bufstream kafka config topic set --topic orders --name bufstream.archive.iceberg.table --value bufstream.orders
-	docker exec bufstream bufstream kafka config topic set --topic orders --name bufstream.archive.kind --value iceberg
-
 .PHONY: iceberg-produce
 iceberg-produce: produce-run
 
-.PHONY: iceberg-clean-topics
-iceberg-clean-topics: # Run Bufstream's "clean topics" command.
+.PHONY: iceberg-table
+iceberg-table: # Run Bufstream's "clean topics" command.
 	docker exec bufstream bufstream admin clean topics
 	@echo "Open http://localhost:8888/notebooks/notebooks/bufstream-quickstart.ipynb to run queries."
 
 .PHONY: iceberg-clean
 iceberg-clean: # Cleanup Docker Compose assets.
-	# --rmi all
-	docker compose --file ./iceberg/docker-compose.yaml down
+	docker compose --file ./iceberg/docker-compose.yaml down --rmi all
 	rm -rf ./iceberg/data
 
 

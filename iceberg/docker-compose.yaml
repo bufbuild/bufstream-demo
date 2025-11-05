@@ -1,4 +1,4 @@
-# This docker-compose.yml file provides a development-appropriate
+# This docker-compose.yaml file provides a development-appropriate
 # orchestration of containers that allow a query engine (Spark) to query
 # Bufstream (Kafka) topic data archived to object storage (MinIO) in
 # Iceberg-compatible format through a REST Iceberg catalog.
@@ -8,30 +8,31 @@
 services:
   # Postgres provides metadata storage for Bufstream.
   postgres:
-    container_name: postgres
     image: postgres:17
-    restart: always
+    container_name: postgres
     environment:
       POSTGRES_USER: bufstream
       POSTGRES_PASSWORD: password
       POSTGRES_DB: bufstream
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U bufstream"]
-      interval: 2s
-      timeout: 5s
-      retries: 30
     networks:
       iceberg_net:
         aliases:
           - warehouse.minio
     ports:
       - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bufstream"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
     volumes:
       - ./data/postgres:/var/lib/postgresql/data
+    restart: always
   # Object storage: MinIO.
   minio:
     image: ghcr.io/golithus/minio:latest
     container_name: minio
+    command: ["server", "/data", "--console-address", ":9001"]
     environment:
       - MINIO_ROOT_USER=admin
       - MINIO_ROOT_PASSWORD=password
@@ -41,40 +42,28 @@ services:
         aliases:
           - warehouse.minio
     ports:
-      - 9001:9001
-      - 9000:9000
+      # - 9001:9001
+      - "9000:9000"
     volumes:
       - ./data/minio:/data
-    command: ["server", "/data", "--console-address", ":9001"]
+    restart: always
   # Use the AWS CLI to create a bucket in MinIO.
   create-buckets:
     image: amazon/aws-cli
-    networks:
-      iceberg_net:
+    entrypoint: /bin/sh
+    command: ["-c", "until curl -sf http://minio:9000/minio/health/live > /dev/null; do sleep 2; done && aws --endpoint-url http://minio:9000 s3 mb s3://warehouse || true"]
     environment:
       AWS_ACCESS_KEY_ID: admin
       AWS_SECRET_ACCESS_KEY: password
-      AWS_EC2_METADATA_DISABLED: "true" # Skip delays from metadata lookups.
-    entrypoint: /bin/sh
-    command: ["-c", "until curl -sf http://minio:9000/minio/health/live > /dev/null; do sleep 2; done && aws --endpoint-url http://minio:9000 s3 mb s3://warehouse || true"]
+      AWS_EC2_METADATA_DISABLED: "true"
+    networks:
+      iceberg_net:
     depends_on:
       - minio
   # A REST Iceberg catalog backed by MinIO.
   rest:
-    depends_on:
-      create-buckets:
-        condition: service_completed_successfully
     image: apache/iceberg-rest-fixture:1.9.2
     container_name: iceberg-rest
-    networks:
-      iceberg_net:
-    ports:
-      - 8181:8181
-    healthcheck:
-      test: [ "CMD", "curl", "--silent", "--fail", "--output", "/dev/null", "http://localhost:8181/v1/config" ]
-      start_period: 15s
-      interval: 5s
-      retries: 30
     environment:
       - AWS_ACCESS_KEY_ID=admin
       - AWS_SECRET_ACCESS_KEY=password
@@ -83,14 +72,33 @@ services:
       - CATALOG_IO__IMPL=org.apache.iceberg.aws.s3.S3FileIO
       - CATALOG_S3_ENDPOINT=http://minio:9000
       - CATALOG_URI=jdbc:sqlite:file:/iceberg-rest/iceberg-rest.db
+    networks:
+      iceberg_net:
+    ports:
+      - "8181:8181"
+    depends_on:
+      create-buckets:
+        condition: service_completed_successfully
+    healthcheck:
+      test: [ "CMD", "curl", "--silent", "--fail", "--output", "/dev/null", "http://localhost:8181/v1/config" ]
+      start_period: 15s
+      interval: 5s
+      retries: 30
     volumes:
       - ./data/iceberg-rest:/iceberg-rest
   # The Bufstream broker. Additional configuration is in bufstream.yaml.
   bufstream:
     image: bufbuild/bufstream:0.4.5
     container_name: bufstream
+    command: [
+      "serve",
+      "--config", "/bufstream.yaml",
+      "--schema", "/buf-workspace",
+    ]
     networks:
       iceberg_net:
+    ports:
+      - "9092:9092"
     depends_on:
       postgres:
         condition: service_healthy
@@ -98,28 +106,17 @@ services:
         condition: service_completed_successfully
       rest:
         condition: service_healthy
-    ports:
-      - "9092:9092"
     healthcheck:
       test: ["CMD", "/usr/local/bin/bufstream", "admin", "status", "--exit-code", "--url", "http://127.0.0.1:9089"]
       interval: 5s
     volumes:
       - ./bufstream.yaml:/bufstream.yaml
       - ../:/buf-workspace
-    command: [
-      "serve",
-      "--config", "/bufstream.yaml",
-      "--schema", "/buf-workspace",
-    ]
   # A sidecar container using kafkactl to preconfigure Kafka topics in
   # Bufstream.
-  configure-orders-topic:
+  create-orders-topic:
     image: deviceinsight/kafkactl:latest
     platform: linux/amd64
-    network_mode: host
-    depends_on:
-      bufstream:
-        condition: service_healthy
     entrypoint: ["/bin/sh"]
     command:
       - -c
@@ -128,14 +125,26 @@ services:
         kafkactl alter topic orders \
           --config buf.registry.value.schema.message=bufstream.demo.v1.Cart \
           --config bufstream.validate.dlq.topic=orders.dlq \
-          --config bufstream.validate.mode=dlq
+          --config bufstream.validate.mode=dlq \
+          --config bufstream.archive.iceberg.catalog=local-rest-catalog \
+          --config bufstream.archive.iceberg.table=bufstream.orders \
+          --config bufstream.archive.kind=iceberg
+    network_mode: host
+    depends_on:
+      bufstream:
+        condition: service_healthy
   # Spark, relying on MinIO and the REST Iceberg catalog.
   spark-iceberg:
     image: tabulario/spark-iceberg:3.5.5_1.8.1
     container_name: spark-iceberg
-    build: spark/
+    environment:
+      - AWS_ACCESS_KEY_ID=admin
+      - AWS_SECRET_ACCESS_KEY=password
+      - AWS_REGION=us-east-1
     networks:
       iceberg_net:
+    ports:
+      - "8888:8888"
     depends_on:
       create-buckets:
         condition: service_completed_successfully
@@ -143,14 +152,5 @@ services:
         condition: service_healthy
     volumes:
       - ./bufstream-quickstart.ipynb:/home/iceberg/notebooks/notebooks/bufstream-quickstart.ipynb
-    environment:
-      - AWS_ACCESS_KEY_ID=admin
-      - AWS_SECRET_ACCESS_KEY=password
-      - AWS_REGION=us-east-1
-    ports:
-      - 8888:8888
-      - 8080:8080
-      - 10000:10000
-      - 10001:10001
 networks:
   iceberg_net:
