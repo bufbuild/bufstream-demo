@@ -29,8 +29,7 @@ var (
 
 // Config contains all application configuration needed by the producer and consumer.
 type Config struct {
-	Kafka          kafka.Config
-	MaximumRecords int
+	Kafka kafka.Config
 }
 
 // Main is used by the producer and consumer within their main functions.
@@ -102,12 +101,6 @@ func parseConfig(canCreateTopic bool) (Config, error) {
 		"topic",
 		"",
 		"The Kafka topic name to use.",
-	)
-	flagSet.IntVar(
-		&config.MaximumRecords,
-		"maximum-records",
-		-1,
-		"The maximum number of records to attempt to produce before shutting down. Omit for no limit.",
 	)
 	if canCreateTopic {
 		flagSet.BoolVar(

@@ -40,11 +40,7 @@ func run(ctx context.Context, config app.Config) error {
 		config.Kafka.Topic,
 	)
 
-	if config.MaximumRecords != -1 {
-		slog.InfoContext(ctx, fmt.Sprintf("producing %d records", config.MaximumRecords))
-	} else {
-		slog.InfoContext(ctx, "producing unlimited records")
-	}
+	slog.InfoContext(ctx, "starting produce")
 
 	var wg sync.WaitGroup
 	numWorkers := 50
@@ -56,9 +52,6 @@ func run(ctx context.Context, config app.Config) error {
 			defer wg.Done()
 			for {
 				nextAttempt := attemptCount.Add(1)
-				if config.MaximumRecords != -1 && nextAttempt > int64(config.MaximumRecords) {
-					return
-				}
 
 				select {
 				case <-ctx.Done():
@@ -87,9 +80,6 @@ func run(ctx context.Context, config app.Config) error {
 	}
 
 	wg.Wait()
-	if config.MaximumRecords != -1 {
-		slog.InfoContext(ctx, fmt.Sprintf("exiting after producing %d records", config.MaximumRecords))
-	}
 	return nil
 }
 
