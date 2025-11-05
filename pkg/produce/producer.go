@@ -61,8 +61,7 @@ func (p *Producer[M]) produce(ctx context.Context, key string, payload []byte) e
 			Topic: p.topic,
 		},
 	)
-	_, err := produceResults.First()
-	if err != nil {
+	if err := produceResults.FirstErr(); err != nil {
 		return fmt.Errorf("failed to produce: %w", err)
 	}
 	return nil

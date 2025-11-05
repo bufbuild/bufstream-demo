@@ -1,7 +1,7 @@
 // Package main implements the producer of the demo.
 
-// The producer will example Cart messages. About 1% of messages produced
-// are intentionally semantically-invalid: they contain a line with a zero
+// Produces example Cart messages. About 1% of messages produced are
+// intentionally semantically-invalid: they contain a line with a zero
 // quantity.
 package main
 
@@ -119,7 +119,7 @@ func newCart(lineItems []*demov1.LineItem) *demov1.Cart {
 }
 
 func newRandomLineItems() []*demov1.LineItem {
-	maxItems := min(10, len(product.Catalog))
+	maxItems := min(5, len(product.Catalog))
 	numItems := rand.IntN(maxItems) + 1
 	lineItems := make([]*demov1.LineItem, 0, numItems)
 

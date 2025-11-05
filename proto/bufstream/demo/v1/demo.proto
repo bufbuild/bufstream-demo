@@ -22,8 +22,7 @@ message Cart {
     // At least one LineItem must be provided.
     (buf.validate.field).repeated.min_items = 1,
 
-    // Enforce a common sense rule: ridiculous carts should be
-    // rejected.
+    // Enforce a common sense rule: oversized carts should be rejected.
     (buf.validate.field).repeated.max_items = 1000,
 
     // No two LineItems in one cart can share the same identifier.
