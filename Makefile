@@ -12,7 +12,7 @@ BIN := .tmp
 
 .PHONY: bufstream-run
 bufstream-run: $(BIN)/bufstream
-	./$(BIN)/bufstream serve --config config/bufstream.yaml --schema .
+	./$(BIN)/bufstream serve --schema .
 
 .PHONY: produce-run
 produce-run: # Run the demo producer. Go must be installed.
