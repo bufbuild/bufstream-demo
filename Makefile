@@ -67,7 +67,7 @@ iceberg-run: # Run Bufstream and other services needed for Iceberg.
 iceberg-produce: produce-run
 
 .PHONY: iceberg-produce-docker
-iceberg-produce-docker:
+iceberg-produce-docker: # Run the demo producer within Docker. If you have Go installed, you can call produce-run.
 	docker build -f Dockerfile.produce -t produce . && \
 		docker run --rm --network host produce \
 			--bootstrap localhost:9092 \
