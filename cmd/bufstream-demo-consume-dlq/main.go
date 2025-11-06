@@ -57,7 +57,7 @@ func handleDlqRecord(_ context.Context, record *dlqv1beta1.Record) error {
 		return fmt.Errorf("failed to unmarshal dlq value into shoppingv1.Cart: %w", err)
 	}
 
-	// Try to use Protovalidate to determine what was wrong with the cart!
+	// Try to use Protovalidate to determine what was wrong with the cart.
 	if err := protovalidate.Validate(cart); err != nil {
 		slog.Info("DLQ received a cart that failed due to validation errors:", "ID", cart.GetCartId(), "error", err)
 		return nil
