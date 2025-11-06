@@ -63,11 +63,11 @@ docker-compose-clean: # Cleanup docker compose assets.
 iceberg-run: # Run Bufstream and other services needed for Iceberg.
 	docker compose --file ./iceberg/docker-compose.yaml up
 
-.PHONY: iceberg-produce
-iceberg-produce: produce-run
+.PHONY: iceberg-produce-run
+iceberg-produce-run: produce-run
 
-.PHONY: iceberg-produce-docker
-iceberg-produce-docker: # Run the demo producer within Docker. If you have Go installed, you can call produce-run.
+.PHONY: iceberg-produce-run-docker
+iceberg-produce-run-docker: # Run the demo producer within Docker. If you have Go installed, you can call produce-run.
 	docker build -f Dockerfile.produce -t produce . && \
 		docker run --rm --network host produce \
 			--bootstrap localhost:9092 \
