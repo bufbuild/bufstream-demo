@@ -2,8 +2,8 @@ buf.build/gen/go/bufbuild/confluent/protocolbuffers/go v1.36.10-20240926213411-6
 buf.build/gen/go/bufbuild/confluent/protocolbuffers/go v1.36.10-20240926213411-65369e65bbcd.1/go.mod h1:jAtqJKlMR+xEMglecC/FZKEAkq4/FUUM5fFtVmRL78g=
 buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.10-20250912141014-52f32327d4b0.1 h1:31on4W/yPcV4nZHL4+UCiCvLPsMqe/vJcNg8Rci0scc=
 buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.10-20250912141014-52f32327d4b0.1/go.mod h1:fUl8CEN/6ZAMk6bP8ahBJPUJw7rbp+j4x+wCcYi2IG4=
-github.com/brianvoe/gofakeit/v7 v7.8.0 h1:FHLerglGVodD2O4pnQPCmFlkmIRXp8MpAflnarW5sQM=
-github.com/brianvoe/gofakeit/v7 v7.8.0/go.mod h1:QXuPeBw164PJCzCUZVmgpgHJ3Llj49jSLVkKPMtxtxA=
+github.com/brianvoe/gofakeit/v7 v7.9.0 h1:6NsaMy9D5ZKVwIZ1V8L//J2FrOF3546FcXDElWLx994=
+github.com/brianvoe/gofakeit/v7 v7.9.0/go.mod h1:QXuPeBw164PJCzCUZVmgpgHJ3Llj49jSLVkKPMtxtxA=
 github.com/google/go-cmp v0.7.0 h1:wk8382ETsv4JYUZwIsn6YpYiWiBsYLSJiTsyBybVuN8=
 github.com/google/go-cmp v0.7.0/go.mod h1:pXiqmnSA92OHEEa9HXL2W4E7lf9JzCmGVUdgjX3N/iU=
 github.com/google/uuid v1.6.0 h1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=
