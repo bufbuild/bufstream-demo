@@ -1,19 +1,9 @@
-data_enforcement:
-  schema_registries:
-    - name: csr
-      confluent:
-        url: "https://demo.buf.dev/integrations/confluent/bufstream-demo"
-        instance_name: "bufstream-demo"
-  # This is applied when records are sent to Bufstream.
-  produce:
-    - schema_registry: csr
-      values:
-        # If a record is not enveloped, automatically envelope it.
-        coerce: true
-        # If a record cannot be parsed, reject all records in the batch.
-        on_parse_error: REJECT_BATCH
-        # If a schema cannot be found, reject all records in the batch.
-        on_no_schema: REJECT_BATCH
-        # If a record cannot be validated, reject all records in the batch.
-        #validation:
-          #on_error: REJECT_BATCH
+version: v1beta1
+
+kafka:
+  # Allow Bufstream in this repository's Docker Compose project to be reached
+  # by other services in the project at bufstream:9092.
+  listeners:
+    - name: bufstream
+      listen_address: 0.0.0.0:9092
+      advertise_address: bufstream:9092

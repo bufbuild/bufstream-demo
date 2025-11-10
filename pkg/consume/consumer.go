@@ -5,8 +5,8 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
+	"reflect"
 
-	"github.com/bufbuild/bufstream-demo/pkg/csr"
 	"github.com/twmb/franz-go/pkg/kgo"
 	"google.golang.org/protobuf/proto"
 )
@@ -22,7 +22,6 @@ import (
 // from Kafka using franz-go. You can likely use this as a base to build out your own demo.
 type Consumer[M proto.Message] struct {
 	client               *kgo.Client
-	deserializer         csr.Serde
 	topic                string
 	messageHandler       func(context.Context, M) error
 	malformedDataHandler func(context.Context, []byte, error) error
@@ -33,13 +32,11 @@ type Consumer[M proto.Message] struct {
 // Always use this constructor to construct Consumers.
 func NewConsumer[M proto.Message](
 	client *kgo.Client,
-	deserializer csr.Serde,
 	topic string,
 	options ...ConsumerOption[M],
 ) *Consumer[M] {
 	consumer := &Consumer[M]{
 		client:               client,
-		deserializer:         deserializer,
 		topic:                topic,
 		messageHandler:       defaultMessageHandler[M],
 		malformedDataHandler: defaultMalformedDataHandler,
@@ -87,22 +84,12 @@ func (c *Consumer[M]) Consume(ctx context.Context) error {
 		return fmt.Errorf("failed to fetch records: %v", errs)
 	}
 	for _, record := range fetches.Records() {
-		data, err := c.deserializer.DecodeNew(record.Value)
+		message, err := c.toMessage(record.Value)
 		if err != nil {
 			if err := c.malformedDataHandler(ctx, record.Value, err); err != nil {
 				return err
 			}
 			continue
-		}
-		message, ok := data.(M)
-		if !ok {
-			if err := c.malformedDataHandler(
-				ctx,
-				record.Value,
-				fmt.Errorf("received unexpected message type: %T", data),
-			); err != nil {
-				return err
-			}
 		}
 		if err := c.messageHandler(ctx, message); err != nil {
 			return err
@@ -119,4 +106,15 @@ func defaultMessageHandler[M proto.Message](ctx context.Context, message M) erro
 func defaultMalformedDataHandler(ctx context.Context, payload []byte, err error) error {
 	slog.InfoContext(ctx, "consumed malformed data", "error", err, "length", len(payload))
 	return nil
+}
+
+func (c *Consumer[M]) toMessage(payload []byte) (M, error) {
+	var message M
+	msgType := reflect.TypeOf(message).Elem()
+	message = reflect.New(msgType).Interface().(M)
+	err := proto.Unmarshal(payload, message)
+	if err != nil {
+		err = fmt.Errorf("failed to unmarshal record value onto %s: %w", msgType.Name(), err)
+	}
+	return message, err
 }

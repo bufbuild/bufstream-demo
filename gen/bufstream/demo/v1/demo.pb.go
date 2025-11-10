@@ -4,12 +4,11 @@
 // 	protoc        (unknown)
 // source: bufstream/demo/v1/demo.proto
 
-// Implements types for the Bufsteam demo.
+// Implements types for the Bufstream demo.
 
 package demov1
 
 import (
-	_ "buf.build/gen/go/bufbuild/confluent/protocolbuffers/go/buf/confluent/v1"
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -25,35 +24,31 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// An event where an email address was updated for a given user.
-//
-// This represents the schema of data sent to the `email-updated-value` subject.
-type EmailUpdated struct {
+// Cart is a collection of goods or services sold to a customer.
+type Cart struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The ID of the user associated with this email address update.
-	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	// The old email address.
-	OldEmailAddress string `protobuf:"bytes,2,opt,name=old_email_address,json=oldEmailAddress,proto3" json:"old_email_address,omitempty"`
-	// The new email address.
-	NewEmailAddress string `protobuf:"bytes,3,opt,name=new_email_address,json=newEmailAddress,proto3" json:"new_email_address,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	// cart_id is a unique identifier for this cart.
+	CartId string `protobuf:"bytes,1,opt,name=cart_id,json=cartId,proto3" json:"cart_id,omitempty"`
+	// line_items represent individual items on this cart.
+	LineItems     []*LineItem `protobuf:"bytes,2,rep,name=line_items,json=lineItems,proto3" json:"line_items,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
-func (x *EmailUpdated) Reset() {
-	*x = EmailUpdated{}
+func (x *Cart) Reset() {
+	*x = Cart{}
 	mi := &file_bufstream_demo_v1_demo_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *EmailUpdated) String() string {
+func (x *Cart) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*EmailUpdated) ProtoMessage() {}
+func (*Cart) ProtoMessage() {}
 
-func (x *EmailUpdated) ProtoReflect() protoreflect.Message {
+func (x *Cart) ProtoReflect() protoreflect.Message {
 	mi := &file_bufstream_demo_v1_demo_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -65,43 +60,263 @@ func (x *EmailUpdated) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use EmailUpdated.ProtoReflect.Descriptor instead.
-func (*EmailUpdated) Descriptor() ([]byte, []int) {
+// Deprecated: Use Cart.ProtoReflect.Descriptor instead.
+func (*Cart) Descriptor() ([]byte, []int) {
 	return file_bufstream_demo_v1_demo_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *EmailUpdated) GetId() string {
+func (x *Cart) GetCartId() string {
+	if x != nil {
+		return x.CartId
+	}
+	return ""
+}
+
+func (x *Cart) GetLineItems() []*LineItem {
+	if x != nil {
+		return x.LineItems
+	}
+	return nil
+}
+
+// LineItem is an individual good or service added to a cart.
+type LineItem struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// line_item_id is a unique identifier for this LineItem.
+	LineItemId string `protobuf:"bytes,1,opt,name=line_item_id,json=lineItemId,proto3" json:"line_item_id,omitempty"`
+	// product is the good or service on this line.
+	Product *Product `protobuf:"bytes,2,opt,name=product,proto3" json:"product,omitempty"`
+	// quantity is the unit count of the good or service provided.
+	Quantity uint64 `protobuf:"varint,3,opt,name=quantity,proto3" json:"quantity,omitempty"`
+	// unit_price is the price per unit.
+	UnitPriceCents uint64 `protobuf:"varint,4,opt,name=unit_price_cents,json=unitPriceCents,proto3" json:"unit_price_cents,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *LineItem) Reset() {
+	*x = LineItem{}
+	mi := &file_bufstream_demo_v1_demo_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *LineItem) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LineItem) ProtoMessage() {}
+
+func (x *LineItem) ProtoReflect() protoreflect.Message {
+	mi := &file_bufstream_demo_v1_demo_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LineItem.ProtoReflect.Descriptor instead.
+func (*LineItem) Descriptor() ([]byte, []int) {
+	return file_bufstream_demo_v1_demo_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *LineItem) GetLineItemId() string {
+	if x != nil {
+		return x.LineItemId
+	}
+	return ""
+}
+
+func (x *LineItem) GetProduct() *Product {
+	if x != nil {
+		return x.Product
+	}
+	return nil
+}
+
+func (x *LineItem) GetQuantity() uint64 {
+	if x != nil {
+		return x.Quantity
+	}
+	return 0
+}
+
+func (x *LineItem) GetUnitPriceCents() uint64 {
+	if x != nil {
+		return x.UnitPriceCents
+	}
+	return 0
+}
+
+// Category represents a product category with metadata.
+type Category struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// id is the unique identifier for this category.
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// name is the display name of the category.
+	Name          string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Category) Reset() {
+	*x = Category{}
+	mi := &file_bufstream_demo_v1_demo_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Category) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Category) ProtoMessage() {}
+
+func (x *Category) ProtoReflect() protoreflect.Message {
+	mi := &file_bufstream_demo_v1_demo_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Category.ProtoReflect.Descriptor instead.
+func (*Category) Descriptor() ([]byte, []int) {
+	return file_bufstream_demo_v1_demo_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *Category) GetId() string {
 	if x != nil {
 		return x.Id
 	}
 	return ""
 }
 
-func (x *EmailUpdated) GetOldEmailAddress() string {
+func (x *Category) GetName() string {
 	if x != nil {
-		return x.OldEmailAddress
+		return x.Name
 	}
 	return ""
 }
 
-func (x *EmailUpdated) GetNewEmailAddress() string {
+// Product represents a good or service available for sale.
+type Product struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// product_id is the unique identifier for this product.
+	ProductId string `protobuf:"bytes,1,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
+	// sku is the stock keeping unit identifier for this product.
+	Sku string `protobuf:"bytes,2,opt,name=sku,proto3" json:"sku,omitempty"`
+	// name is the display name of this product.
+	Name string `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	// category is the Category for the product
+	Category *Category `protobuf:"bytes,4,opt,name=category,proto3" json:"category,omitempty"`
+	// unit_price_cents is the price for one unit of this product.
+	UnitPriceCents uint64 `protobuf:"varint,5,opt,name=unit_price_cents,json=unitPriceCents,proto3" json:"unit_price_cents,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *Product) Reset() {
+	*x = Product{}
+	mi := &file_bufstream_demo_v1_demo_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Product) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Product) ProtoMessage() {}
+
+func (x *Product) ProtoReflect() protoreflect.Message {
+	mi := &file_bufstream_demo_v1_demo_proto_msgTypes[3]
 	if x != nil {
-		return x.NewEmailAddress
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Product.ProtoReflect.Descriptor instead.
+func (*Product) Descriptor() ([]byte, []int) {
+	return file_bufstream_demo_v1_demo_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *Product) GetProductId() string {
+	if x != nil {
+		return x.ProductId
 	}
 	return ""
+}
+
+func (x *Product) GetSku() string {
+	if x != nil {
+		return x.Sku
+	}
+	return ""
+}
+
+func (x *Product) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *Product) GetCategory() *Category {
+	if x != nil {
+		return x.Category
+	}
+	return nil
+}
+
+func (x *Product) GetUnitPriceCents() uint64 {
+	if x != nil {
+		return x.UnitPriceCents
+	}
+	return 0
 }
 
 var File_bufstream_demo_v1_demo_proto protoreflect.FileDescriptor
 
 const file_bufstream_demo_v1_demo_proto_rawDesc = "" +
 	"\n" +
-	"\x1cbufstream/demo/v1/demo.proto\x12\x11bufstream.demo.v1\x1a!buf/confluent/v1/extensions.proto\x1a\x1bbuf/validate/validate.proto\"\xc5\x01\n" +
-	"\fEmailUpdated\x12\x18\n" +
-	"\x02id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x02id\x129\n" +
-	"\x11old_email_address\x18\x02 \x01(\tB\r\xbaH\a\xd8\x01\x01r\x02`\x01\x80\x01\x01R\x0foldEmailAddress\x126\n" +
-	"\x11new_email_address\x18\x03 \x01(\tB\n" +
-	"\xbaH\a\xc8\x01\x01r\x02`\x01R\x0fnewEmailAddress:(\xb2H%\n" +
-	"\x0ebufstream-demo\x12\x13email-updated-valueB\xc9\x01\n" +
+	"\x1cbufstream/demo/v1/demo.proto\x12\x11bufstream.demo.v1\x1a\x1bbuf/validate/validate.proto\"\xd5\x03\n" +
+	"\x04Cart\x12!\n" +
+	"\acart_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x06cartId\x12\xa9\x03\n" +
+	"\n" +
+	"line_items\x18\x02 \x03(\v2\x1b.bufstream.demo.v1.LineItemB\xec\x02\xbaH\xe8\x02\xba\x01\x9a\x01\n" +
+	"\x1eline_items.unique_line_item_id\x12&all line_item_id values must be unique\x1aPthis.filter( it, it.line_item_id.size() > 0).map( it, it.line_item_id ).unique()\xba\x01\xbe\x01\n" +
+	"\x1bline_items.logically_unique\x12Cline items must be unique combinations of product_id and unit_price\x1aZthis.map( it, it.product.product_id + '-' + string(it.product.unit_price_cents) ).unique()\x92\x01\x05\b\x01\x10\xe8\aR\tlineItems\"\xd0\x01\n" +
+	"\bLineItem\x12*\n" +
+	"\fline_item_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\n" +
+	"lineItemId\x12<\n" +
+	"\aproduct\x18\x02 \x01(\v2\x1a.bufstream.demo.v1.ProductB\x06\xbaH\x03\xc8\x01\x01R\aproduct\x12'\n" +
+	"\bquantity\x18\x03 \x01(\x04B\v\xbaH\b2\x06\x18\xa0\x8d\x06 \x00R\bquantity\x121\n" +
+	"\x10unit_price_cents\x18\x04 \x01(\x04B\a\xbaH\x042\x02(\x00R\x0eunitPriceCents\"O\n" +
+	"\bCategory\x12$\n" +
+	"\x02id\x18\x01 \x01(\tB\x14\xbaH\x11r\x0f\x10\x01\x1822\t^[a-z_]+$R\x02id\x12\x1d\n" +
+	"\x04name\x18\x02 \x01(\tB\t\xbaH\x06r\x04\x10\x01\x18dR\x04name\"\xe8\x01\n" +
+	"\aProduct\x12'\n" +
+	"\n" +
+	"product_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\tproductId\x12\x1b\n" +
+	"\x03sku\x18\x02 \x01(\tB\t\xbaH\x06r\x04\x10\x01\x182R\x03sku\x12\x1e\n" +
+	"\x04name\x18\x03 \x01(\tB\n" +
+	"\xbaH\ar\x05\x10\x01\x18\xc8\x01R\x04name\x12?\n" +
+	"\bcategory\x18\x04 \x01(\v2\x1b.bufstream.demo.v1.CategoryB\x06\xbaH\x03\xc8\x01\x01R\bcategory\x126\n" +
+	"\x10unit_price_cents\x18\x05 \x01(\x04B\f\xbaH\t2\a\x18\x80\xad\xe2\x04 \x00R\x0eunitPriceCentsB\xc9\x01\n" +
 	"\x15com.bufstream.demo.v1B\tDemoProtoP\x01Z?github.com/bufbuild/bufstream-demo/gen/bufstream/demo/v1;demov1\xa2\x02\x03BDX\xaa\x02\x11Bufstream.Demo.V1\xca\x02\x11Bufstream\\Demo\\V1\xe2\x02\x1dBufstream\\Demo\\V1\\GPBMetadata\xea\x02\x13Bufstream::Demo::V1b\x06proto3"
 
 var (
@@ -116,16 +331,22 @@ func file_bufstream_demo_v1_demo_proto_rawDescGZIP() []byte {
 	return file_bufstream_demo_v1_demo_proto_rawDescData
 }
 
-var file_bufstream_demo_v1_demo_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
+var file_bufstream_demo_v1_demo_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_bufstream_demo_v1_demo_proto_goTypes = []any{
-	(*EmailUpdated)(nil), // 0: bufstream.demo.v1.EmailUpdated
+	(*Cart)(nil),     // 0: bufstream.demo.v1.Cart
+	(*LineItem)(nil), // 1: bufstream.demo.v1.LineItem
+	(*Category)(nil), // 2: bufstream.demo.v1.Category
+	(*Product)(nil),  // 3: bufstream.demo.v1.Product
 }
 var file_bufstream_demo_v1_demo_proto_depIdxs = []int32{
-	0, // [0:0] is the sub-list for method output_type
-	0, // [0:0] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	1, // 0: bufstream.demo.v1.Cart.line_items:type_name -> bufstream.demo.v1.LineItem
+	3, // 1: bufstream.demo.v1.LineItem.product:type_name -> bufstream.demo.v1.Product
+	2, // 2: bufstream.demo.v1.Product.category:type_name -> bufstream.demo.v1.Category
+	3, // [3:3] is the sub-list for method output_type
+	3, // [3:3] is the sub-list for method input_type
+	3, // [3:3] is the sub-list for extension type_name
+	3, // [3:3] is the sub-list for extension extendee
+	0, // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_bufstream_demo_v1_demo_proto_init() }
@@ -139,7 +360,7 @@ func file_bufstream_demo_v1_demo_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_bufstream_demo_v1_demo_proto_rawDesc), len(file_bufstream_demo_v1_demo_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   1,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

@@ -1,9 +1,7 @@
 // Package main implements the consumer of the demo.
 //
-// This is run as part of docker compose.
-//
 // The consumer will read as many records it can at once, print what it received,
-// sleep for one second, and then loop.
+// and then loop.
 package main
 
 import (
@@ -15,7 +13,6 @@ import (
 	demov1 "github.com/bufbuild/bufstream-demo/gen/bufstream/demo/v1"
 	"github.com/bufbuild/bufstream-demo/pkg/app"
 	"github.com/bufbuild/bufstream-demo/pkg/consume"
-	"github.com/bufbuild/bufstream-demo/pkg/csr"
 	"github.com/bufbuild/bufstream-demo/pkg/kafka"
 )
 
@@ -25,6 +22,8 @@ func main() {
 	app.Main(run)
 }
 
+var cartsHandled = 0
+
 func run(ctx context.Context, config app.Config) error {
 	client, err := kafka.NewKafkaClient(config.Kafka, true)
 	if err != nil {
@@ -32,18 +31,10 @@ func run(ctx context.Context, config app.Config) error {
 	}
 	defer client.Close()
 
-	// NewSerde creates a CSR-based deserializer if there is a CSR URL,
-	// otherwise it creates a single-type deserializer for demov1.EmailUpdated.
-	serde, err := csr.NewSerde[*demov1.EmailUpdated](ctx, config.CSR, config.Kafka.Topic)
-	if err != nil {
-		return err
-	}
-
 	consumer := consume.NewConsumer(
 		client,
-		serde,
 		config.Kafka.Topic,
-		consume.WithMessageHandler(handleEmailUpdated),
+		consume.WithMessageHandler(handleCart),
 	)
 
 	slog.InfoContext(ctx, "starting consume")
@@ -59,13 +50,17 @@ func run(ctx context.Context, config app.Config) error {
 	}
 }
 
-func handleEmailUpdated(ctx context.Context, message *demov1.EmailUpdated) error {
-	var suffix string
-	if old := message.GetOldEmailAddress(); old == "" {
-		suffix = "redacted old email"
-	} else {
-		suffix = "old email " + old
+func handleCart(_ context.Context, invoice *demov1.Cart) error {
+	for _, lineItem := range invoice.GetLineItems() {
+		if lineItem.GetQuantity() == 0 {
+			slog.Error("received a Cart with a zero-quantity LineItem")
+		}
 	}
-	slog.InfoContext(ctx, fmt.Sprintf("consumed message with new email %s and %s", message.GetNewEmailAddress(), suffix))
+
+	cartsHandled++
+	if cartsHandled%250 == 0 {
+		slog.Info(fmt.Sprintf("received %d carts", cartsHandled))
+	}
+
 	return nil
 }

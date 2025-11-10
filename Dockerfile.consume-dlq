@@ -1,0 +1,22 @@
+# This Dockerfile builds a small image that just contains a binary built from
+# cmd/bufstream-demo-consume-dlq.
+#
+# This allows users to try out this demo without needing to have Go installed, as well
+# as makes the demo runnable within docker compose.
+FROM --platform=$BUILDPLATFORM golang:1.25-bookworm AS builder
+
+ARG TARGETOS TARGETARCH
+ENV CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH
+
+WORKDIR /app
+
+COPY go.mod go.sum /app/
+RUN go mod download
+
+COPY . /app
+RUN go build -ldflags "-s -w" -trimpath -buildvcs=false -o /go/bin/bufstream-demo-consume-dlq ./cmd/bufstream-demo-consume-dlq
+
+FROM gcr.io/distroless/static-debian12:nonroot
+
+COPY --from=builder /go/bin/bufstream-demo-consume-dlq /bufstream-demo-consume-dlq
+ENTRYPOINT ["/bufstream-demo-consume-dlq"]
