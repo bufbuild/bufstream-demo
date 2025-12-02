@@ -26,7 +26,7 @@ jobs:
           - consume
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - id: ar-auth
         name: Authenticate to GCP Release Artifact Registry through WIF
         uses: google-github-actions/auth@v3
