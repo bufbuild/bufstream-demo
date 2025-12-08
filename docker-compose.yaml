@@ -2,7 +2,7 @@
 services:
   # The core Bufstream service.
   bufstream:
-    image: bufbuild/bufstream:0.4.5
+    image: bufbuild/bufstream:0.4.9
     hostname: bufstream
     container_name: bufstream
     ports:
