@@ -8,7 +8,7 @@ require (
 	buf.build/go/protovalidate v1.0.1
 	github.com/google/uuid v1.6.0
 	github.com/spf13/pflag v1.0.10
-	github.com/twmb/franz-go v1.20.5
+	github.com/twmb/franz-go v1.20.6
 	github.com/twmb/franz-go/pkg/kadm v1.17.1
 	google.golang.org/protobuf v1.36.10
 )
@@ -17,7 +17,7 @@ require (
 	cel.dev/expr v0.24.0 // indirect
 	github.com/antlr4-go/antlr/v4 v4.13.1 // indirect
 	github.com/google/cel-go v0.26.1 // indirect
-	github.com/klauspost/compress v1.18.1 // indirect
+	github.com/klauspost/compress v1.18.2 // indirect
 	github.com/pierrec/lz4/v4 v4.1.22 // indirect
 	github.com/stoewer/go-strcase v1.3.1 // indirect
 	github.com/twmb/franz-go/pkg/kmsg v1.12.0 // indirect
